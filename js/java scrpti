@@ -1,0 +1,170 @@
+JavaScript
+// Função para alternar entre as páginas do site sem recarregar (evita erros 404)
+function abrirPagina(idPagina) {
+    const paginas = document.querySelectorAll('.conteudo-pagina');
+    paginas.forEach(p => p.classList.remove('ativo'));
+
+    const botoes = document.querySelectorAll('nav button');
+    botoes.forEach(b => b.classList.remove('ativo'));
+
+    const paginaAlvo = document.getElementById(idPagina);
+    if (paginaAlvo) {
+        paginaAlvo.classList.add('ativo');
+    }
+    
+    // Ativa o botão correspondente no menu
+    if(idPagina === 'pagina-inicio') document.getElementById('btn-inicio').classList.add('ativo');
+    if(idPagina === 'pagina-quem-somos') document.getElementById('btn-quem-somos').classList.add('ativo');
+    if(idPagina === 'pagina-cultos') document.getElementById('btn-cultos').classList.add('ativo');
+    if(idPagina === 'pagina-aulas') document.getElementById('btn-aulas').classList.add('ativo');
+    if(idPagina === 'pagina-contatos') document.getElementById('btn-contatos').classList.add('ativo');
+}
+
+// Banco de Perguntas e Temas do Novo Testamento por Capítulos
+const bancoPerguntas = {
+    "Mateus": [
+        { 
+            capitulo: "Mateus Cap. 1", 
+            pergunta: "Qual é o tema principal do Capítulo 1 do Evangelho de Mateus?", 
+            opcoes: [
+                "A genealogia de Jesus e o nascimento de Cristo", 
+                "O Sermão da Montanha", 
+                "O Batismo no Jordão", 
+                "A Parábola do Semeador"
+            ], 
+            correta: 0 
+        },
+        { 
+            capitulo: "Mateus Cap. 13", 
+            pergunta: "Qual parábola dá início ao ensino sobre o Reino de Deus na terra em Mateus 13?", 
+            opcoes: [
+                "O Tesouro Escondido", 
+                "A Parábola do Semeador", 
+                "A Pérola de Grande Valor", 
+                "A Rede Lançada"
+            ], 
+            correta: 1 
+        }
+    ],
+    "Romanos": [
+        { 
+            capitulo: "Romanos Cap. 1", 
+            pergunta: "Qual tema o apóstolo Paulo aborda logo na introdução de Romanos 1?", 
+            opcoes: [
+                "A ceia do Senhor", 
+                "O poder do Evangelho para a salvação de todo aquele que crê", 
+                "A lei do dízimo", 
+                "A ordem dos cultos"
+            ], 
+            correta: 1 
+        }
+    ]
+};
+
+let perguntasAtuais = [];
+let indicePergunta = 0;
+let pontuacao = 0;
+
+// Iniciar o questionário com base no livro selecionado
+function iniciarQuiz() {
+    const selectLivro = document.getElementById('select-livro');
+    if (!selectLivro) return;
+    
+    const livro = selectLivro.value;
+    perguntasAtuais = bancoPerguntas[livro] || [];
+    
+    if(perguntasAtuais.length === 0) {
+        alert("Em breve mais questões para este livro!");
+        return;
+    }
+
+    indicePergunta = 0;
+    pontuacao = 0;
+    
+    const areaResultado = document.getElementById('area-resultado');
+    const areaPergunta = document.getElementById('area-pergunta');
+    
+    if(areaResultado) areaResultado.style.display = 'none';
+    if(areaPergunta) areaPergunta.style.display = 'block';
+    
+    carregarPergunta();
+}
+
+// Carregar a pergunta atual no ecrã
+function carregarPergunta() {
+    const feedback = document.getElementById('feedback');
+    if(feedback) feedback.innerText = '';
+
+    const q = perguntasAtuais[indicePergunta];
+    document.getElementById('titulo-capitulo').innerText = q.capitulo;
+    document.getElementById('texto-pergunta').innerText = q.pergunta;
+
+    const divOpcoes = document.getElementById('opcoes-respostas');
+    divOpcoes.innerHTML = '';
+
+    q.opcoes.forEach((opcao, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'opcao-btn';
+        btn.innerText = opcao;
+        btn.onclick = () => verificarResposta(i);
+        divOpcoes.appendChild(btn);
+    });
+}
+
+// Verificar se a resposta está certa e indicar a correta em caso de erro
+function verificarResposta(i) {
+    const q = perguntasAtuais[indicePergunta];
+    const feedback = document.getElementById('feedback');
+    const botoes = document.querySelectorAll('.opcao-btn');
+
+    // Desativa os botões temporariamente após a escolha
+    botoes.forEach(b => b.disabled = true);
+
+    if(i === q.correta) {
+        pontuacao++;
+        feedback.style.color = '#4caf50';
+        feedback.innerText = "Resposta Correta!";
+    } else {
+        feedback.style.color = '#f44336';
+        feedback.innerText = "Resposta Errada! A correta era: " + q.opcoes[q.correta];
+    }
+
+    // Avança para a próxima pergunta após 2 segundos
+    setTimeout(() => {
+        indicePergunta++;
+        if(indicePergunta < perguntasAtuais.length) {
+            carregarPergunta();
+        } else {
+            exibirResultado();
+        }
+    }, 2000);
+}
+
+// Exibir a pontuação final com classificações de Ruim, Médio e Bom por porcentagem
+function exibirResultado() {
+    const areaPergunta = document.getElementById('area-pergunta');
+    if(areaPergunta) areaPergunta.style.display = 'none';
+    
+    const resDiv = document.getElementById('area-resultado');
+    if(!resDiv) return;
+    
+    resDiv.style.display = 'block';
+
+    const porcentagem = Math.round((pontuacao / perguntasAtuais.length) * 100);
+    let nivel = "";
+    let classeCss = "";
+
+    if(porcentagem >= 80) {
+        nivel = "BOM - Excelente conhecimento da Palavra!";
+        classeCss = "resultado-bom";
+    } else if(porcentagem >= 50) {
+        nivel = "MÉDIO - Bom desempenho, continue a estudar!";
+        classeCss = "resultado-medio";
+    } else {
+        nivel = "RUIM - Necessita dedicar-se mais à leitura e estudo das Escrituras.";
+        classeCss = "resultado-ruim";
+    }
+
+    resDiv.className = "resultado-box " + classeCss;
+    resDiv.innerHTML = `<strong>Resultado Final:</strong> ${porcentagem}% de acertos.<br><strong>Classificação:</strong> ${nivel}`;
+}

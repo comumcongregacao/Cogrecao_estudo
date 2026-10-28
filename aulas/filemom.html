@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz da Epístola a Filemom</title>
+
+  <style>
+    :root {
+      --dourado: #c9a64f;
+      --dourado-escuro: #a9842f;
+      --fundo: #242424;
+      --cartao: #fffefa;
+      --texto: #252525;
+      --suave: #777;
+      --verde: #237a45;
+      --vermelho: #b73535;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 30px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .app {
+      width: min(760px, 100%);
+    }
+
+    .cartao {
+      background: var(--cartao);
+      border-radius: 22px;
+      padding: 34px;
+      box-shadow: 0 18px 55px #0005;
+    }
+
+    header {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(23px, 4.5vw, 34px);
+    }
+
+    .subtitulo {
+      color: var(--suave);
+      line-height: 1.5;
+      margin: 0 0 24px;
+    }
+
+    .contador-pergunta {
+      color: var(--suave);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .barra-fundo {
+      height: 8px;
+      overflow: hidden;
+      background: #eee9dc;
+      border-radius: 99px;
+      margin-bottom: 25px;
+    }
+
+    .barra {
+      height: 100%;
+      width: 0;
+      background: var(--dourado);
+      transition: width 0.25s ease;
+    }
+
+    .pergunta {
+      font-size: clamp(19px, 3.8vw, 24px);
+      line-height: 1.4;
+      margin: 0 0 22px;
+    }
+
+    .alternativas {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .alternativa {
+      min-height: 58px;
+      padding: 14px 16px;
+      border: 1px solid #e7dfca;
+      border-radius: 14px;
+      background: #f4efe1;
+      color: var(--texto);
+      text-align: left;
+      font-size: 15px;
+      line-height: 1.3;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s, border 0.15s;
+    }
+
+    .alternativa:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: var(--dourado);
+      background: #eee3c5;
+    }
+
+    .alternativa:disabled {
+      cursor: default;
+    }
+
+    .alternativa.certa {
+      background: #e1f2e6;
+      border-color: var(--verde);
+      color: #155a30;
+      font-weight: bold;
+    }
+
+    .alternativa.errada {
+      background: #fae5e3;
+      border-color: var(--vermelho);
+      color: #8c2222;
+      font-weight: bold;
+    }
+
+    .retorno {
+      min-height: 28px;
+      margin: 17px 0 0;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    .retorno.certa {
+      color: var(--verde);
+    }
+
+    .retorno.errada {
+      color: var(--vermelho);
+    }
+
+    .painel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 25px;
+    }
+
+    .pontuacao {
+      display: flex;
+      gap: 16px;
+      color: var(--suave);
+      font-size: 14px;
+    }
+
+    .pontuacao strong {
+      color: var(--texto);
+    }
+
+    .botoes {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    button.controle {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: var(--dourado);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button.controle:hover:not(:disabled) {
+      background: var(--dourado-escuro);
+    }
+
+    button.controle.secundario {
+      background: #eee9dc;
+      color: var(--texto);
+    }
+
+    button.controle.voltar-site {
+      background: #333;
+      color: #fff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button.controle.voltar-site:hover {
+      background: #555;
+    }
+
+    button.controle:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .resultado {
+      text-align: center;
+      padding: 20px 0 8px;
+    }
+
+    .resultado h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 32px;
+      margin: 0 0 10px;
+    }
+
+    .nota {
+      font-size: 54px;
+      font-weight: bold;
+      color: var(--dourado-escuro);
+      margin: 14px 0;
+    }
+
+    .mensagem-final {
+      color: var(--suave);
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .oculto {
+      display: none;
+    }
+
+    @media (max-width: 560px) {
+      .cartao {
+        padding: 23px 18px;
+      }
+
+      .alternativas {
+        grid-template-columns: 1fr;
+      }
+
+      .painel {
+        align-items: stretch;
+      }
+
+      .pontuacao {
+        width: 100%;
+      }
+
+      .botoes {
+        width: 100%;
+      }
+
+      .botoes button {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <section class="cartao">
+      <header>
+        <h1>Quiz da Epístola a Filemom</h1>
+        <button class="controle voltar-site" onclick="voltarParaSite()">
+          ⬅ Voltar ao Site
+        </button>
+      </header>
+
+      <p class="subtitulo">
+        Responda às 15 perguntas sobre a Epístola a Filemom (João Ferreira de Almeida).
+        As perguntas e alternativas são embaralhadas a cada tentativa.
+      </p>
+
+      <div id="areaPergunta">
+        <div class="contador-pergunta" id="contadorPergunta"></div>
+
+        <div class="barra-fundo">
+          <div class="barra" id="barra"></div>
+        </div>
+
+        <h2 class="pergunta" id="textoPergunta"></h2>
+        <div class="alternativas" id="alternativas"></div>
+        <p class="retorno" id="retorno" aria-live="polite"></p>
+
+        <div class="painel">
+          <div class="pontuacao">
+            <span>✅ Certas: <strong id="certas">0</strong></span>
+            <span>❌ Erradas: <strong id="erradas">0</strong></span>
+          </div>
+
+          <div class="botoes">
+            <button class="controle secundario" id="inicio">
+              Primeira pergunta
+            </button>
+            <button class="controle secundario" id="anterior">
+              Anterior
+            </button>
+            <button class="controle" id="proxima">
+              Próxima
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="resultado oculto" id="resultado"></div>
+    </section>
+  </main>
+
+  <script>
+    const perguntasOriginais = [
+      { pergunta: "Como o apóstolo Paulo se identifica no início da Epístola a Filemom?", opcoes: ["Paulo, prisioneiro de Jesus Cristo", "Paulo, apóstolo de Jesus Cristo", "Paulo, servo de Deus", "Paulo, chamado por Deus"], resposta: "Paulo, prisioneiro de Jesus Cristo" },
+      { pergunta: "Além de Filemom, a quem mais a carta é endereçada diretamente na saudação inicial?", opcoes: ["À irmã Áfia e a Arquipo, nosso companheiro", "A Timóteo e a Tito", "Aos presbíteros da cidade", "Aos santos de Colossos"], resposta: "À irmã Áfia e a Arquipo, nosso companheiro" },
+      { pergunta: "Qual é o nome da igreja que se reunia na casa de Filemom?", opcoes: ["A igreja que está em tua casa", "A igreja de Deus em Colossos", "A assembleia dos santos", "A igreja da Judeia"], resposta: "A igreja que está em tua casa" },
+      { pergunta: "Qual era o nome do escravo fugitivo que se converteu através de Paulo na prisão?", opcoes: ["Onésimo", "Tíquico", "Aristônio", "Onesíforo"], resposta: "Onésimo" },
+      { pergunta: "O que o nome Onésimo significava literalmente, o qual Paulo contrasta dizendo que antes ele era inútil?", opcoes: ["Útil", "Fiel", "Justo", "Amado"], resposta: "Útil" },
+      { pergunta: "Como Paulo descreve Onésimo em relação à sua conversão nas prisões?", opcoes: ["Meu filho Onésimo, que gerei nas minhas prisões", "Um obreiro aprovado na fé", "O primeiro dos conversos em Roma", "Um ministro do evangelho"], resposta: "Meu filho Onésimo, que gerei nas minhas prisões" },
+      { pergunta: "O que Paulo diz que fez em relação a qualquer dívida ou dano que Onésimo tenha causado a Filemom?", opcoes: ["Eu, Paulo, de meu punho o escrevi, eu pagarei", "Escrevi para que o perdoasses sem pagamento", "Ele já trabalhou para quitar o valor", "A igreja se encarregará da dívida"], resposta: "Eu, Paulo, de meu punho o escrevi, eu pagarei" },
+      { pergunta: "De que maneira Paulo pede que Filemom receba Onésimo de volta?", opcoes: ["Como irmão amado, acima de servo", "Apenas como um servo leal", "Como um hóspede temporário", "Como um cooperador da igreja"], resposta: "Como irmão amado, acima de servo" },
+      { pergunta: "Por que razão Paulo preferiu não ordenar autoritariamente a Filemom o que fazer?", opcoes: ["Para que o teu bem não seja como por força, mas voluntário", "Porque não tinha autoridade apostólica", "Porque Filemom era mais velho", "Para evitar escândalos na comunidade"], resposta: "Para que o teu bem não seja como por força, mas voluntário" },
+      { pergunta: "Qual era o sentimento que Paulo dizia ter tido ao ouvir falar do amor e da fé de Filemom?", opcoes: ["Tive grande gozo e consolação do teu amor", "Senti profunda tristeza e preocupação", "Fiquei surpreso com a sua firmeza", "Não recebi notícias diretas de sua casa"], resposta: "Tive grande gozo e consolação do teu amor" },
+      { pergunta: "Quem era o cooperador e companheiro de prisão de Paulo que envia saudações a Filemom no final da carta?", opcoes: ["Epafras", "Timóteo", "Tito", "Silas"], resposta: "Epafras" },
+      { pergunta: "Quais cooperadores de Paulo são mencionados nas saudações finais da epístola?", opcoes: ["Marcos, Aristarco, Demas e Lucas", "Pedro, Tiago e João", "Aquila, Priscila e Apolo", "Jázon, Sospater e Tíquico"], resposta: "Marcos, Aristarco, Demas e Lucas" },
+      { pergunta: "O que Paulo pede a Filemom que lhe prepare para quando for solto?", opcoes: ["Uma pousada", "Uma capa e os pergaminhos", "Alimento e vestes especiais", "Dinheiro para a viagem"], resposta: "Uma pousada" },
+      { pergunta: "Em qual base Paulo diz esperar ser restituído a Filemom através de suas orações?", opcoes: ["Espero que pelas vossas orações vos serei dado", "Pela graça do imperador romano", "Pela decisão dos magistrados", "Pela ajuda dos irmãos de Éfeso"], resposta: "Espero que pelas vossas orações vos serei dado" },
+      { pergunta: "Como se encerra a bênção final da Epístola a Filemom?", opcoes: ["A graça de nosso Senhor Jesus Cristo seja com o vosso espírito. Amém", "A paz seja com todos vós. Amém", "O amor de Deus esteja convosco", "A graça seja com todos. Amém"], resposta: "A graça de nosso Senhor Jesus Cristo seja com o vosso espírito. Amém" }
+    ];
+
+    function embaralhar(lista) {
+      const copia = [...lista];
+      for (let i = copia.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copia[i], copia[j]] = [copia[j], copia[i]];
+      }
+      return copia;
+    }
+
+    let perguntas = [];
+    let indice = 0;
+    let respostas = [];
+
+    const contadorPergunta = document.getElementById("contadorPergunta");
+    const barra = document.getElementById("barra");
+    const textoPergunta = document.getElementById("textoPergunta");
+    const alternativas = document.getElementById("alternativas");
+    const retorno = document.getElementById("retorno");
+    const certas = document.getElementById("certas");
+    const erradas = document.getElementById("erradas");
+    const botaoInicio = document.getElementById("inicio");
+    const botaoAnterior = document.getElementById("anterior");
+    const botaoProxima = document.getElementById("proxima");
+    const areaPergunta = document.getElementById("areaPergunta");
+    const areaResultado = document.getElementById("resultado");
+
+    function voltarParaSite() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "/";
+      }
+    }
+
+    function atualizarPontuacao() {
+      const totalCertas = respostas.filter(
+        resposta => resposta !== null && resposta.correta
+      ).length;
+
+      const totalErradas = respostas.filter(
+        resposta => resposta !== null && !resposta.correta
+      ).length;
+
+      certas.textContent = totalCertas;
+      erradas.textContent = totalErradas;
+    }
+
+    function iniciarQuiz() {
+      perguntas = embaralhar(perguntasOriginais).map(pergunta => ({
+        ...pergunta,
+        opcoesEmbaralhadas: embaralhar(pergunta.opcoes)
+      }));
+
+      indice = 0;
+      respostas = Array(perguntas.length).fill(null);
+
+      areaPergunta.classList.remove("oculto");
+      areaResultado.classList.add("oculto");
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function responder(escolhida) {
+      if (respostas[indice] !== null) {
+        return;
+      }
+
+      const respostaCorreta = perguntas[indice].resposta;
+      const correta = escolhida === respostaCorreta;
+
+      respostas[indice] = {
+        escolhida: escolhida,
+        correta: correta
+      };
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function mostrarPergunta() {
+      const atual = perguntas[indice];
+      const registro = respostas[indice];
+
+      contadorPergunta.textContent =
+        `Pergunta ${indice + 1} de ${perguntas.length}`;
+
+      barra.style.width =
+        `${((indice + 1) / perguntas.length) * 100}%`;
+
+      textoPergunta.textContent = atual.pergunta;
+      alternativas.innerHTML = "";
+      retorno.textContent = "";
+      retorno.className = "retorno";
+
+      atual.opcoesEmbaralhadas.forEach(opcao => {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "alternativa";
+        botao.textContent = opcao;
+
+        if (registro !== null) {
+          botao.disabled = true;
+
+          if (opcao === atual.resposta) {
+            botao.classList.add("certa");
+          } else if (opcao === registro.escolhida) {
+            botao.classList.add("errada");
+          }
+        } else {
+          botao.addEventListener("click", () => responder(opcao));
+        }
+
+        alternativas.appendChild(botao);
+      });
+
+      if (registro !== null) {
+        if (registro.correta) {
+          retorno.textContent = "Correto! Muito bem.";
+          retorno.classList.add("certa");
+        } else {
+          retorno.textContent =
+            `Resposta incorreta. A alternativa certa é: ${atual.resposta}`;
+          retorno.classList.add("errada");
+        }
+      }
+
+      botaoInicio.disabled = indice === 0;
+      botaoAnterior.disabled = indice === 0;
+
+      botaoProxima.textContent =
+        indice === perguntas.length - 1 ? "Ver resultado" : "Próxima";
+
+      atualizarPontuacao();
+    }
+
+    function mostrarResultado() {
+      const totalCertas = respostas.filter(
+        resposta => resposta !== null && resposta.correta
+      ).length;
+
+      const totalErradas = respostas.filter(
+        resposta => resposta !== null && !resposta.correta
+      ).length;
+
+      const porcentagem = Math.round(
+        (totalCertas / perguntas.length) * 100
+      );
+
+      let nivel;
+      let mensagem;
+
+      if (porcentagem < 25) {
+        nivel = "Mal";
+        mensagem = "Continue estudando Filemom e tente novamente.";
+      } else if (porcentagem < 50) {
+        nivel = "Médio";
+        mensagem = "Você está avançando. Revise o texto e tente novamente.";
+      } else if (porcentagem < 75) {
+        nivel = "Bom";
+        mensagem = "Bom trabalho! Você conhece bem a Epístola a Filemom.";
+      } else {
+        nivel = "Excelente";
+        mensagem = "Excelente resultado! Você demonstrou domínio profundo desta carta!";
+      }
+
+      areaPergunta.classList.add("oculto");
+      areaResultado.classList.remove("oculto");
+
+      areaResultado.innerHTML = `
+        <h2>Resultado final</h2>
+        <div class="nota">${porcentagem}%</div>
+        <p><strong>${nivel}</strong></p>
+        <p class="mensagem-final">
+          Você acertou <strong>${totalCertas}</strong> e errou
+          <strong>${totalErradas}</strong> de ${perguntas.length} perguntas.<br>
+          ${mensagem}
+        </p>
+
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px;">
+          <button class="controle" id="novaTentativa">Nova tentativa</button>
+          <button class="controle secundario" onclick="voltarParaSite()">Voltar ao Site</button>
+        </div>
+      `;
+
+      document
+        .getElementById("novaTentativa")
+        .addEventListener("click", iniciarQuiz);
+    }
+
+    botaoInicio.addEventListener("click", () => {
+      indice = 0;
+      mostrarPergunta();
+    });
+
+    botaoAnterior.addEventListener("click", () => {
+      if (indice > 0) {
+        indice--;
+        mostrarPergunta();
+      }
+    });
+
+    botaoProxima.addEventListener("click", () => {
+      if (indice < perguntas.length - 1) {
+        indice++;
+        mostrarPergunta();
+      } else {
+        mostrarResultado();
+      }
+    });
+
+    iniciarQuiz();
+  </script>
+</body>
+</html>

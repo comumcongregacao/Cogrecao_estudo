@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz da Terceira Epístola de João</title>
+
+  <style>
+    :root {
+      --dourado: #c9a64f;
+      --dourado-escuro: #a9842f;
+      --fundo: #242424;
+      --cartao: #fffefa;
+      --texto: #252525;
+      --suave: #777;
+      --verde: #237a45;
+      --vermelho: #b73535;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 30px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .app {
+      width: min(760px, 100%);
+    }
+
+    .cartao {
+      background: var(--cartao);
+      border-radius: 22px;
+      padding: 34px;
+      box-shadow: 0 18px 55px #0005;
+    }
+
+    header {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(23px, 4.5vw, 34px);
+    }
+
+    .subtitulo {
+      color: var(--suave);
+      line-height: 1.5;
+      margin: 0 0 24px;
+    }
+
+    .contador-pergunta {
+      color: var(--suave);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .barra-fundo {
+      height: 8px;
+      overflow: hidden;
+      background: #eee9dc;
+      border-radius: 99px;
+      margin-bottom: 25px;
+    }
+
+    .barra {
+      height: 100%;
+      width: 0;
+      background: var(--dourado);
+      transition: width 0.25s ease;
+    }
+
+    .pergunta {
+      font-size: clamp(19px, 3.8vw, 24px);
+      line-height: 1.4;
+      margin: 0 0 22px;
+    }
+
+    .alternativas {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .alternativa {
+      min-height: 58px;
+      padding: 14px 16px;
+      border: 1px solid #e7dfca;
+      border-radius: 14px;
+      background: #f4efe1;
+      color: var(--texto);
+      text-align: left;
+      font-size: 15px;
+      line-height: 1.3;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s, border 0.15s;
+    }
+
+    .alternativa:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: var(--dourado);
+      background: #eee3c5;
+    }
+
+    .alternativa:disabled {
+      cursor: default;
+    }
+
+    .alternativa.certa {
+      background: #e1f2e6;
+      border-color: var(--verde);
+      color: #155a30;
+      font-weight: bold;
+    }
+
+    .alternativa.errada {
+      background: #fae5e3;
+      border-color: var(--vermelho);
+      color: #8c2222;
+      font-weight: bold;
+    }
+
+    .retorno {
+      min-height: 28px;
+      margin: 17px 0 0;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    .retorno.certa {
+      color: var(--verde);
+    }
+
+    .retorno.errada {
+      color: var(--vermelho);
+    }
+
+    .painel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 25px;
+    }
+
+    .pontuacao {
+      display: flex;
+      gap: 16px;
+      color: var(--suave);
+      font-size: 14px;
+    }
+
+    .pontuacao strong {
+      color: var(--texto);
+    }
+
+    .botoes {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    button.controle {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: var(--dourado);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button.controle:hover:not(:disabled) {
+      background: var(--dourado-escuro);
+    }
+
+    button.controle.secundario {
+      background: #eee9dc;
+      color: var(--texto);
+    }
+
+    button.controle.voltar-site {
+      background: #333;
+      color: #fff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button.controle.voltar-site:hover {
+      background: #555;
+    }
+
+    button.controle:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .resultado {
+      text-align: center;
+      padding: 20px 0 8px;
+    }
+
+    .resultado h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 32px;
+      margin: 0 0 10px;
+    }
+
+    .nota {
+      font-size: 54px;
+      font-weight: bold;
+      color: var(--dourado-escuro);
+      margin: 14px 0;
+    }
+
+    .mensagem-final {
+      color: var(--suave);
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .oculto {
+      display: none;
+    }
+
+    @media (max-width: 560px) {
+      .cartao {
+        padding: 23px 18px;
+      }
+
+      .alternativas {
+        grid-template-columns: 1fr;
+      }
+
+      .painel {
+        align-items: stretch;
+      }
+
+      .pontuacao {
+        width: 100%;
+      }
+
+      .botoes {
+        width: 100%;
+      }
+
+      .botoes button {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <section class="cartao">
+      <header>
+        <h1>Quiz da Terceira Epístola de João</h1>
+        <button class="controle voltar-site" onclick="voltarParaSite()">
+          ⬅ Voltar ao Site
+        </button>
+      </header>
+
+      <p class="subtitulo">
+        Responda às 10 perguntas sobre os temas e versículos principais da Terceira Epístola de João (3 João).
+        As perguntas e alternativas são embaralhadas a cada tentativa.
+      </p>
+
+      <div id="areaPergunta">
+        <div class="contador-pergunta" id="contadorPergunta"></div>
+
+        <div class="barra-fundo">
+          <div class="barra" id="barra"></div>
+        </div>
+
+        <h2 class="pergunta" id="textoPergunta"></h2>
+        <div class="alternativas" id="alternativas"></div>
+        <p class="retorno" id="retorno" aria-live="polite"></p>
+
+        <div class="painel">
+          <div class="pontuacao">
+            <span>✅ Certas: <strong id="certas">0</strong></span>
+            <span>❌ Erradas: <strong id="erradas">0</strong></span>
+          </div>
+
+          <div class="botoes">
+            <button class="controle secundario" id="inicio">
+              Primeira pergunta
+            </button>
+            <button class="controle secundario" id="anterior">
+              Anterior
+            </button>
+            <button class="controle" id="proxima">
+              Próxima
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="resultado oculto" id="resultado"></div>
+    </section>
+  </main>
+
+  <script>
+    // 10 perguntas fidedignas aos versículos principais de 3 João (João Ferreira de Almeida)
+    const perguntasOriginais = [
+      {
+        pergunta: "A quem especificamente o presbítero dirige a saudação inicial na Terceira Epístola de João? (v. 1)",
+        opcoes: ["Ao amado Gaio, a quem amo na verdade", "A Timóteo, filho na fé", "À senhora eleita e seus filhos", "A Tito, verdadeiro filho"],
+        resposta: "Ao amado Gaio, a quem amo na verdade"
+      },
+      {
+        pergunta: "Qual é o desejo do presbítero expresso em oração a favor de Gaio no versículo 2?",
+        opcoes: [
+          "Que prospere em todas as coisas e tenha saúde, assim como prospera a sua alma",
+          "Que seja promovido a presbítero na igreja local",
+          "Que viaje imediatamente para Jerusalém",
+          "Que receba dons de profecia e cura"
+        ],
+        resposta: "Que prospere em todas as coisas e tenha saúde, assim como prospera a sua alma"
+      },
+      {
+        pergunta: "Segundo o versículo 4, qual é a maior alegria declarada pelo autor da carta?",
+        opcoes: [
+          "Ouvir que os meus filhos andam na verdade",
+          "Ver o crescimento numérico da igreja",
+          "Construir novos templos de adoração",
+          "Receber ofertas e suprimentos de viagem"
+        ],
+        resposta: "Ouvir que os meus filhos andam na verdade"
+      },
+      {
+        pergunta: "Por qual atitude fiel e amorosa Gaio é elogiado nos versículos 5 e 6?",
+        opcoes: [
+          "Por acolher e prestar socorro aos irmãos e estranhos que saíram pelo Nome",
+          "Por ter confrontado os soldados romanos",
+          "Por ter escrito um evangelho detalhado",
+          "Por ter jejuado durante quarenta dias"
+        ],
+        resposta: "Por acolher e prestar socorro aos irmãos e estranhos que saíram pelo Nome"
+      },
+      {
+        pergunta: "Qual motivo é apresentado nos versículos 7 e 8 para cooperarmos com os cooperadores da verdade?",
+        opcoes: [
+          "Porque saíram por amor do Nome, sem nada tomar dos gentios",
+          "Porque eles possuem autoridade política",
+          "Para garantirmos tesouros materiais na terra",
+          "Para evitarmos perseguições na comunidade"
+        ],
+        resposta: "Porque saíram por amor do Nome, sem nada tomar dos gentios"
+      },
+      {
+        pergunta: "Qual indivíduo é repreendido gravemente no versículo 9 por gostar de ter a primazia entre eles?",
+        opcoes: ["Diótrefes", "Demétrio", "Alexandre", "Himeneu"],
+        resposta: "Diótrefes"
+      },
+      {
+        pergunta: "Quais eram as más atitudes praticadas por Diótrefes na igreja, segundo o versículo 10?",
+        opcoes: [
+          "Proferir palavras maliciosas, não receber os irmãos e expulsar da igreja os que queriam recebê-los",
+          "Cobrar impostos altos dos fiéis",
+          "Ensinar filosofias gregas nas reuniões",
+          "Recusar-se a ler o Antigo Testamento"
+        ],
+        resposta: "Proferir palavras maliciosas, não receber os irmãos e expulsar da igreja os que queriam recebê-los"
+      },
+      {
+        pergunta: "Qual é o conselho solene dado no versículo 11 sobre o bem e o mal?",
+        opcoes: [
+          "Não sigas o mal, mas o bem. Quem faz o bem é de Deus; mas quem faz o mal não tem visto a Deus",
+          "Evita qualquer contato com pessoas de fora da igreja",
+          "Tolera o mal para manter a paz entre os membros",
+          "Paga o mal com o mal aos inimigos"
+        ],
+        resposta: "Não sigas o mal, mas o bem. Quem faz o bem é de Deus; mas quem faz o mal não tem visto a Deus"
+      },
+      {
+        pergunta: "Quem é citado no versículo 12 como tendo bom testemunho de todos e da própria verdade?",
+        opcoes: ["Demétrio", "Diótrefes", "Gaio", "Estêvão"],
+        resposta: "Demétrio"
+      },
+      {
+        pergunta: "Como o presbítero conclui a carta nos versículos 13 e 14, em relação à sua comunicação e saudações?",
+        opcoes: [
+          "Deseja falar face a face em breve, enviando a paz e pedindo para saudar os amigos por nome",
+          "Informa que enviará outra carta longa com mais instruções em breve",
+          "Pede que enviem uma oferta por escrito",
+          "Anuncia sua aposentadoria das viagens missionárias"
+        ],
+        resposta: "Deseja falar face a face em breve, enviando a paz e pedindo para saudar os amigos por nome"
+      }
+    ];
+
+    function embaralhar(lista) {
+      const copia = [...lista];
+      for (let i = copia.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copia[i], copia[j]] = [copia[j], copia[i]];
+      }
+      return copia;
+    }
+
+    let perguntas = [];
+    let indice = 0;
+    let respostas = [];
+
+    const contadorPergunta = document.getElementById("contadorPergunta");
+    const barra = document.getElementById("barra");
+    const textoPergunta = document.getElementById("textoPergunta");
+    const alternativas = document.getElementById("alternativas");
+    const retorno = document.getElementById("retorno");
+    const certas = document.getElementById("certas");
+    const erradas = document.getElementById("erradas");
+    const botaoInicio = document.getElementById("inicio");
+    const botaoAnterior = document.getElementById("anterior");
+    const botaoProxima = document.getElementById("proxima");
+    const areaPergunta = document.getElementById("areaPergunta");
+    const areaResultado = document.getElementById("resultado");
+
+    function voltarParaSite() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "/";
+      }
+    }
+
+    function atualizarPontuacao() {
+      const totalCertas = respostas.filter(
+        resposta => resposta !== null && resposta.correta
+      ).length;
+
+      const totalErradas = respostas.filter(
+        resposta => resposta !== null && !resposta.correta
+      ).length;
+
+      certas.textContent = totalCertas;
+      erradas.textContent = totalErradas;
+    }
+
+    function iniciarQuiz() {
+      perguntas = embaralhar(perguntasOriginais).map(pergunta => ({
+        ...pergunta,
+        opcoesEmbaralhadas: embaralhar(pergunta.opcoes)
+      }));
+
+      indice = 0;
+      respostas = Array(perguntas.length).fill(null);
+
+      areaPergunta.classList.remove("oculto");
+      areaResultado.classList.add("oculto");
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function responder(escolhida) {
+      if (respostas[indice] !== null) {
+        return;
+      }
+
+      const respostaCorreta = perguntas[indice].resposta;
+      const correta = escolhida === respostaCorreta;
+
+      respostas[indice] = {
+        escolhida: escolhida,
+        correta: correta
+      };
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function mostrarPergunta() {
+      const atual = perguntas[indice];
+      const registro = respostas[indice];
+
+      contadorPergunta.textContent =
+        `Pergunta ${indice + 1} de ${perguntas.length}`;
+
+      barra.style.width =
+        `${((indice + 1) / perguntas.length) * 100}%`;
+
+      textoPergunta.textContent = atual.pergunta;
+      alternativas.innerHTML = "";
+      retorno.textContent = "";
+      retorno.className = "retorno";
+
+      atual.opcoesEmbaralhadas.forEach(opcao => {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "alternativa";
+        botao.textContent = opcao;
+
+        if (registro !== null) {
+          botao.disabled = true;
+
+          if (opcao === atual.resposta) {
+            botao.classList.add("certa");
+          } else if (opcao === registro.escolhida) {
+            botao.classList.add("errada");
+          }
+        } else {
+          botao.addEventListener("click", () => responder(opcao));
+        }
+
+        alternativas.appendChild(botao);
+      });
+
+      if (registro !== null) {
+        if (registro.correta) {
+          retorno.textContent = "Correto! Muito bem.";
+          retorno.classList.add("certa");
+        } else {
+          retorno.textContent =
+            `Resposta incorreta. A alternativa certa é: ${atual.resposta}`;
+          retorno.classList.add("errada");
+        }
+      }
+
+      botaoInicio.disabled = indice === 0;
+      botaoAnterior.disabled = indice === 0;
+
+      botaoProxima.textContent =
+        indice === perguntas.length - 1 ? "Ver resultado" : "Próxima";
+
+      atualizarPontuacao();
+    }
+
+    function mostrarResultado() {
+      const totalCertas = respostas.filter(
+        resposta => resposta !== null && resposta.correta
+      ).length;
+
+      const totalErradas = respostas.filter(
+        resposta => resposta !== null && !resposta.correta
+      ).length;
+
+      const porcentagem = Math.round(
+        (totalCertas / perguntas.length) * 100
+      );
+
+      let nivel;
+      let mensagem;
+
+      if (porcentagem < 25) {
+        nivel = "Insuficiente";
+        mensagem = "Leia os 14 versículos da Terceira Epístola de João e tente novamente.";
+      } else if (porcentagem < 50) {
+        nivel = "Médio";
+        mensagem = "Você compreendeu alguns pontos, mas vale a pena revisar a carta mais uma vez.";
+      } else if (porcentagem < 75) {
+        nivel = "Bom";
+        mensagem = "Muito bem! Você demonstrou bom conhecimento sobre a Terceira Epístola de João.";
+      } else {
+        nivel = "Excelente";
+        mensagem = "Excelente! Você domina todos os versículos e lições de 3 João!";
+      }
+
+      areaPergunta.classList.add("oculto");
+      areaResultado.classList.remove("oculto");
+
+      areaResultado.innerHTML = `
+        2>Resultado final</h2>
+        <div class="nota">${porcentagem}%</div>
+        <p><strong>${nivel}</strong></p>
+        <p class="mensagem-final">
+          Você acertou <strong>${totalCertas}</strong> e errou
+          <strong>${totalErradas}</strong> de ${perguntas.length} perguntas.<br>
+          ${mensagem}
+        </p>
+
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px;">
+          <button class="controle" id="novaTentativa">Nova tentativa</button>
+          <button class="controle secundario" onclick="voltarParaSite()">Voltar ao Site</button>
+        </div>
+      `;
+
+      document
+        .getElementById("novaTentativa")
+        .addEventListener("click", iniciarQuiz);
+    }
+
+    botaoInicio.addEventListener("click", () => {
+      indice = 0;
+      mostrarPergunta();
+    });
+
+    botaoAnterior.addEventListener("click", () => {
+      if (indice > 0) {
+        indice--;
+        mostrarPergunta();
+      }
+    });
+
+    botaoProxima.addEventListener("click", () => {
+      if (indice < perguntas.length - 1) {
+        indice++;
+        mostrarPergunta();
+      } else {
+        mostrarResultado();
+      }
+    });
+
+    iniciarQuiz();
+  </script>
+</body>
+</html>

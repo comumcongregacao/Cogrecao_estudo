@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz da Epístola aos Efésios</title>
+
+  <style>
+    :root {
+      --dourado: #c9a64f;
+      --dourado-escuro: #a9842f;
+      --fundo: #242424;
+      --cartao: #fffefa;
+      --texto: #252525;
+      --suave: #777;
+      --verde: #237a45;
+      --vermelho: #b73535;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 30px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .app {
+      width: min(760px, 100%);
+    }
+
+    .cartao {
+      background: var(--cartao);
+      border-radius: 22px;
+      padding: 34px;
+      box-shadow: 0 18px 55px #0005;
+    }
+
+    header {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(23px, 4.5vw, 34px);
+    }
+
+    .subtitulo {
+      color: var(--suave);
+      line-height: 1.5;
+      margin: 0 0 24px;
+    }
+
+    .contador-pergunta {
+      color: var(--suave);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .barra-fundo {
+      height: 8px;
+      overflow: hidden;
+      background: #eee9dc;
+      border-radius: 99px;
+      margin-bottom: 25px;
+    }
+
+    .barra {
+      height: 100%;
+      width: 0;
+      background: var(--dourado);
+      transition: width 0.25s ease;
+    }
+
+    .pergunta {
+      font-size: clamp(19px, 3.8vw, 24px);
+      line-height: 1.4;
+      margin: 0 0 22px;
+    }
+
+    .alternativas {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .alternativa {
+      min-height: 58px;
+      padding: 14px 16px;
+      border: 1px solid #e7dfca;
+      border-radius: 14px;
+      background: #f4efe1;
+      color: var(--texto);
+      text-align: left;
+      font-size: 15px;
+      line-height: 1.3;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s, border 0.15s;
+    }
+
+    .alternativa:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: var(--dourado);
+      background: #eee3c5;
+    }
+
+    .alternativa:disabled {
+      cursor: default;
+    }
+
+    .alternativa.certa {
+      background: #e1f2e6;
+      border-color: var(--verde);
+      color: #155a30;
+      font-weight: bold;
+    }
+
+    .alternativa.errada {
+      background: #fae5e3;
+      border-color: var(--vermelho);
+      color: #8c2222;
+      font-weight: bold;
+    }
+
+    .retorno {
+      min-height: 28px;
+      margin: 17px 0 0;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    .retorno.certa {
+      color: var(--verde);
+    }
+
+    .retorno.errada {
+      color: var(--vermelho);
+    }
+
+    .painel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 25px;
+    }
+
+    .pontuacao {
+      display: flex;
+      gap: 16px;
+      color: var(--suave);
+      font-size: 14px;
+    }
+
+    .pontuacao strong {
+      color: var(--texto);
+    }
+
+    .botoes {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    button.controle {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: var(--dourado);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button.controle:hover:not(:disabled) {
+      background: var(--dourado-escuro);
+    }
+
+    button.controle.secundario {
+      background: #eee9dc;
+      color: var(--texto);
+    }
+
+    button.controle.voltar-site {
+      background: #333;
+      color: #fff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button.controle.voltar-site:hover {
+      background: #555;
+    }
+
+    button.controle:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .resultado {
+      text-align: center;
+      padding: 20px 0 8px;
+    }
+
+    .resultado h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 32px;
+      margin: 0 0 10px;
+    }
+
+    .nota {
+      font-size: 54px;
+      font-weight: bold;
+      color: var(--dourado-escuro);
+      margin: 14px 0;
+    }
+
+    .mensagem-final {
+      color: var(--suave);
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .oculto {
+      display: none;
+    }
+
+    @media (max-width: 560px) {
+      .cartao {
+        padding: 23px 18px;
+      }
+
+      .alternativas {
+        grid-template-columns: 1fr;
+      }
+
+      .painel {
+        align-items: stretch;
+      }
+
+      .pontuacao {
+        width: 100%;
+      }
+
+      .botoes {
+        width: 100%;
+      }
+
+      .botoes button {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <section class="cartao">
+      <header>
+        <h1>Quiz da Epístola aos Efésios</h1>
+        <button class="controle voltar-site" onclick="voltarParaSite()">
+          ⬅ Voltar ao Site
+        </button>
+      </header>
+
+      <p class="subtitulo">
+        Responda às 40 perguntas sobre os 6 capítulos e epígrafes da Epístola de Paulo aos Efésios (João Ferreira de Almeida).
+        As perguntas e alternativas são embaralhadas a cada tentativa.
+      </p>
+
+      <div id="areaPergunta">
+        <div class="contador-pergunta" id="contadorPergunta"></div>
+
+        <div class="barra-fundo">
+          <div class="barra" id="barra"></div>
+        </div>
+
+        <h2 class="pergunta" id="textoPergunta"></h2>
+        <div class="alternativas" id="alternativas"></div>
+        <p class="retorno" id="retorno" aria-live="polite"></p>
+
+        <div class="painel">
+          <div class="pontuacao">
+            <span>✅ Certas: <strong id="certas">0</strong></span>
+            <span>❌ Erradas: <strong id="erradas">0</strong></span>
+          </div>
+
+          <div class="botoes">
+            <button class="controle secundario" id="inicio">
+              Primeira pergunta
+            </button>
+            <button class="controle secundario" id="anterior">
+              Anterior
+            </button>
+            <button class="controle" id="proxima">
+              Próxima
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="resultado oculto" id="resultado"></div>
+    </section>
+  </main>
+
+  <script>
+    // Lista com 40 perguntas baseadas nas epígrafes de Efésios 1-6 (João Ferreira de Almeida)
+    const perguntasOriginais = [
+      // Capítulo 1
+      { pergunta: "Em qual capítulo de Efésios encontramos a bênção da eleição em Cristo 'antes da fundação do mundo'?", opcoes: ["Capítulo 1", "Capítulo 2", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 1" },
+      { pergunta: "O epígrafe em que é revelado que fomos 'selados com o Espírito Santo da promessa' pertence ao:", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 5", "Capítulo 6"], resposta: "Capítulo 1" },
+      { pergunta: "Em qual capítulo Paulo ora pedindo a Deus o 'Espírito de sabedoria e de revelação no conhecimento dele'?", opcoes: ["Capítulo 1", "Capítulo 2", "Capítulo 4", "Capítulo 5"], resposta: "Capítulo 1" },
+      { pergunta: "O ensino de que Cristo foi constituído por Deus como 'a cabeça sobre todas as coisas na igreja' está no:", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 5", "Capítulo 6"], resposta: "Capítulo 1" },
+
+      // Capítulo 2
+      { pergunta: "Em qual capítulo está registrada a célebre verdade: 'Porque pela graça sois salvos, por meio da fé; e isto não vem de vós, é dom de Deus'?", opcoes: ["Capítulo 2", "Capítulo 1", "Capítulo 3", "Capítulo 5"], resposta: "Capítulo 2" },
+      { pergunta: "O epígrafe sobre estarmos antes 'mortos em ofensas e pecados' mas agora 'vivificados juntamente com Cristo' pertence ao:", opcoes: ["Capítulo 2", "Capítulo 4", "Capítulo 5", "Capítulo 6"], resposta: "Capítulo 2" },
+      { pergunta: "Em qual capítulo Paulo explica que Cristo 'derrubou a parede de separação' para reconciliar judeus e gentios num só corpo?", opcoes: ["Capítulo 2", "Capítulo 1", "Capítulo 3", "Capítulo 4"], resposta: "Capítulo 2" },
+      { pergunta: "A metáfora da Igreja edificada sobre 'o fundamento dos apóstolos e dos profetas, de que Jesus Cristo é a principal pedra da esquina' está no:", opcoes: ["Capítulo 2", "Capítulo 4", "Capítulo 5", "Capítulo 6"], resposta: "Capítulo 2" },
+
+      // Capítulo 3
+      { pergunta: "Em qual capítulo de Efésios o apóstolo fala sobre a revelação do 'mistério de Cristo de que os gentios são co-herdeiros'?", opcoes: ["Capítulo 3", "Capítulo 1", "Capítulo 2", "Capítulo 5"], resposta: "Capítulo 3" },
+      { pergunta: "O epígrafe em que Paulo se declara 'o mínimo de todos os santos' a quem foi dada a graça de pregar entre os gentios está no:", opcoes: ["Capítulo 3", "Capítulo 2", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 3" },
+      { pergunta: "Em qual capítulo Paulo ora para que os crentes possam 'compreender qual seja a largura, e o comprimento, e a altura, e a profundidade' do amor de Cristo?", opcoes: ["Capítulo 3", "Capítulo 1", "Capítulo 4", "Capítulo 5"], resposta: "Capítulo 3" },
+      { pergunta: "A doxologia 'Aquele que é poderoso para fazer tudo muito mais abundantemente além daquilo que pedimos ou pensamos' encerra o:", opcoes: ["Capítulo 3", "Capítulo 2", "Capítulo 5", "Capítulo 6"], resposta: "Capítulo 3" },
+
+      // Capítulo 4
+      { pergunta: "Em qual capítulo o apóstolo exorta a andar de modo 'digno da vocação com que fostes chamados, com toda a humildade e mansidão'?", opcoes: ["Capítulo 4", "Capítulo 2", "Capítulo 3", "Capítulo 6"], resposta: "Capítulo 4" },
+      { pergunta: "O epígrafe sobre a unidade da fé: 'Um só corpo e um só Espírito, um só Senhor, uma só fé, um só batismo, um só Deus e Pai' pertence ao:", opcoes: ["Capítulo 4", "Capítulo 1", "Capítulo 3", "Capítulo 5"], resposta: "Capítulo 4" },
+      { pergunta: "Em qual capítulo está registrada a concessão dos ministérios: 'Ele mesmo deu uns para apóstolos, e outros para profetas, e outros para evangelistas...'?", opcoes: ["Capítulo 4", "Capítulo 2", "Capítulo 5", "Capítulo 6"], resposta: "Capítulo 4" },
+      { pergunta: "A instrução solene sobre 'vos despojardes do velho homem' e 'vos revestirdes do novo homem, criado segundo Deus' encontra-se no:", opcoes: ["Capítulo 4", "Capítulo 1", "Capítulo 3", "Capítulo 5"], resposta: "Capítulo 4" },
+      { pergunta: "O mandamento 'Irai-vos, e não pequeis; não se ponha o sol sobre a vossa ira' pertence ao:", opcoes: ["Capítulo 4", "Capítulo 2", "Capítulo 5", "Capítulo 6"], resposta: "Capítulo 4" },
+
+      // Capítulo 5
+      { pergunta: "Em qual capítulo de Efésios encontramos a exortação: 'Sede, pois, imitadores de Deus, como filhos amados; e andai em amor'?", opcoes: ["Capítulo 5", "Capítulo 2", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 5" },
+      { pergunta: "O epígrafe com o alerta: 'Porque noutro tempo éreis trevas, mas agora sois luz no Senhor; andai como filhos da luz' pertence ao:", opcoes: ["Capítulo 5", "Capítulo 1", "Capítulo 3", "Capítulo 4"], resposta: "Capítulo 5" },
+      { pergunta: "Em qual capítulo lemos a instrução de 'Remir o tempo, porquanto os dias são maus'?", opcoes: ["Capítulo 5", "Capítulo 2", "Capítulo 3", "Capítulo 6"], resposta: "Capítulo 5" },
+      { pergunta: "Onde se encontra a célebre passagem: 'E não vos embriagueis com vinho, em que há contenda, mas enchei-vos do Espírito'?", opcoes: ["Capítulo 5", "Capítulo 1", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 5" },
+      { pergunta: "O epígrafe que ensina os deveres do matrimônio ('Maridos, amai vossas mulheres, como também Cristo amou a igreja') está no:", opcoes: ["Capítulo 5", "Capítulo 2", "Capítulo 3", "Capítulo 4"], resposta: "Capítulo 5" },
+
+      // Capítulo 6
+      { pergunta: "Em qual capítulo está o mandamento direcionado aos filhos: 'Vós, filhos, sede obedientes a vossos pais no Senhor, porque isto é justo'?", opcoes: ["Capítulo 6", "Capítulo 2", "Capítulo 4", "Capítulo 5"], resposta: "Capítulo 6" },
+      { pergunta: "O epígrafe que cita o quinto mandamento como 'o primeiro mandamento com promessa' pertence ao:", opcoes: ["Capítulo 6", "Capítulo 1", "Capítulo 3", "Capítulo 5"], resposta: "Capítulo 6" },
+      { pergunta: "Em qual capítulo o apóstolo exorta os pais a não provocarem a ira a seus filhos, mas criá-los 'na doutrina e admoestação do Senhor'?", opcoes: ["Capítulo 6", "Capítulo 2", "Capítulo 4", "Capítulo 5"], resposta: "Capítulo 6" },
+      { pergunta: "A solene instrução de tomar 'toda a armadura de Deus, para que possais resistir no dia mau' encontra-se no:", opcoes: ["Capítulo 6", "Capítulo 3", "Capítulo 4", "Capítulo 5"], resposta: "Capítulo 6" },
+      { pergunta: "Em qual capítulo é dito que 'não temos de lutar contra a carne e o sangue, mas, sim, contra os principados, contra as potestades'?", opcoes: ["Capítulo 6", "Capítulo 1", "Capítulo 2", "Capítulo 5"], resposta: "Capítulo 6" },
+      { pergunta: "A citação da 'espada do Espírito, que é a palavra de Deus' e o 'escudo da fé' pertence ao:", opcoes: ["Capítulo 6", "Capítulo 3", "Capítulo 4", "Capítulo 5"], resposta: "Capítulo 6" },
+
+      // Perguntas Complementares
+      { pergunta: "A declaração de que fomos predestinados 'para filhos de adoção por Jesus Cristo, para si mesmo' está registrada no:", opcoes: ["Capítulo 1", "Capítulo 2", "Capítulo 4", "Capítulo 5"], resposta: "Capítulo 1" },
+      { pergunta: "Onde lemos que nos tornamos 'conterrâneos dos santos, e da família de Deus'?", opcoes: ["Capítulo 2", "Capítulo 3", "Capítulo 4", "Capítulo 5"], resposta: "Capítulo 2" },
+      { pergunta: "A afirmação 'Porque somos feitura sua, criados em Cristo Jesus para as boas obras' é do:", opcoes: ["Capítulo 2", "Capítulo 1", "Capítulo 3", "Capítulo 5"], resposta: "Capítulo 2" },
+      { pergunta: "Em qual capítulo Paulo pede oração para que lhe seja dada a palavra ao abrir a sua boca 'para fazer notório o mistério do evangelho'?", opcoes: ["Capítulo 6", "Capítulo 2", "Capítulo 4", "Capítulo 5"], resposta: "Capítulo 6" },
+      { pergunta: "A menção a Tíquico como 'irmão amado e fiel ministro no Senhor' enviado por Paulo está no:", opcoes: ["Capítulo 6", "Capítulo 1", "Capítulo 3", "Capítulo 5"], resposta: "Capítulo 6" },
+      { pergunta: "A ordem para 'Não entristecerdes o Espírito Santo de Deus, no qual estais selados para o dia da redenção' encontra-se no:", opcoes: ["Capítulo 4", "Capítulo 1", "Capítulo 3", "Capítulo 5"], resposta: "Capítulo 4" },
+      { pergunta: "A instrução 'Antes sede uns para com os outros benignos, misericordiosos, perdoando-vos uns aos outros, como Deus vos perdoou em Cristo' é do:", opcoes: ["Capítulo 4", "Capítulo 2", "Capítulo 3", "Capítulo 6"], resposta: "Capítulo 4" },
+      { pergunta: "Em qual capítulo o apóstolo afirma que o mistério da unão matrimonial entre homem e mulher se refere grandemente 'a Cristo e à igreja'?", opcoes: ["Capítulo 5", "Capítulo 2", "Capítulo 3", "Capítulo 6"], resposta: "Capítulo 5" },
+      { pergunta: "A expressão de que o Senhor quer apresentar a Si mesmo uma 'igreja gloriosa, sem mácula, nem ruga, nem coisa semelhante' está no:", opcoes: ["Capítulo 5", "Capítulo 1", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 5" },
+      { pergunta: "Onde se localiza o alerta de que nenhum 'fornicador, ou impuro, ou avarento... tem herança no reino de Cristo e de Deus'?", opcoes: ["Capítulo 5", "Capítulo 2", "Capítulo 3", "Capítulo 6"], resposta: "Capítulo 5" },
+      { pergunta: "Em qual capítulo Paulo fala sobre o propósito dos dons ministeriais para alcançar a 'unidade da fé' e a 'medida da estatura completa de Cristo'?", opcoes: ["Capítulo 4", "Capítulo 1", "Capítulo 3", "Capítulo 5"], resposta: "Capítulo 4" },
+      { pergunta: "A célebre exortação 'Desperta, tu que dormes, e levanta-te dentre os mortos, e Cristo te esclarecerá' pertence ao:", opcoes: ["Capítulo 5", "Capítulo 2", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 5" }
+    ];
+
+    function embaralhar(lista) {
+      const copia = [...lista];
+      for (let i = copia.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copia[i], copia[j]] = [copia[j], copia[i]];
+      }
+      return copia;
+    }
+
+    let perguntas = [];
+    let indice = 0;
+    let respostas = [];
+
+    const contadorPergunta = document.getElementById("contadorPergunta");
+    const barra = document.getElementById("barra");
+    const textoPergunta = document.getElementById("textoPergunta");
+    const alternativas = document.getElementById("alternativas");
+    const retorno = document.getElementById("retorno");
+    const certas = document.getElementById("certas");
+    const erradas = document.getElementById("erradas");
+    const botaoInicio = document.getElementById("inicio");
+    const botaoAnterior = document.getElementById("anterior");
+    const botaoProxima = document.getElementById("proxima");
+    const areaPergunta = document.getElementById("areaPergunta");
+    const areaResultado = document.getElementById("resultado");
+
+    function voltarParaSite() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "/";
+      }
+    }
+
+    function atualizarPontuacao() {
+      const totalCertas = respostas.filter(
+        resposta => resposta !== null && resposta.correta
+      ).length;
+
+      const totalErradas = respostas.filter(
+        resposta => resposta !== null && !resposta.correta
+      ).length;
+
+      certas.textContent = totalCertas;
+      erradas.textContent = totalErradas;
+    }
+
+    function iniciarQuiz() {
+      perguntas = embaralhar(perguntasOriginais).map(pergunta => ({
+        ...pergunta,
+        opcoesEmbaralhadas: embaralhar(pergunta.opcoes)
+      }));
+
+      indice = 0;
+      respostas = Array(perguntas.length).fill(null);
+
+      areaPergunta.classList.remove("oculto");
+      areaResultado.classList.add("oculto");
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function responder(escolhida) {
+      if (respostas[indice] !== null) {
+        return;
+      }
+
+      const respostaCorreta = perguntas[indice].resposta;
+      const correta = escolhida === respostaCorreta;
+
+      respostas[indice] = {
+        escolhida: escolhida,
+        correta: correta
+      };
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function mostrarPergunta() {
+      const atual = perguntas[indice];
+      const registro = respostas[indice];
+
+      contadorPergunta.textContent =
+        `Pergunta ${indice + 1} de ${perguntas.length}`;
+
+      barra.style.width =
+        `${((indice + 1) / perguntas.length) * 100}%`;
+
+      textoPergunta.textContent = atual.pergunta;
+      alternativas.innerHTML = "";
+      retorno.textContent = "";
+      retorno.className = "retorno";
+
+      atual.opcoesEmbaralhadas.forEach(opcao => {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "alternativa";
+        botao.textContent = opcao;
+
+        if (registro !== null) {
+          botao.disabled = true;
+
+          if (opcao === atual.resposta) {
+            botao.classList.add("certa");
+          } else if (opcao === registro.escolhida) {
+            botao.classList.add("errada");
+          }
+        } else {
+          botao.addEventListener("click", () => responder(opcao));
+        }
+
+        alternativas.appendChild(botao);
+      });
+
+      if (registro !== null) {
+        if (registro.correta) {
+          retorno.textContent = "Correto! Muito bem.";
+          retorno.classList.add("certa");
+        } else {
+          retorno.textContent =
+            `Resposta incorreta. A alternativa certa é: ${atual.resposta}`;
+          retorno.classList.add("errada");
+        }
+      }
+
+      botaoInicio.disabled = indice === 0;
+      botaoAnterior.disabled = indice === 0;
+
+      botaoProxima.textContent =
+        indice === perguntas.length - 1 ? "Ver resultado" : "Próxima";
+
+      atualizarPontuacao();
+    }
+
+    function mostrarResultado() {
+      const totalCertas = respostas.filter(
+        resposta => resposta !== null && resposta.correta
+      ).length;
+
+      const totalErradas = respostas.filter(
+        resposta => resposta !== null && !resposta.correta
+      ).length;
+
+      const porcentagem = Math.round(
+        (totalCertas / perguntas.length) * 100
+      );
+
+      let nivel;
+      let mensagem;
+
+      if (porcentagem < 25) {
+        nivel = "Mal";
+        mensagem = "Continue estudando a Epístola aos Efésios e tente novamente.";
+      } else if (porcentagem < 50) {
+        nivel = "Médio";
+        mensagem = "Você está avançando. Revise os capítulos e tente novamente.";
+      } else if (porcentagem < 75) {
+        nivel = "Bom";
+        mensagem = "Bom trabalho! Você conhece grande parte da Epístola aos Efésios.";
+      } else {
+        nivel = "Excelente";
+        mensagem = "Excelente resultado! Você demonstrou domínio impressionante das epígrafes!";
+      }
+
+      areaPergunta.classList.add("oculto");
+      areaResultado.classList.remove("oculto");
+
+      areaResultado.innerHTML = `
+        <h2>Resultado final</h2>
+        <div class="nota">${porcentagem}%</div>
+        <p><strong>${nivel}</strong></p>
+        <p class="mensagem-final">
+          Você acertou <strong>${totalCertas}</strong> e errou
+          <strong>${totalErradas}</strong> de ${perguntas.length} perguntas.<br>
+          ${mensagem}
+        </p>
+
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px;">
+          <button class="controle" id="novaTentativa">Nova tentativa</button>
+          <button class="controle secundario" onclick="voltarParaSite()">Voltar ao Site</button>
+        </div>
+      `;
+
+      document
+        .getElementById("novaTentativa")
+        .addEventListener("click", iniciarQuiz);
+    }
+
+    botaoInicio.addEventListener("click", () => {
+      indice = 0;
+      mostrarPergunta();
+    });
+
+    botaoAnterior.addEventListener("click", () => {
+      if (indice > 0) {
+        indice--;
+        mostrarPergunta();
+      }
+    });
+
+    botaoProxima.addEventListener("click", () => {
+      if (indice < perguntas.length - 1) {
+        indice++;
+        mostrarPergunta();
+      } else {
+        mostrarResultado();
+      }
+    });
+
+    iniciarQuiz();
+  </script>
+</body>
+</html>

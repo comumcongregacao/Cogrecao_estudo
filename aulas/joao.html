@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz do Evangelho de João</title>
+
+  <style>
+    :root {
+      --dourado: #c9a64f;
+      --dourado-escuro: #a9842f;
+      --fundo: #242424;
+      --cartao: #fffefa;
+      --texto: #252525;
+      --suave: #777;
+      --verde: #237a45;
+      --vermelho: #b73535;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 30px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .app {
+      width: min(760px, 100%);
+    }
+
+    .cartao {
+      background: var(--cartao);
+      border-radius: 22px;
+      padding: 34px;
+      box-shadow: 0 18px 55px #0005;
+    }
+
+    header {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(25px, 5vw, 36px);
+    }
+
+    .subtitulo {
+      color: var(--suave);
+      line-height: 1.5;
+      margin: 0 0 24px;
+    }
+
+    .contador-pergunta {
+      color: var(--suave);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .barra-fundo {
+      height: 8px;
+      overflow: hidden;
+      background: #eee9dc;
+      border-radius: 99px;
+      margin-bottom: 25px;
+    }
+
+    .barra {
+      height: 100%;
+      width: 0;
+      background: var(--dourado);
+      transition: width 0.25s ease;
+    }
+
+    .pergunta {
+      font-size: clamp(19px, 3.8vw, 24px);
+      line-height: 1.4;
+      margin: 0 0 22px;
+    }
+
+    .alternativas {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .alternativa {
+      min-height: 58px;
+      padding: 14px 16px;
+      border: 1px solid #e7dfca;
+      border-radius: 14px;
+      background: #f4efe1;
+      color: var(--texto);
+      text-align: left;
+      font-size: 15px;
+      line-height: 1.3;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s, border 0.15s;
+    }
+
+    .alternativa:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: var(--dourado);
+      background: #eee3c5;
+    }
+
+    .alternativa:disabled {
+      cursor: default;
+    }
+
+    .alternativa.certa {
+      background: #e1f2e6;
+      border-color: var(--verde);
+      color: #155a30;
+      font-weight: bold;
+    }
+
+    .alternativa.errada {
+      background: #fae5e3;
+      border-color: var(--vermelho);
+      color: #8c2222;
+      font-weight: bold;
+    }
+
+    .retorno {
+      min-height: 28px;
+      margin: 17px 0 0;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    .retorno.certa {
+      color: var(--verde);
+    }
+
+    .retorno.errada {
+      color: var(--vermelho);
+    }
+
+    .painel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 25px;
+    }
+
+    .pontuacao {
+      display: flex;
+      gap: 16px;
+      color: var(--suave);
+      font-size: 14px;
+    }
+
+    .pontuacao strong {
+      color: var(--texto);
+    }
+
+    .botoes {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    button.controle {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: var(--dourado);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button.controle:hover:not(:disabled) {
+      background: var(--dourado-escuro);
+    }
+
+    button.controle.secundario {
+      background: #eee9dc;
+      color: var(--texto);
+    }
+
+    button.controle.voltar-site {
+      background: #333;
+      color: #fff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button.controle.voltar-site:hover {
+      background: #555;
+    }
+
+    button.controle:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .resultado {
+      text-align: center;
+      padding: 20px 0 8px;
+    }
+
+    .resultado h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 32px;
+      margin: 0 0 10px;
+    }
+
+    .nota {
+      font-size: 54px;
+      font-weight: bold;
+      color: var(--dourado-escuro);
+      margin: 14px 0;
+    }
+
+    .mensagem-final {
+      color: var(--suave);
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .oculto {
+      display: none;
+    }
+
+    @media (max-width: 560px) {
+      .cartao {
+        padding: 23px 18px;
+      }
+
+      .alternativas {
+        grid-template-columns: 1fr;
+      }
+
+      .painel {
+        align-items: stretch;
+      }
+
+      .pontuacao {
+        width: 100%;
+      }
+
+      .botoes {
+        width: 100%;
+      }
+
+      .botoes button {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <section class="cartao">
+      <header>
+        <h1>Quiz do Evangelho de João</h1>
+        <button class="controle voltar-site" onclick="voltarParaSite()">
+          ⬅ Voltar ao Site
+        </button>
+      </header>
+
+      <p class="subtitulo">
+        Responda às 40 perguntas sobre os 21 capítulos e epígrafes do Evangelho segundo São João (João Ferreira de Almeida).
+        As perguntas e alternativas são embaralhadas a cada tentativa.
+      </p>
+
+      <div id="areaPergunta">
+        <div class="contador-pergunta" id="contadorPergunta"></div>
+
+        <div class="barra-fundo">
+          <div class="barra" id="barra"></div>
+        </div>
+
+        <h2 class="pergunta" id="textoPergunta"></h2>
+        <div class="alternativas" id="alternativas"></div>
+        <p class="retorno" id="retorno" aria-live="polite"></p>
+
+        <div class="painel">
+          <div class="pontuacao">
+            <span>✅ Certas: <strong id="certas">0</strong></span>
+            <span>❌ Erradas: <strong id="erradas">0</strong></span>
+          </div>
+
+          <div class="botoes">
+            <button class="controle secundario" id="inicio">
+              Primeira pergunta
+            </button>
+            <button class="controle secundario" id="anterior">
+              Anterior
+            </button>
+            <button class="controle" id="proxima">
+              Próxima
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="resultado oculto" id="resultado"></div>
+    </section>
+  </main>
+
+  <script>
+    // Lista com 40 perguntas baseadas em todas as epígrafes de João 1-21 (João Ferreira de Almeida)
+    const perguntasOriginais = [
+      // Capítulo 1
+      { pergunta: "Em qual capítulo está a epígrafe 'O Verbo eterno feito carne' e 'O Cordeiro de Deus'?", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 5", "Capítulo 8"], resposta: "Capítulo 1" },
+      { pergunta: "O epígrafe 'A vocação de Filipe e Natanael' pertence a qual capítulo?", opcoes: ["Capítulo 1", "Capítulo 2", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 1" },
+
+      // Capítulo 2
+      { pergunta: "Onde encontramos 'O primeiro milagre em Caná da Galileia' (a transformação da água em vinho)?", opcoes: ["Capítulo 2", "Capítulo 1", "Capítulo 4", "Capítulo 7"], resposta: "Capítulo 2" },
+      { pergunta: "Em qual capítulo ocorre 'A primeira purificação do templo em Jerusalém' no Evangelho de João?", opcoes: ["Capítulo 2", "Capítulo 3", "Capítulo 5", "Capítulo 9"], resposta: "Capítulo 2" },
+
+      // Capítulo 3
+      { pergunta: "O epígrafe 'O diálogo de Jesus com Nicodemos (o novo nascimento)' pertence a qual capítulo?", opcoes: ["Capítulo 3", "Capítulo 1", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 3" },
+      { pergunta: "Em qual capítulo está escrito o famoso epígrafe sobre 'O amor de Deus ao mundo' ('Porque Deus amou o mundo de tal maneira...')?", opcoes: ["Capítulo 3", "Capítulo 2", "Capítulo 5", "Capítulo 8"], resposta: "Capítulo 3" },
+
+      // Capítulo 4
+      { pergunta: "Onde se encontra 'Jesus e a mulher samaritana junto ao poço de Jacó'?", opcoes: ["Capítulo 4", "Capítulo 2", "Capítulo 6", "Capítulo 9"], resposta: "Capítulo 4" },
+      { pergunta: "O epígrafe 'A adoração em espírito e em verdade' pertence a qual capítulo?", opcoes: ["Capítulo 4", "Capítulo 3", "Capítulo 7", "Capítulo 10"], resposta: "Capítulo 4" },
+      { pergunta: "Em qual capítulo está registrada 'A cura do filho de um nobre em Caná'?", opcoes: ["Capítulo 4", "Capítulo 5", "Capítulo 8", "Capítulo 11"], resposta: "Capítulo 4" },
+
+      // Capítulo 5
+      { pergunta: "Em qual capítulo ocorre 'A cura do paralítico no tanque de Betesda num dia de sábado'?", opcoes: ["Capítulo 5", "Capítulo 3", "Capítulo 7", "Capítulo 9"], resposta: "Capítulo 5" },
+      { pergunta: "O epígrafe 'A autoridade do Filho dada pelo Pai e o testemunho das Escrituras' é de qual capítulo?", opcoes: ["Capítulo 5", "Capítulo 4", "Capítulo 8", "Capítulo 10"], resposta: "Capítulo 5" },
+
+      // Capítulo 6
+      { pergunta: "Onde encontramos 'A multiplicação dos pães e dos peixes' e 'Jesus anda sobre o mar' no Evangelho de João?", opcoes: ["Capítulo 6", "Capítulo 4", "Capítulo 8", "Capítulo 12"], resposta: "Capítulo 6" },
+      { pergunta: "O epígrafe 'O discurso sobre o Pão da Vida' pertence a qual capítulo?", opcoes: ["Capítulo 6", "Capítulo 5", "Capítulo 7", "Capítulo 10"], resposta: "Capítulo 6" },
+      { pergunta: "Em qual capítulo Pedro declara: 'Senhor, para quem iremos nós? Tu tens as palavras da vida eterna'?", opcoes: ["Capítulo 6", "Capítulo 9", "Capítulo 13", "Capítulo 17"], resposta: "Capítulo 6" },
+
+      // Capítulo 7
+      { pergunta: "Em qual capítulo está 'Jesus na Festa dos Tabernáculos em Jerusalém'?", opcoes: ["Capítulo 7", "Capítulo 5", "Capítulo 8", "Capítulo 11"], resposta: "Capítulo 7" },
+      { pergunta: "O epígrafe 'O rio de água viva prometido ao que crer' pertence a qual capítulo?", opcoes: ["Capítulo 7", "Capítulo 4", "Capítulo 10", "Capítulo 14"], resposta: "Capítulo 7" },
+
+      // Capítulo 8
+      { pergunta: "Onde encontramos o relato da 'Mulher pega em adultério'?", opcoes: ["Capítulo 8", "Capítulo 6", "Capítulo 9", "Capítulo 12"], resposta: "Capítulo 8" },
+      { pergunta: "Em qual capítulo Jesus declara 'Eu sou a Luz do mundo' e 'A verdade vos libertará'?", opcoes: ["Capítulo 8", "Capítulo 5", "Capítulo 10", "Capítulo 15"], resposta: "Capítulo 8" },
+      { pergunta: "O epígrafe em que Jesus declara 'Antes que Abraão fosse, Eu Sou' está em qual capítulo?", opcoes: ["Capítulo 8", "Capítulo 7", "Capítulo 11", "Capítulo 13"], resposta: "Capítulo 8" },
+
+      // Capítulo 9
+      { pergunta: "Em qual capítulo ocorre 'A cura de um cego de nascença no tanque de Siloé num sábado'?", opcoes: ["Capítulo 9", "Capítulo 5", "Capítulo 8", "Capítulo 11"], resposta: "Capítulo 9" },
+
+      // Capítulo 10
+      { pergunta: "O epígrafe 'A parábola do Bom Pastor e do aprisco das ovelhas' pertence a qual capítulo?", opcoes: ["Capítulo 10", "Capítulo 6", "Capítulo 12", "Capítulo 15"], resposta: "Capítulo 10" },
+      { pergunta: "Em qual capítulo está a declaração de Jesus: 'As Minhas ovelhas ouvem a Minha voz'?", opcoes: ["Capítulo 10", "Capítulo 8", "Capítulo 11", "Capítulo 14"], resposta: "Capítulo 10" },
+
+      // Capítulo 11
+      { pergunta: "Onde se encontra o relato de 'A enfermidade e a ressurreição de Lázaro em Betânia'?", opcoes: ["Capítulo 11", "Capítulo 9", "Capítulo 12", "Capítulo 16"], resposta: "Capítulo 11" },
+      { pergunta: "O epígrafe 'Jesus, a Ressurreição e a Vida' pertence a qual capítulo?", opcoes: ["Capítulo 11", "Capítulo 10", "Capítulo 13", "Capítulo 15"], resposta: "Capítulo 11" },
+
+      // Capítulo 12
+      { pergunta: "Em qual capítulo ocorre 'A unção de Jesus por Maria em Betânia' e 'A entrada triunfal em Jerusalém'?", opcoes: ["Capítulo 12", "Capítulo 10", "Capítulo 13", "Capítulo 18"], resposta: "Capítulo 12" },
+
+      // Capítulo 13
+      { pergunta: "O epígrafe 'Jesus lava os pés aos discípulos (o exemplo de humildade)' pertence a qual capítulo?", opcoes: ["Capítulo 13", "Capítulo 11", "Capítulo 14", "Capítulo 17"], resposta: "Capítulo 13" },
+      { pergunta: "Em qual capítulo Jesus dá 'O novo mandamento do amor' ('Que vos ameis uns aos outros')?", opcoes: ["Capítulo 13", "Capítulo 12", "Capítulo 15", "Capítulo 16"], resposta: "Capítulo 13" },
+
+      // Capítulo 14
+      { pergunta: "Onde se encontra a declaração de Jesus: 'Eu sou o Caminho, e a Verdade e a Vida'?", opcoes: ["Capítulo 14", "Capítulo 10", "Capítulo 12", "Capítulo 16"], resposta: "Capítulo 14" },
+      { pergunta: "O epígrafe 'A promessa do Consolador (o Espírito Santo)' pertence a qual capítulo?", opcoes: ["Capítulo 14", "Capítulo 13", "Capítulo 15", "Capítulo 18"], resposta: "Capítulo 14" },
+
+      // Capítulo 15
+      { pergunta: "Em qual capítulo está 'A parábola da Videira Verdadeira e dos ramos'?", opcoes: ["Capítulo 15", "Capítulo 12", "Capítulo 14", "Capítulo 17"], resposta: "Capítulo 15" },
+      { pergunta: "O epígrafe 'O ódio do mundo contra Cristo e os Seus discípulos' encontra-se em qual capítulo?", opcoes: ["Capítulo 15", "Capítulo 13", "Capítulo 16", "Capítulo 18"], resposta: "Capítulo 15" },
+
+      // Capítulo 16
+      { pergunta: "O epígrafe 'A obra e a missão do Espírito Santo no mundo' pertence a qual capítulo?", opcoes: ["Capítulo 16", "Capítulo 14", "Capítulo 15", "Capítulo 17"], resposta: "Capítulo 16" },
+      { pergunta: "Em qual capítulo Jesus encoraja os discípulos dizendo: 'Tende bom ânimo, Eu venci o mundo'?", opcoes: ["Capítulo 16", "Capítulo 12", "Capítulo 15", "Capítulo 18"], resposta: "Capítulo 16" },
+
+      // Capítulo 17
+      { pergunta: "Onde se encontra a célebre 'Oração sacerdotal de Jesus ao Pai'?", opcoes: ["Capítulo 17", "Capítulo 14", "Capítulo 16", "Capítulo 19"], resposta: "Capítulo 17" },
+
+      // Capítulo 18
+      { pergunta: "O epígrafe 'A prisão de Jesus no horto do Cedron e o interrogatório perante Pilatos' está em qual capítulo?", opcoes: ["Capítulo 18", "Capítulo 16", "Capítulo 19", "Capítulo 20"], resposta: "Capítulo 18" },
+      { pergunta: "Em qual capítulo Jesus afirma a Pilatos: 'O Meu Reino não é deste mundo'?", opcoes: ["Capítulo 18", "Capítulo 15", "Capítulo 17", "Capítulo 21"], resposta: "Capítulo 18" },
+
+      // Capítulo 19
+      { pergunta: "O epígrafe 'A coroação de espinhos, a crucificação e a morte de Jesus' pertence a qual capítulo?", opcoes: ["Capítulo 19", "Capítulo 17", "Capítulo 18", "Capítulo 20"], resposta: "Capítulo 19" },
+
+      // Capítulo 20
+      { pergunta: "Em qual capítulo ocorre 'A aparição a Maria Madalena e aos discípulos com a presença de Tomé'?", opcoes: ["Capítulo 20", "Capítulo 18", "Capítulo 19", "Capítulo 21"], resposta: "Capítulo 20" },
+      { pergunta: "Onde encontramos a declaração de Tomé: 'Meu Senhor e meu Deus'?", opcoes: ["Capítulo 20", "Capítulo 17", "Capítulo 19", "Capítulo 21"], resposta: "Capítulo 20" },
+
+      // Capítulo 21
+      { pergunta: "O epígrafe 'A aparição junto ao mar de Tiberíades, a segunda pesca maravilhosa e a restauração de Pedro' está em qual capítulo?", opcoes: ["Capítulo 21", "Capítulo 18", "Capítulo 19", "Capítulo 20"], resposta: "Capítulo 21" }
+    ];
+
+    function embaralhar(lista) {
+      const copia = [...lista];
+      for (let i = copia.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copia[i], copia[j]] = [copia[j], copia[i]];
+      }
+      return copia;
+    }
+
+    let perguntas = [];
+    let indice = 0;
+    let respostas = [];
+
+    const contadorPergunta = document.getElementById("contadorPergunta");
+    const barra = document.getElementById("barra");
+    const textoPergunta = document.getElementById("textoPergunta");
+    const alternativas = document.getElementById("alternativas");
+    const retorno = document.getElementById("retorno");
+    const certas = document.getElementById("certas");
+    const erradas = document.getElementById("erradas");
+    const botaoInicio = document.getElementById("inicio");
+    const botaoAnterior = document.getElementById("anterior");
+    const botaoProxima = document.getElementById("proxima");
+    const areaPergunta = document.getElementById("areaPergunta");
+    const areaResultado = document.getElementById("resultado");
+
+    function voltarParaSite() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "/";
+      }
+    }
+
+    function atualizarPontuacao() {
+      const totalCertas = respostas.filter(
+        resposta => resposta !== null && resposta.correta
+      ).length;
+
+      const totalErradas = respostas.filter(
+        resposta => resposta !== null && !resposta.correta
+      ).length;
+
+      certas.textContent = totalCertas;
+      erradas.textContent = totalErradas;
+    }
+
+    function iniciarQuiz() {
+      perguntas = embaralhar(perguntasOriginais).map(pergunta => ({
+        ...pergunta,
+        opcoesEmbaralhadas: embaralhar(pergunta.opcoes)
+      }));
+
+      indice = 0;
+      respostas = Array(perguntas.length).fill(null);
+
+      areaPergunta.classList.remove("oculto");
+      areaResultado.classList.add("oculto");
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function responder(escolhida) {
+      if (respostas[indice] !== null) {
+        return;
+      }
+
+      const respostaCorreta = perguntas[indice].resposta;
+      const correta = escolhida === respostaCorreta;
+
+      respostas[indice] = {
+        escolhida: escolhida,
+        correta: correta
+      };
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function mostrarPergunta() {
+      const atual = perguntas[indice];
+      const registro = respostas[indice];
+
+      contadorPergunta.textContent =
+        `Pergunta ${indice + 1} de ${perguntas.length}`;
+
+      barra.style.width =
+        `${((indice + 1) / perguntas.length) * 100}%`;
+
+      textoPergunta.textContent = atual.pergunta;
+      alternativas.innerHTML = "";
+      retorno.textContent = "";
+      retorno.className = "retorno";
+
+      atual.opcoesEmbaralhadas.forEach(opcao => {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "alternativa";
+        botao.textContent = opcao;
+
+        if (registro !== null) {
+          botao.disabled = true;
+
+          if (opcao === atual.resposta) {
+            botao.classList.add("certa");
+          } else if (opcao === registro.escolhida) {
+            botao.classList.add("errada");
+          }
+        } else {
+          botao.addEventListener("click", () => responder(opcao));
+        }
+
+        alternativas.appendChild(botao);
+      });
+
+      if (registro !== null) {
+        if (registro.correta) {
+          retorno.textContent = "Correto! Muito bem.";
+          retorno.classList.add("certa");
+        } else {
+          retorno.textContent =
+            `Resposta incorreta. A alternativa certa é: ${atual.resposta}`;
+          retorno.classList.add("errada");
+        }
+      }
+
+      botaoInicio.disabled = indice === 0;
+      botaoAnterior.disabled = indice === 0;
+
+      botaoProxima.textContent =
+        indice === perguntas.length - 1 ? "Ver resultado" : "Próxima";
+
+      atualizarPontuacao();
+    }
+
+    function mostrarResultado() {
+      const totalCertas = respostas.filter(
+        resposta => resposta !== null && resposta.correta
+      ).length;
+
+      const totalErradas = respostas.filter(
+        resposta => resposta !== null && !resposta.correta
+      ).length;
+
+      const porcentagem = Math.round(
+        (totalCertas / perguntas.length) * 100
+      );
+
+      let nivel;
+      let mensagem;
+
+      if (porcentagem < 25) {
+        nivel = "Mal";
+        mensagem = "Continue estudando o Evangelho de João e tente novamente.";
+      } else if (porcentagem < 50) {
+        nivel = "Médio";
+        mensagem = "Você está avançando. Revise os capítulos e tente novamente.";
+      } else if (porcentagem < 75) {
+        nivel = "Bom";
+        mensagem = "Bom trabalho! Você conhece grande parte do Evangelho de João.";
+      } else {
+        nivel = "Excelente";
+        mensagem = "Excelente resultado! Você demonstrou domínio impressionante das epígrafes!";
+      }
+
+      areaPergunta.classList.add("oculto");
+      areaResultado.classList.remove("oculto");
+
+      areaResultado.innerHTML = `
+        <h2>Resultado final</h2>
+        <div class="nota">${porcentagem}%</div>
+        <p><strong>${nivel}</strong></p>
+        <p class="mensagem-final">
+          Você acertou <strong>${totalCertas}</strong> e errou
+          <strong>${totalErradas}</strong> de ${perguntas.length} perguntas.<br>
+          ${mensagem}
+        </p>
+
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px;">
+          <button class="controle" id="novaTentativa">Nova tentativa</button>
+          <button class="controle secundario" onclick="voltarParaSite()">Voltar ao Site</button>
+        </div>
+      `;
+
+      document
+        .getElementById("novaTentativa")
+        .addEventListener("click", iniciarQuiz);
+    }
+
+    botaoInicio.addEventListener("click", () => {
+      indice = 0;
+      mostrarPergunta();
+    });
+
+    botaoAnterior.addEventListener("click", () => {
+      if (indice > 0) {
+        indice--;
+        mostrarPergunta();
+      }
+    });
+
+    botaoProxima.addEventListener("click", () => {
+      if (indice < perguntas.length - 1) {
+        indice++;
+        mostrarPergunta();
+      } else {
+        mostrarResultado();
+      }
+    });
+
+    iniciarQuiz();
+  </script>
+</body>
+</html>

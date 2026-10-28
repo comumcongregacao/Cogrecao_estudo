@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz do Livro de Apocalipse</title>
+
+  <style>
+    :root {
+      --dourado: #c9a64f;
+      --dourado-escuro: #a9842f;
+      --fundo: #242424;
+      --cartao: #fffefa;
+      --texto: #252525;
+      --suave: #777;
+      --verde: #237a45;
+      --vermelho: #b73535;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 30px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .app {
+      width: min(760px, 100%);
+    }
+
+    .cartao {
+      background: var(--cartao);
+      border-radius: 22px;
+      padding: 34px;
+      box-shadow: 0 18px 55px #0005;
+    }
+
+    header {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(23px, 4.5vw, 34px);
+    }
+
+    .subtitulo {
+      color: var(--suave);
+      line-height: 1.5;
+      margin: 0 0 24px;
+    }
+
+    .contador-pergunta {
+      color: var(--suave);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .barra-fundo {
+      height: 8px;
+      overflow: hidden;
+      background: #eee9dc;
+      border-radius: 99px;
+      margin-bottom: 25px;
+    }
+
+    .barra {
+      height: 100%;
+      width: 0;
+      background: var(--dourado);
+      transition: width 0.25s ease;
+    }
+
+    .pergunta {
+      font-size: clamp(19px, 3.8vw, 24px);
+      line-height: 1.4;
+      margin: 0 0 22px;
+    }
+
+    .alternativas {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .alternativa {
+      min-height: 58px;
+      padding: 14px 16px;
+      border: 1px solid #e7dfca;
+      border-radius: 14px;
+      background: #f4efe1;
+      color: var(--texto);
+      text-align: left;
+      font-size: 15px;
+      line-height: 1.3;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s, border 0.15s;
+    }
+
+    .alternativa:hover:not(:disabled) {
+      transform: translateY(-2px);
+      border-color: var(--dourado);
+      background: #eee3c5;
+    }
+
+    .alternativa:disabled {
+      cursor: default;
+    }
+
+    .alternativa.certa {
+      background: #e1f2e6;
+      border-color: var(--verde);
+      color: #155a30;
+      font-weight: bold;
+    }
+
+    .alternativa.errada {
+      background: #fae5e3;
+      border-color: var(--vermelho);
+      color: #8c2222;
+      font-weight: bold;
+    }
+
+    .retorno {
+      min-height: 28px;
+      margin: 17px 0 0;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    .retorno.certa {
+      color: var(--verde);
+    }
+
+    .retorno.errada {
+      color: var(--vermelho);
+    }
+
+    .painel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 25px;
+    }
+
+    .pontuacao {
+      display: flex;
+      gap: 16px;
+      color: var(--suave);
+      font-size: 14px;
+    }
+
+    .pontuacao strong {
+      color: var(--texto);
+    }
+
+    .botoes {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    button.controle {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: var(--dourado);
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button.controle:hover:not(:disabled) {
+      background: var(--dourado-escuro);
+    }
+
+    button.controle.secundario {
+      background: #eee9dc;
+      color: var(--texto);
+    }
+
+    button.controle.voltar-site {
+      background: #333;
+      color: #fff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button.controle.voltar-site:hover {
+      background: #555;
+    }
+
+    button.controle:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .resultado {
+      text-align: center;
+      padding: 20px 0 8px;
+    }
+
+    .resultado h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 32px;
+      margin: 0 0 10px;
+    }
+
+    .nota {
+      font-size: 54px;
+      font-weight: bold;
+      color: var(--dourado-escuro);
+      margin: 14px 0;
+    }
+
+    .mensagem-final {
+      color: var(--suave);
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    .oculto {
+      display: none;
+    }
+
+    @media (max-width: 560px) {
+      .cartao {
+        padding: 23px 18px;
+      }
+
+      .alternativas {
+        grid-template-columns: 1fr;
+      }
+
+      .painel {
+        align-items: stretch;
+      }
+
+      .pontuacao {
+        width: 100%;
+      }
+
+      .botoes {
+        width: 100%;
+      }
+
+      .botoes button {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <section class="cartao">
+      <header>
+        <h1>Quiz do Livro de Apocalipse</h1>
+        <button class="controle voltar-site" onclick="voltarParaSite()">
+          ⬅ Voltar ao Site
+        </button>
+      </header>
+
+      <p class="subtitulo">
+        Responda às 44 perguntas sobre as epígrafes e acontecimentos dos 22 capítulos do Livro de Apocalipse (João Ferreira de Almeida).
+        As perguntas e alternativas são embaralhadas a cada tentativa.
+      </p>
+
+      <div id="areaPergunta">
+        <div class="contador-pergunta" id="contadorPergunta"></div>
+
+        <div class="barra-fundo">
+          <div class="barra" id="barra"></div>
+        </div>
+
+        <h2 class="pergunta" id="textoPergunta"></h2>
+        <div class="alternativas" id="alternativas"></div>
+        <p class="retorno" id="retorno" aria-live="polite"></p>
+
+        <div class="painel">
+          <div class="pontuacao">
+            <span>✅ Certas: <strong id="certas">0</strong></span>
+            <span>❌ Erradas: <strong id="erradas">0</strong></span>
+          </div>
+
+          <div class="botoes">
+            <button class="controle secundario" id="inicio">
+              Primeira pergunta
+            </button>
+            <button class="controle secundario" id="anterior">
+              Anterior
+            </button>
+            <button class="controle" id="proxima">
+              Próxima
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="resultado oculto" id="resultado"></div>
+    </section>
+  </main>
+
+  <script>
+    const perguntasOriginais = [
+      // Capítulo 1
+      { pergunta: "Em qual capítulo João relata a revelação de Jesus Cristo na ilha de Patmos e a visão do Filho do Homem entre os sete castiçais?", opcoes: ["Capítulo 1", "Capítulo 2", "Capítulo 4", "Capítulo 7"], resposta: "Capítulo 1" },
+      { pergunta: "A ordem para escrever o livro e enviá-lo às sete igrejas da Ásia (Éfeso, Esmirna, Pérgamo, Tiatira, Sardes, Filadélfia e Laodiceia) está no:", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 5", "Capítulo 8"], resposta: "Capítulo 1" },
+
+      // Capítulo 2
+      { pergunta: "Em qual capítulo se encontram as cartas dirigidas aos anjos das igrejas de Éfeso, Esmirna, Pérgamo e Tiatira?", opcoes: ["Capítulo 2", "Capítulo 1", "Capítulo 3", "Capítulo 4"], resposta: "Capítulo 2" },
+      { pergunta: "A repreensão à igreja de Éfeso por deixar o seu 'primeiro amor' pertence ao:", opcoes: ["Capítulo 2", "Capítulo 3", "Capítulo 5", "Capítulo 6"], resposta: "Capítulo 2" },
+
+      // Capítulo 3
+      { pergunta: "Em qual capítulo estão contidas as mensagens para as igrejas de Sardes, Filadélfia e Laodiceia ('Eis que estou à porta e bato')?", opcoes: ["Capítulo 3", "Capítulo 2", "Capítulo 4", "Capítulo 7"], resposta: "Capítulo 3" },
+      { pergunta: "A advertência à igreja de Laodiceia por ser morna, nem fria nem quente, encontra-se no:", opcoes: ["Capítulo 3", "Capítulo 1", "Capítulo 5", "Capítulo 9"], resposta: "Capítulo 3" },
+
+      // Capítulo 4
+      { pergunta: "A visão do trono no céu, dos vinte e quatro anciãos e dos quatro seres viventes adorando a Deus pertence ao:", opcoes: ["Capítulo 4", "Capítulo 2", "Capítulo 6", "Capítulo 8"], resposta: "Capítulo 4" },
+      { pergunta: "O cântico constante 'Santo, Santo, Santo é o Senhor Deus, o Todo-Poderoso' diante do trono ocorre no:", opcoes: ["Capítulo 4", "Capítulo 3", "Capítulo 7", "Capítulo 11"], resposta: "Capítulo 4" },
+
+      // Capítulo 5
+      { pergunta: "Em qual capítulo é apresentado o livro selado com sete selos, o qual somente o Leão da tribo de Judá (o Cordeiro) é digno de abrir?", opcoes: ["Capítulo 5", "Capítulo 4", "Capítulo 6", "Capítulo 9"], resposta: "Capítulo 5" },
+      { pergunta: "O cântico dos anciãos e seres viventes declarando que o Cordeiro foi morto e nos remiu para Deus com o seu sangue está no:", opcoes: ["Capítulo 5", "Capítulo 2", "Capítulo 7", "Capítulo 10"], resposta: "Capítulo 5" },
+
+      // Capítulo 6
+      { pergunta: "A abertura dos primeiros seis selos pelo Cordeiro, trazendo os cavalos e os seus cavaleiros, encontra-se no:", opcoes: ["Capítulo 6", "Capítulo 5", "Capítulo 7", "Capítulo 8"], resposta: "Capítulo 6" },
+      { pergunta: "O clamor das almas dos mortos por amor da palavra de Deus debaixo do altar ocorre na abertura do quinto selo no:", opcoes: ["Capítulo 6", "Capítulo 4", "Capítulo 9", "Capítulo 12"], resposta: "Capítulo 6" },
+
+      // Capítulo 7
+      { pergunta: "O selamento dos 144.000 assinalados das tribos de Israel e a visão da grande multidão vestida de vestes brancas pertencem ao:", opcoes: ["Capítulo 7", "Capítulo 6", "Capítulo 8", "Capítulo 14"], resposta: "Capítulo 7" },
+      { pergunta: "A promessa de que Deus enxugará de seus olhos toda lágrima para os que vêm da grande tribulação está no:", opcoes: ["Capítulo 7", "Capítulo 5", "Capítulo 10", "Capítulo 21"], resposta: "Capítulo 7" },
+
+      // Capítulo 8
+      { pergunta: "A abertura do sétimo selo, o silêncio no céu por quase meia hora e os toques das primeiras quatro trombetas pertencem ao:", opcoes: ["Capítulo 8", "Capítulo 7", "Capítulo 9", "Capítulo 11"], resposta: "Capítulo 8" },
+      { pergunta: "O anjo voando pelo meio do céu e clamando 'Ai! Ai! Ai dos que habitam sobre a terra!' antecede os últimos toques no:", opcoes: ["Capítulo 8", "Capítulo 6", "Capítulo 10", "Capítulo 12"], resposta: "Capítulo 8" },
+
+      // Capítulo 9
+      { pergunta: "Em qual capítulo soam a quinta e a sexta trombetas, liberando os gafanhotos do poço do abismo e os cavalheiros do Eufrates?", opcoes: ["Capítulo 9", "Capítulo 8", "Capítulo 10", "Capítulo 13"], resposta: "Capítulo 9" },
+      { pergunta: "O rei do abismo cujo nome em hebreu é Abadom e em grego Apoliom é mencionado no:", opcoes: ["Capítulo 9", "Capítulo 7", "Capítulo 11", "Capítulo 16"], resposta: "Capítulo 9" },
+
+      // Capítulo 10
+      { pergunta: "A visão do anjo forte com o livrinho aberto na mão, que João recebe ordem para comer, pertence ao:", opcoes: ["Capítulo 10", "Capítulo 9", "Capítulo 11", "Capítulo 14"], resposta: "Capítulo 10" },
+      { pergunta: "A voz que ordena a João não escrever o que os sete trovões falaram encontra-se no:", opcoes: ["Capítulo 10", "Capítulo 8", "Capítulo 12", "Capítulo 15"], resposta: "Capítulo 10" },
+
+      // Capítulo 11
+      { pergunta: "Em qual capítulo João recebe uma cana para medir o templo e são apresentadas as duas testemunhas que profetizam por 1.260 dias?", opcoes: ["Capítulo 11", "Capítulo 10", "Capítulo 12", "Capítulo 13"], resposta: "Capítulo 11" },
+      { pergunta: "O toque da sétima trombeta, anunciando que os reinos do mundo vieram a ser de nosso Senhor e do seu Cristo, está no:", opcoes: ["Capítulo 11", "Capítulo 9", "Capítulo 14", "Capítulo 19"], resposta: "Capítulo 11" },
+
+      // Capítulo 12
+      { pergunta: "A visão da mulher vestida do sol com a lua debaixo dos pés, o grande dragão vermelho e a peleja no céu entre Miguel e o dragão pertence ao:", opcoes: ["Capítulo 12", "Capítulo 11", "Capítulo 13", "Capítulo 17"], resposta: "Capítulo 12" },
+      { pergunta: "A declaração de que o acusador dos irmãos foi precipitado na terra e vencido pelo sangue do Cordeiro encontra-se no:", opcoes: ["Capítulo 12", "Capítulo 10", "Capítulo 14", "Capítulo 20"], resposta: "Capítulo 12" },
+
+      // Capítulo 13
+      { pergunta: "Em qual capítulo surge a besta do mar com sete cabeças e dez chifres, e a besta que sobe da terra (o falso profeta)?", opcoes: ["Capítulo 13", "Capítulo 12", "Capítulo 14", "Capítulo 17"], resposta: "Capítulo 13" },
+      { pergunta: "A revelação da marca da besta e o número do seu nome (666) pertencem ao:", opcoes: ["Capítulo 13", "Capítulo 11", "Capítulo 15", "Capítulo 18"], resposta: "Capítulo 13" },
+
+      // Capítulo 14
+      { pergunta: "A visão do Cordeiro no monte Sião com os 144.000, os três anjos proclamando o evangelho e o anúncio da queda da Babilônia estão no:", opcoes: ["Capítulo 14", "Capítulo 13", "Capítulo 15", "Capítulo 18"], resposta: "Capítulo 14" },
+      { pergunta: "A ceifa da terra com a foice afiada e o lagar da ira de Deus são descritos no:", opcoes: ["Capítulo 14", "Capítulo 12", "Capítulo 16", "Capítulo 19"], resposta: "Capítulo 14" },
+
+      // Capítulo 15
+      { pergunta: "A visão dos sete anjos com as sete últimas pragas e os vitoriosos cantando o cântico de Moisés e do Cordeiro pertence ao:", opcoes: ["Capítulo 15", "Capítulo 14", "Capítulo 16", "Capítulo 17"], resposta: "Capítulo 15" },
+      { pergunta: "O templo do tabernáculo do testemunho se enchendo de fumaça da glória de Deus ocorre no:", opcoes: ["Capítulo 15", "Capítulo 11", "Capítulo 18", "Capítulo 21"], resposta: "Capítulo 15" },
+
+      // Capítulo 16
+      { pergunta: "A ordem para os sete anjos derramarem as sete taças da ira de Deus sobre a terra e o ajuntamento em Armagedom pertencem ao:", opcoes: ["Capítulo 16", "Capítulo 15", "Capítulo 17", "Capítulo 19"], resposta: "Capítulo 16" },
+      { pergunta: "A voz que sai do trono do templo dizendo 'Está feito!' na sétima taça encontra-se no:", opcoes: ["Capítulo 16", "Capítulo 14", "Capítulo 18", "Capítulo 22"], resposta: "Capítulo 16" },
+
+      // Capítulo 17
+      { pergunta: "A visão da grande prostituta assentada sobre a besta de cor escarlate e a interpretação das sete cabeças e dez chifres estão no:", opcoes: ["Capítulo 17", "Capítulo 13", "Capítulo 16", "Capítulo 18"], resposta: "Capítulo 17" },
+      { pergunta: "A afirmação de que o Cordeiro vencerá os reis porque é o Senhor dos senhores e o Rei dos reis pertence ao:", opcoes: ["Capítulo 17", "Capítulo 15", "Capítulo 19", "Capítulo 20"], resposta: "Capítulo 17" },
+
+      // Capítulo 18
+      { pergunta: "A proclamação 'Caiu, caiu a grande Babilônia!', a voz do céu ordenando 'Sai dela, povo meu' e o lamento dos reis e mercadores pertencem ao:", opcoes: ["Capítulo 18", "Capítulo 17", "Capítulo 19", "Capítulo 21"], resposta: "Capítulo 18" },
+      { pergunta: "A pedra de moinho lançada no mar como símbolo da destruição repentina da Babilônia está no:", opcoes: ["Capítulo 18", "Capítulo 16", "Capítulo 20", "Capítulo 22"], resposta: "Capítulo 18" },
+
+      // Capítulo 19
+      { pergunta: "As bodas do Cordeiro, o cântico do Aleluia no céu e a visão do cavaleiro chamado Fiel e Verdadeiro montado em um cavalo branco pertencem ao:", opcoes: ["Capítulo 19", "Capítulo 18", "Capítulo 20", "Capítulo 21"], resposta: "Capítulo 19" },
+      { pergunta: "A derrota da besta e do falso profeta, sendo ambos lançados vivos no lago de fogo e enxofre, ocorre no:", opcoes: ["Capítulo 19", "Capítulo 13", "Capítulo 17", "Capítulo 20"], resposta: "Capítulo 19" },
+
+      // Capítulo 20
+      { pergunta: "A prisão de Satanás por mil anos, o reino dos santos com Cristo e a derrocada final de Gogue e Magogue pertencem ao:", opcoes: ["Capítulo 20", "Capítulo 19", "Capítulo 21", "Capítulo 22"], resposta: "Capítulo 20" },
+      { pergunta: "O grande trono branco e o julgamento final de todos os mortos segundo as suas obras encontram-se no:", opcoes: ["Capítulo 20", "Capítulo 18", "Capítulo 21", "Capítulo 22"], resposta: "Capítulo 20" },
+
+      // Capítulo 21
+      { pergunta: "A visão dos novos céus e da nova terra, da Nova Jerusalém descendo do céu e a promessa de que não haverá mais morte nem dor estão no:", opcoes: ["Capítulo 21", "Capítulo 20", "Capítulo 22", "Capítulo 7"], resposta: "Capítulo 21" },
+      { pergunta: "A descrição da cidade de ouro puro com doze portas de pérolas e fundamentos de pedras preciosas pertence ao:", opcoes: ["Capítulo 21", "Capítulo 19", "Capítulo 22", "Capítulo 3"], resposta: "Capítulo 21" },
+
+      // Capítulo 22
+      { pergunta: "O rio da água da vida, a árvore da vida com seus doze frutos e as exortações e saudações finais do livro pertencem ao:", opcoes: ["Capítulo 22", "Capítulo 21", "Capítulo 20", "Capítulo 1"], resposta: "Capítulo 22" },
+      { pergunta: "A afirmação 'Eu sou o Alfa e o Ômega, o princípio e o fim, o primeiro e o derradeiro' e a promessa 'Eis que cedo venho' encerram a bíblia no:", opcoes: ["Capítulo 22", "Capítulo 21", "Capítulo 19", "Capítulo 3"], resposta: "Capítulo 22" }
+    ];
+
+    function embaralhar(lista) {
+      const copia = [...lista];
+      for (let i = copia.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copia[i], copia[j]] = [copia[j], copia[i]];
+      }
+      return copia;
+    }
+
+    let perguntas = [];
+    let indice = 0;
+    let respostas = [];
+
+    const contadorPergunta = document.getElementById("contadorPergunta");
+    const barra = document.getElementById("barra");
+    const textoPergunta = document.getElementById("textoPergunta");
+    const alternativas = document.getElementById("alternativas");
+    const retorno = document.getElementById("retorno");
+    const certas = document.getElementById("certas");
+    const erradas = document.getElementById("erradas");
+    const botaoInicio = document.getElementById("inicio");
+    const botaoAnterior = document.getElementById("anterior");
+    const botaoProxima = document.getElementById("proxima");
+    const areaPergunta = document.getElementById("areaPergunta");
+    const areaResultado = document.getElementById("resultado");
+
+    function voltarParaSite() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "/";
+      }
+    }
+
+    function atualizarPontuacao() {
+      const totalCertas = respostas.filter(
+        resposta => resposta !== null && resposta.correta
+      ).length;
+
+      const totalErradas = respostas.filter(
+        resposta => resposta !== null && !resposta.correta
+      ).length;
+
+      certas.textContent = totalCertas;
+      erradas.textContent = totalErradas;
+    }
+
+    function iniciarQuiz() {
+      perguntas = embaralhar(perguntasOriginais).map(pergunta => ({
+        ...pergunta,
+        opcoesEmbaralhadas: embaralhar(pergunta.opcoes)
+      }));
+
+      indice = 0;
+      respostas = Array(perguntas.length).fill(null);
+
+      areaPergunta.classList.remove("oculto");
+      areaResultado.classList.add("oculto");
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function responder(escolhida) {
+      if (respostas[indice] !== null) {
+        return;
+      }
+
+      const respostaCorreta = perguntas[indice].resposta;
+      const correta = escolhida === respostaCorreta;
+
+      respostas[indice] = {
+        escolhida: escolhida,
+        correta: correta
+      };
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function mostrarPergunta() {
+      const atual = perguntas[indice];
+      const registro = respostas[indice];
+
+      contadorPergunta.textContent =
+        `Pergunta ${indice + 1} de ${perguntas.length}`;
+
+      barra.style.width =
+        `${((indice + 1) / perguntas.length) * 100}%`;
+
+      textoPergunta.textContent = atual.pergunta;
+      alternativas.innerHTML = "";
+      retorno.textContent = "";
+      retorno.className = "retorno";
+
+      atual.opcoesEmbaralhadas.forEach(opcao => {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "alternativa";
+        botao.textContent = opcao;
+
+        if (registro !== null) {
+          botao.disabled = true;
+
+          if (opcao === atual.resposta) {
+            botao.classList.add("certa");
+          } else if (opcao === registro.escolhida) {
+            botao.classList.add("errada");
+          }
+        } else {
+          botao.addEventListener("click", () => responder(opcao));
+        }
+
+        alternativas.appendChild(botao);
+      });
+
+      if (registro !== null) {
+        if (registro.correta) {
+          retorno.textContent = "Correto! Muito bem.";
+          retorno.classList.add("certa");
+        } else {
+          retorno.textContent =
+            `Resposta incorreta. A alternativa certa é: ${atual.resposta}`;
+          retorno.classList.add("errada");
+        }
+      }
+
+      botaoInicio.disabled = indice === 0;
+      botaoAnterior.disabled = indice === 0;
+
+      botaoProxima.textContent =
+        indice === perguntas.length - 1 ? "Ver resultado" : "Próxima";
+
+      atualizarPontuacao();
+    }
+
+    function mostrarResultado() {
+      const totalCertas = respostas.filter(
+        resposta => resposta !== null && resposta.correta
+      ).length;
+
+      const totalErradas = respostas.filter(
+        resposta => resposta !== null && !resposta.correta
+      ).length;
+
+      const porcentagem = Math.round(
+        (totalCertas / perguntas.length) * 100
+      );
+
+      let nivel;
+      let mensagem;
+
+      if (porcentagem < 25) {
+        nivel = "Mal";
+        mensagem = "Continue estudando o Livro de Apocalipse e tente novamente.";
+      } else if (porcentagem < 50) {
+        nivel = "Médio";
+        mensagem = "Você está avançando. Revise os capítulos e tente novamente.";
+      } else if (porcentagem < 75) {
+        nivel = "Bom";
+        mensagem = "Bom trabalho! Você conhece grande parte do Livro de Apocalipse.";
+      } else {
+        nivel = "Excelente";
+        mensagem = "Excelente resultado! Você demonstrou domínio impressionante das epígrafes de Apocalipse!";
+      }
+
+      areaPergunta.classList.add("oculto");
+      areaResultado.classList.remove("oculto");
+
+      areaResultado.innerHTML = `
+        <h2>Resultado final</h2>
+        <div class="nota">${porcentagem}%</div>
+        <p><strong>${nivel}</strong></p>
+        <p class="mensagem-final">
+          Você acertou <strong>${totalCertas}</strong> e errou
+          <strong>${totalErradas}</strong> de ${perguntas.length} perguntas.<br>
+          ${mensagem}
+        </p>
+
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px;">
+          <button class="controle" id="novaTentativa">Nova tentativa</button>
+          <button class="controle secundario" onclick="voltarParaSite()">Voltar ao Site</button>
+        </div>
+      `;
+
+      document
+        .getElementById("novaTentativa")
+        .addEventListener("click", iniciarQuiz);
+    }
+
+    botaoInicio.addEventListener("click", () => {
+      indice = 0;
+      mostrarPergunta();
+    });
+
+    botaoAnterior.addEventListener("click", () => {
+      if (indice > 0) {
+        indice--;
+        mostrarPergunta();
+      }
+    });
+
+    botaoProxima.addEventListener("click", () => {
+      if (indice < perguntas.length - 1) {
+        indice++;
+        mostrarPergunta();
+      } else {
+        mostrarResultado();
+      }
+    });
+
+    iniciarQuiz();
+  </script>
+</body>
+</html>
+Se precisar de qualquer adaptação ou ajuste, é só avisar, irmão Éber!
