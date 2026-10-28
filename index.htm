@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comum Congregação em Jesus Cristo</title>
+
+    <style>
+        :root {
+            --ouro-principal: #d4af37;
+            --ouro-claro: #f3e5ab;
+            --fundo-escuro: #0a0a0a;
+            --fundo-card: #141414;
+            --texto-claro: #f5f5f5;
+            --borda-dourada: #b8860b;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Georgia, "Times New Roman", serif;
+            background-color: var(--fundo-escuro);
+            color: var(--texto-claro);
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(180deg, #000 0%, #141414 100%);
+            border-bottom: 2px solid var(--borda-dourada);
+            padding: 30px 15px;
+            text-align: center;
+        }
+
+        .emblema-header {
+            width: 220px;
+            height: auto;
+            max-width: 100%;
+            display: block;
+            margin: 0 auto;
+            filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.4));
+        }
+
+        .slogan-container {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .slogan-linha1,
+        .slogan-linha2,
+        .slogan-linha3 {
+            background: linear-gradient(180deg, #ffe680 0%, #d4af37 50%, #8b6508 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .slogan-linha1 {
+            font-size: 1.6rem;
+            letter-spacing: 2px;
+        }
+
+        .slogan-linha2 {
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            margin: 2px 0;
+        }
+
+        .slogan-linha3 {
+            font-size: 1.8rem;
+            letter-spacing: 3px;
+        }
+
+        nav {
+            background-color: #111;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--borda-dourada);
+        }
+
+        nav button {
+            background: transparent;
+            color: var(--texto-claro);
+            border: none;
+            padding: 15px 25px;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        nav button:hover,
+        nav button.ativo {
+            background-color: var(--ouro-principal);
+            color: #000;
+            font-weight: bold;
+        }
+
+        .conteudo-pagina {
+            display: none;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 25px;
+            background-color: var(--fundo-card);
+            border: 1px solid var(--borda-dourada);
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+        }
+
+        .conteudo-pagina.ativo {
+            display: block;
+        }
+
+        h1, h2, h3 {
+            color: var(--ouro-principal);
+            text-align: center;
+        }
+
+        .destaque-presidencia {
+            border-left: 4px solid var(--ouro-principal);
+            padding: 15px;
+            margin: 20px 0;
+            background-color: rgba(212, 175, 55, 0.05);
+        }
+
+        .quiz-container {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--borda-dourada);
+            margin-top: 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #050505;
+            border-top: 1px solid var(--borda-dourada);
+            color: #888;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 600px) {
+            nav button { padding: 12px; font-size: 1rem; }
+            .conteudo-pagina { margin: 20px 12px; padding: 18px; }
+            .slogan-linha1 { font-size: 1.1rem; letter-spacing: 1px; }
+            .slogan-linha2 { font-size: 0.75rem; letter-spacing: 2px; margin: 2px 0; }
+            .slogan-linha3 { font-size: 1.1rem; letter-spacing: 2px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <!-- LOGOTIPO DA CONGREGAÇÃO VISÍVEL EM TODAS AS ABAS -->
+    <img
+        src="img/Logotipo da Congregação.png"
+        alt="Logotipo da Comum Congregação em Jesus Cristo"
+        class="emblema-header"
+    >
+
+    <!-- SLOGAN DA IGREJA -->
+    <div class="slogan-container">
+        <div class="slogan-linha1">COMUM CONGREGAÇÃO</div>
+        <div class="slogan-linha2">EM</div>
+        <div class="slogan-linha3">JESUS CRISTO</div>
+    </div>
+</header>
+
+<nav>
+    <button type="button" onclick="abrirPagina('pagina-inicio')" class="ativo" id="btn-inicio">Início</button>
+    <button type="button" onclick="abrirPagina('pagina-quem-somos')" id="btn-quem-somos">Quem Nós Somos</button>
+    <button type="button" onclick="abrirPagina('pagina-cultos')" id="btn-cultos">Cultos</button>
+    <button type="button" onclick="abrirPagina('pagina-aulas')" id="btn-aulas">Nossas Aulas Bíblicas &amp; Quiz</button>
+    <button type="button" onclick="abrirPagina('pagina-contatos')" id="btn-contatos">Contatos</button>
+</nav>
+
+<main>
+    <section id="pagina-inicio" class="conteudo-pagina ativo">
+        <h2>Seja Bem-Vindo à Comum Congregação em Jesus Cristo</h2>
+
+        <p style="text-align: center; font-style: italic;">
+            “Graça e paz de Deus vos sejam multiplicadas em vossas vidas, no pleno conhecimento de Deus e de Jesus, nosso Senhor.” (2 Pedro 1:2)
+        </p>
+
+        <div class="destaque-presidencia">
+            <h3>Saudação do Ancião Presidente</h3>
+            <p>
+                Amada irmandade e caros cooperadores em Jesus Cristo, que a Paz de Deus reine em cada lar.
+                Este portal foi preparado para a edificação da nossa fé, estudo da Palavra e comunhão na santa doutrina.
+            </p>
+            <p>
+                <strong>Ancião Éber Silos</strong><br>
+                Presidente da Comum Congregação em Jesus Cristo
+            </p>
+        </div>
+    </section>
+
+    <section id="pagina-quem-somos" class="conteudo-pagina">
+        <h2>Quem Nós Somos</h2>
+
+        <p>
+            A Comum Congregação em Jesus Cristo nasceu do sincero desejo de servir a Deus com simplicidade,
+            ordem e zelo pela doutrina revelada nas Sagradas Escrituras. Sob a presidência do Ancião Éber Silos,
+            nossa casa de oração procura cultivar e conservar a cultura de fé, comunhão e amor ao próximo.
+        </p>
+
+        <p>
+            Reconhecemos que a obra não é feita por mãos nem por vanglória humana, mas pelo poder do Espírito Santo
+            que habita em cada coração regenerado. Nossos irmãos servem com humildade no púlpito, dedicando-se
+            à exortação, ao aconselhamento e à doutrina.
+        </p>
+
+        <h3>Nossos Princípios Doutrinários</h3>
+        <ul>
+            <li><strong>A Palavra de Deus:</strong> A Bíblia Sagrada como única doutrina infalível de fé e conduta.</li>
+            <li><strong>A Graça de Jesus Cristo:</strong> A salvação mediante a fé e o sacrifício de nosso Senhor Jesus Cristo na cruz.</li>
+            <li><strong>A Ordem no Púlpito:</strong> O serviço sagrado exercido com reverência e temor pelos cooperadores em Jesus Cristo.</li>
+            <li><strong>A Unidade da Irmandade:</strong> O vínculo da paz, da caridade e da comunhão, unindo toda a igreja.</li>
+        </ul>
+    </section>
+
+    <section id="pagina-cultos" class="conteudo-pagina">
+        <h2>Horários de Cultos e Reuniões</h2>
+        <p>Convidamos toda a amada irmandade e visitantes a estarem conosco para adorar ao Altíssimo.</p>
+
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px; color: var(--texto-claro);">
+                <thead>
+                    <tr style="border-bottom: 2px solid var(--ouro-principal); color: var(--ouro-principal);">
+                        <th style="padding: 10px; text-align: left;">Dia</th>
+                        <th style="padding: 10px; text-align: left;">Horário</th>
+                        <th style="padding: 10px; text-align: left;">Serviço Sagrado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;">Sábado</td>
+                        <td style="padding: 10px;">19:30</td>
+                        <td style="padding: 10px;">Culto de Louvor a Deus e Exortação da Palavra</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;">Domingo</td>
+                        <td style="padding: 10px;">17:30</td>
+                        <td style="padding: 10px;">Culto de Louvor a Deus e Exortação da Palavra</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #333;">
+                        <td style="padding: 10px;">Segunda-feira</td>
+                        <td style="padding: 10px;">20:30</td>
+                        <td style="padding: 10px;">Reunião de leitura bíblica e ensinamento</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="margin-top: 30px; text-align: center; font-style: italic;">
+            <p>
+                “Guardai o vosso pé, quando entrardes na casa de Deus; porque chegar-se para ouvir é melhor do que oferecer sacrifícios de tolos.” (Eclesiastes 5:1)
+            </p>
+        </div>
+    </section>
+
+    <!-- SEÇÃO DE AULAS BÍBLICAS COM LINKS PARA A PASTA aulas/ -->
+    <section id="pagina-aulas" class="conteudo-pagina">
+        <h2>Nossas Aulas Bíblicas &amp; Quiz do Novo Testamento</h2>
+        <p>
+            Espaço dedicado ao estudo dos temas dos capítulos dos livros do Novo Testamento
+            para a edificação da irmandade e dos cooperadores em Jesus Cristo.
+        </p>
+
+        <div class="quiz-container">
+            <h3>Questionário Bíblico por Livros e Capítulos</h3>
+
+            <label for="select-livro" style="color: var(--ouro-claro);">
+                Escolha o livro do Novo Testamento para estudar:
+            </label>
+
+            <select id="select-livro" style="width: 100%; padding: 12px; margin: 10px 0; background: #262626; color: #fff; border: 1px solid var(--borda-dourada); font-size: 1rem;">
+                <option value="aulas/mateus.html">Evangelho de São Mateus (28 Capítulos)</option>
+                <option value="aulas/marcos.html">Evangelho de São Marcos (16 Capítulos)</option>
+                <option value="aulas/lucas.html">Evangelho de São Lucas (24 Capítulos)</option>
+                <option value="aulas/joao.html">Evangelho de São João (21 Capítulos)</option>
+                <option value="aulas/atos.html">Atos dos Apóstolos (28 Capítulos)</option>
+                <option value="aulas/romanos.html">Epístola aos Romanos (16 Capítulos)</option>
+                <option value="aulas/primeiro corintios.html">Primeiro corintios (16 Capítulos)</option>
+                <option value="aulas/segundo corintios.html">Segundo corintios (13 Capítulos)</option>
+                <option value="aulas/galatas.html">Livro de Galatas (6 Capítulos)</option>
+                <option value="aulas/efesios.html">Carta aos Efésios (6 Capítulos)</option>
+                <option value="aulas/felipenses.html">Carta aos Felipenses (4 Capítulos)</option>
+                <option value="aulas/colossenses.html">Carta aos Colossenses (4 Capítulos)</option>
+                <option value="aulas/tessanolisense1.html"> Primeira Carta aos Tessanolisense (5 Capítulos)</option>
+                <option value="aulas/tessanolisense2.html"> Segunda Carta aos Tessanolisense (3 Capítulos)</option>
+                <option value="aulas/timoteo1.html"> Primeira Carta a Timóteo (6 Capítulos)</option>
+                <option value="aulas/timoteo2.html"> Segunda Carta a Timóteo (4 Capítulos)</option>
+                <option value="aulas/tito.html">  Carta a Tito (4 Capítulos)</option>
+                <option value="aulas/filemom.html">  Carta a Filemom (4 Capítulos)</option>
+                <option value="aulas/Hebreus.html">  Carta aos Hebreus (13 Capítulos)</option>
+                <option value="aulas/tiago.html">  Carta de Tiago (5 Capítulos)</option>
+                <option value="aulas/pedro1.html">  Primeira Carta de Pedro (5 Capítulos)</option>
+                <option value="aulas/pedro2.html">  Segunda Carta de Pedro (3 Capítulos)</option>
+                <option value="aulas/joao1.html">  Primeira Carta de João (5 Capítulos)</option>
+                <option value="aulas/joao2.html">  Segunda Carta de João (1 Capítulo)</option>
+                <option value="aulas/joao3.html">  Terceira Carta de João (1 Capítulo)</option>
+                 <option value="aulas/judas.html">   Carta de Judas (1 Capítulo)</option>
+                  <option value="aulas/apocalipse.html">   Livro do Apocalipse ( 22 Capítulos)</option>
+
+
+
+            </select>
+
+            <button type="button" onclick="irParaLivro()" style="width: 100%; padding: 14px; background: var(--ouro-principal); border: none; font-weight: bold; cursor: pointer; font-size: 1rem; margin-top: 10px;">
+                Abrir Quiz do Livro Selecionado
+            </button>
+        </div>
+    </section>
+
+    <section id="pagina-contatos" class="conteudo-pagina">
+        <h2>Contatos e Pedidos de Oração</h2>
+        <p>A amada irmandade pode enviar pedidos de oração e mensagens para a nossa casa de oração.</p>
+
+        <form id="form-contato" style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+            <input type="text" placeholder="Seu nome completo" required style="padding: 10px; background: #262626; border: 1px solid #404040; color: #fff;">
+            <input type="text" placeholder="Seu e-mail ou telefone" required style="padding: 10px; background: #262626; border: 1px solid #404040; color: #fff;">
+            <textarea rows="5" placeholder="Escreva seu pedido de oração ou mensagem..." required style="padding: 10px; background: #262626; border: 1px solid #404040; color: #fff;"></textarea>
+            <button type="submit" style="padding: 12px; background: var(--ouro-principal); border: none; font-weight: bold; cursor: pointer;">
+                Enviar Mensagem
+            </button>
+        </form>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; Comum Congregação em Jesus Cristo. Presidência: Ancião Éber Silos.</p>
+    <p>A Paz de Deus no grato amor de Jesus Cristo.</p>
+</footer>
+
+<script>
+    function abrirPagina(idPagina) {
+        document.querySelectorAll(".conteudo-pagina").forEach(function(pagina) {
+            pagina.classList.remove("ativo");
+        });
+
+        document.querySelectorAll("nav button").forEach(function(botao) {
+            botao.classList.remove("ativo");
+        });
+
+        document.getElementById(idPagina).classList.add("ativo");
+
+        const botoes = {
+            "pagina-inicio": "btn-inicio",
+            "pagina-quem-somos": "btn-quem-somos",
+            "pagina-cultos": "btn-cultos",
+            "pagina-aulas": "btn-aulas",
+            "pagina-contatos": "btn-contatos"
+        };
+
+        if (botoes[idPagina]) {
+            document.getElementById(botoes[idPagina]).classList.add("ativo");
+        }
+    }
+
+    function irParaLivro() {
+        const destino = document.getElementById("select-livro").value;
+        if (destino) {
+            window.location.href = destino;
+        }
+    }
+
+    document.getElementById("form-contato").addEventListener("submit", function(evento) {
+        evento.preventDefault();
+        alert("Mensagem registrada com sucesso!");
+        this.reset();
+    });
+</script>
+
+</body>
+</html>
