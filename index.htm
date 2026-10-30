@@ -271,7 +271,7 @@
         </form>
         
         <!-- Mensagem de confirmação na tela -->
-        <div id="mensagem-status" style="margin-top: 15px; text-align: center; font-weight: bold; color: #4caf50;"></div>
+        <div id="mensagem-status" style="margin-top: 15px; text-align: center; font-weight: bold; color: #4caf50; font-size: 1.1rem;"></div>
     </div>
 
     <footer>
@@ -296,7 +296,7 @@
             if(idPagina === 'pagina-contatos') document.getElementById('btn-contatos').classList.add('ativo');
         }
 
-        // Função para direcionar ao WhatsApp e exibir a mensagem na tela
+        // Função corrigida para abrir o WhatsApp corretamente
         function enviarWhatsApp(event) {
             event.preventDefault();
 
@@ -305,7 +305,7 @@
             const mensagem = document.getElementById('mensagem-contato').value;
             const statusDiv = document.getElementById('mensagem-status');
 
-            // Número do WhatsApp fornecido: 913481321 (adicionado código do país +351 de Portugal como padrão, ou ajuste se for outro)
+            // Número com o prefixo de Portugal (+351) e o número fornecido
             const numeroWhatsApp = "351913481321";
 
             const textoFormatado = `*Pedido de Oração - Site*%0A%0A*Nome:* ${encodeURIComponent(nome)}%0A*Contato:* ${encodeURIComponent(contato)}%0A*Mensagem:* ${encodeURIComponent(mensagem)}`;
@@ -313,8 +313,9 @@
             // Exibe a mensagem solicitada na tela
             statusDiv.innerText = "Sua mensagem foi enviada com sucesso. Estaremos em oração!";
 
-            // Abre o WhatsApp com a mensagem pronta
-            window.open(`https://wa.me/${numeroWhatsApp}?text=${textoFormatado}`, '_blank');
+            // Abre o WhatsApp usando o link universal que funciona em qualquer telemóvel ou computador
+            const urlWhatsApp = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${textoFormatado}`;
+            window.open(urlWhatsApp, '_blank');
 
             // Limpa o formulário após o envio
             document.getElementById('form-contato').reset();
