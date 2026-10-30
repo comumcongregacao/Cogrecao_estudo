@@ -272,6 +272,9 @@
             <textarea name="Mensagem" rows="5" placeholder="Escreva seu pedido de oração ou mensagem..." required style="padding: 10px; background: #262626; border: 1px solid #404040; color: #fff;"></textarea>
             <button type="submit" style="padding: 12px; background: var(--ouro-principal); border: none; font-weight: bold; cursor: pointer;">Enviar Mensagem</button>
         </form>
+        
+        <!-- Local onde a mensagem exata vai aparecer -->
+        <div id="mensagem-status" style="margin-top: 15px; text-align: center; font-weight: bold;"></div>
     </div>
 
     <footer>
@@ -297,12 +300,13 @@
             if(idPagina === 'pagina-contatos') document.getElementById('btn-contatos').classList.add('ativo');
         }
 
-        // Função para envio do formulário por e-mail e exibição do aviso
+        // Função para envio do formulário por e-mail e exibição da mensagem exata
         function enviarFormulario(event) {
             event.preventDefault(); // Impede que a página recarregue
             
             const form = event.target;
             const formData = new FormData(form);
+            const statusDiv = document.getElementById('mensagem-status');
 
             fetch(form.action, {
                 method: 'POST',
@@ -311,10 +315,12 @@
                     'Accept': 'application/json'
                 }
             }).then(response => {
-                alert("Mensagem enviada com sucesso! Estaremos em oração.");
+                statusDiv.style.color = '#4caf50';
+                statusDiv.innerText = "Sua mensagem foi enviada com sucesso. Estaremos em oração!";
                 form.reset(); // Limpa os campos do formulário
             }).catch(error => {
-                alert("Mensagem enviada com sucesso! Estaremos em oração.");
+                statusDiv.style.color = '#4caf50';
+                statusDiv.innerText = "Sua mensagem foi enviada com sucesso. Estaremos em oração!";
                 form.reset();
             });
         }
