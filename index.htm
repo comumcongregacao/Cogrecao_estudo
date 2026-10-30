@@ -151,7 +151,8 @@
 <body>
 
    <header>
-    <img src="img/Logotipo da Congregação.png" alt="Comum Congregação em Jesus Cristo" class="emblema-header"><br>
+    <!-- Logotipo corrigido com o nome exato que está no GitHub -->
+    <img src="img/Logotipo%20da%20Congregação.png" alt="Comum Congregação em Jesus Cristo" class="emblema-header"><br>
     <div class="slogan-principal">A Paz de Deus no grato amor de Jesus Cristo</div>
 </header>
 
@@ -296,7 +297,7 @@
             if(idPagina === 'pagina-contatos') document.getElementById('btn-contatos').classList.add('ativo');
         }
 
-        // Função para preparar o envio direto para o WhatsApp do irmão
+        // Função para envio direto para o seu WhatsApp com a frase correta
         function enviarWhatsApp(event) {
             event.preventDefault();
 
@@ -310,10 +311,10 @@
 
             const textoFormatado = `A Paz de Deus! Meu nome é ${nome}. Meu contato é: ${contato}.%0A%0AMeu pedido de oração / mensagem:%0A${mensagem}`;
 
-            // Exibe a sua frase exata na tela do site
+            // Exibe a frase exata solicitada na tela do site
             statusDiv.innerText = "Sua mensagem foi enviada com sucesso. Estaremos em oração!";
 
-            // Abre a conversa do WhatsApp para que o visitante envie a mensagem diretamente para o seu número
+            // Abre a conversa do WhatsApp para que o visitante envie diretamente para o seu número
             const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${textoFormatado}`;
             window.open(urlWhatsApp, '_blank');
 
