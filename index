@@ -267,7 +267,7 @@
             <input type="text" id="nome-contato" placeholder="Seu Nome Completo" required style="padding: 10px; background: #262626; border: 1px solid #404040; color: #fff;">
             <input type="text" id="contato-info" placeholder="Seu E-mail ou Telefone" required style="padding: 10px; background: #262626; border: 1px solid #404040; color: #fff;">
             <textarea id="mensagem-contato" rows="5" placeholder="Escreva seu pedido de oração ou mensagem..." required style="padding: 10px; background: #262626; border: 1px solid #404040; color: #fff;"></textarea>
-            <button type="submit" style="padding: 12px; background: var(--ouro-principal); border: none; font-weight: bold; cursor: pointer;">Enviar Mensagem via WhatsApp</button>
+            <button type="submit" style="padding: 12px; background: var(--ouro-principal); border: none; font-weight: bold; cursor: pointer;">Enviar Mensagem</button>
         </form>
         
         <!-- Mensagem de confirmação na tela -->
@@ -296,7 +296,7 @@
             if(idPagina === 'pagina-contatos') document.getElementById('btn-contatos').classList.add('ativo');
         }
 
-        // Função corrigida para abrir o WhatsApp corretamente
+        // Função para preparar o envio direto para o WhatsApp do irmão
         function enviarWhatsApp(event) {
             event.preventDefault();
 
@@ -305,19 +305,19 @@
             const mensagem = document.getElementById('mensagem-contato').value;
             const statusDiv = document.getElementById('mensagem-status');
 
-            // Número com o prefixo de Portugal (+351) e o número fornecido
+            // Seu número do WhatsApp com o código de Portugal (+351)
             const numeroWhatsApp = "351913481321";
 
-            const textoFormatado = `*Pedido de Oração - Site*%0A%0A*Nome:* ${encodeURIComponent(nome)}%0A*Contato:* ${encodeURIComponent(contato)}%0A*Mensagem:* ${encodeURIComponent(mensagem)}`;
+            const textoFormatado = `A Paz de Deus! Meu nome é ${nome}. Meu contato é: ${contato}.%0A%0AMeu pedido de oração / mensagem:%0A${mensagem}`;
 
-            // Exibe a mensagem solicitada na tela
+            // Exibe a sua frase exata na tela do site
             statusDiv.innerText = "Sua mensagem foi enviada com sucesso. Estaremos em oração!";
 
-            // Abre o WhatsApp usando o link universal que funciona em qualquer telemóvel ou computador
-            const urlWhatsApp = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${textoFormatado}`;
+            // Abre a conversa do WhatsApp para que o visitante envie a mensagem diretamente para o seu número
+            const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${textoFormatado}`;
             window.open(urlWhatsApp, '_blank');
 
-            // Limpa o formulário após o envio
+            // Limpa os campos do formulário
             document.getElementById('form-contato').reset();
         }
 
