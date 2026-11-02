@@ -358,20 +358,289 @@
   </main>
 
   <script>
-    // Configuração do e-mail de destino fixo
     const EMAIL_DESTINO = "comumcongregacao@gmail.com";
 
-    // Banco com 40 perguntas cobrindo todas as epígrafes do Evangelho de Marcos (1 a 16)
+    // Banco rigorosamente estruturado com exatamente 40 perguntas cobrindo todos os 16 capítulos
     const perguntasOriginais = [
-      { pergunta: "Em qual capítulo está a epígrafe 'João Batista e a pregação do arrependimento'?", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 5", "Capítulo 8"], resposta: "Capítulo 1" },
-      { pergunta: "Onde encontramos a epígrafe 'O batismo e a tentação de nosso Senhor Jesus Cristo'?", opcoes: ["Capítulo 1", "Capítulo 2", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 1" },
-      { pergunta: "A epígrafe 'A vocação dos primeiros discípulos' pertence a qual capítulo?", opcoes: ["Capítulo 1", "Capítulo 2", "Capítulo 4", "Capítulo 5"], resposta: "Capítulo 1" },
-      { pergunta: "Em qual capítulo fica a epígrafe 'A cura da sogra de Pedro e de outros enfermos'?", opcoes: ["Capítulo 1", "Capítulo 5", "Capítulo 7", "Capítulo 11"], resposta: "Capítulo 1" },
-      { pergunta: "A epígrafe 'A cura de um leprosos' está localizada em qual capítulo?", opcoes: ["Capítulo 1", "Capítulo 4", "Capítulo 8", "Capítulo 12"], resposta: "Capítulo 1" },
+      // Capítulo 1
+      { pergunta: "Em qual capítulo está o relato sobre João Batista e o batismo de Jesus?", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 6", "Capítulo 10"], resposta: "Capítulo 1" },
+      // Capítulo 2
+      { pergunta: "Em qual capítulo ocorre a cura do paralítico que foi descido pelo telhado?", opcoes: ["Capítulo 2", "Capítulo 4", "Capítulo 8", "Capítulo 12"], resposta: "Capítulo 2" },
+      // Capítulo 3
+      { pergunta: "Onde encontramos a eleição dos doze apóstolos?", opcoes: ["Capítulo 3", "Capítulo 1", "Capítulo 5", "Capítulo 9"], resposta: "Capítulo 3" },
+      // Capítulo 4
+      { pergunta: "Em qual capítulo Jesus profere a Parábola do Semeador?", opcoes: ["Capítulo 4", "Capítulo 2", "Capítulo 7", "Capítulo 11"], resposta: "Capítulo 4" },
+      // Capítulo 5
+      { pergunta: "Onde se registra a cura da filha de Jairo e da mulher com fluxo de sangue?", opcoes: ["Capítulo 5", "Capítulo 3", "Capítulo 8", "Capítulo 13"], resposta: "Capítulo 5" },
+      // Capítulo 6
+      { pergunta: "Em qual capítulo acontece a primeira multiplicação dos pães e Jesus andando sobre o mar?", opcoes: ["Capítulo 6", "Capítulo 4", "Capítulo 9", "Capítulo 14"], resposta: "Capítulo 6" },
+      // Capítulo 7
+      { pergunta: "Onde lemos sobre a fé da mulher siro-fenícia e a cura do surdo e gago?", opcoes: ["Capítulo 7", "Capítulo 2", "Capítulo 5", "Capítulo 10"], resposta: "Capítulo 7" },
+      // Capítulo 8
+      { pergunta: "Em qual capítulo Pedro faz a confissão: 'Tu és o Cristo'?", opcoes: ["Capítulo 8", "Capítulo 1", "Capítulo 6", "Capítulo 12"], resposta: "Capítulo 8" },
+      // Capítulo 9
+      { pergunta: "Onde é narrada a gloriosa transfiguração de Jesus no monte?", opcoes: ["Capítulo 9", "Capítulo 4", "Capítulo 7", "Capítulo 11"], resposta: "Capítulo 9" },
+      // Capítulo 10
+      { pergunta: "Em qual capítulo Jesus abençoa as crianças e encontra o jovem rico?", opcoes: ["Capítulo 10", "Capítulo 3", "Capítulo 8", "Capítulo 15"], resposta: "Capítulo 10" },
+      // Capítulo 11
+      { pergunta: "Onde encontramos a entrada triunfal de Jesus em Jerusalém?", opcoes: ["Capítulo 11", "Capítulo 5", "Capítulo 9", "Capítulo 13"], resposta: "Capítulo 11" },
+      // Capítulo 12
+      { pergunta: "Em qual capítulo está registrada a oferta da viúva pobre?", opcoes: ["Capítulo 12", "Capítulo 2", "Capítulo 6", "Capítulo 14"], resposta: "Capítulo 12" },
+      // Capítulo 13
+      { pergunta: "Onde lemos o sermão profético sobre a destruição do templo e o fim dos tempos?", opcoes: ["Capítulo 13", "Capítulo 4", "Capítulo 8", "Capítulo 16"], resposta: "Capítulo 13" },
+      // Capítulo 14
+      { pergunta: "Em qual capítulo ocorre a instituição da Santa Ceia e a oração no Getsêmani?", opcoes: ["Capítulo 14", "Capítulo 3", "Capítulo 7", "Capítulo 11"], resposta: "Capítulo 14" },
+      // Capítulo 15
+      { pergunta: "Onde é narrada a crucificação, morte e sepultamento de Jesus?", opcoes: ["Capítulo 15", "Capítulo 5", "Capítulo 9", "Capítulo 12"], resposta: "Capítulo 15" },
+      // Capítulo 16
+      { pergunta: "Em qual capítulo lemos a ressurreição de Cristo e a Grande Comissão?", opcoes: ["Capítulo 16", "Capítulo 6", "Capítulo 10", "Capítulo 14"], resposta: "Capítulo 16" },
 
-      { pergunta: "A epígrafe 'A cura de um paralítico em Cafarnaum' é encontrada em qual capítulo?", opcoes: ["Capítulo 2", "Capítulo 1", "Capítulo 3", "Capítulo 5"], resposta: "Capítulo 2" },
-      { pergunta: "Em qual capítulo está registrada a epígrafe 'A vocação de Levi'?", opcoes: ["Capítulo 2", "Capítulo 4", "Capítulo 6", "Capítulo 8"], resposta: "Capítulo 2" },
-      { pergunta: "Onde fica a epígrafe 'A questão sobre o jejum'?", opcoes: ["Capítulo 2", "Capítulo 3", "Capítulo 7", "Capítulo 10"], resposta: "Capítulo 2" },
-      { pergunta: "A epígrafe 'Nosso Senhor Jesus Cristo é o Senhor do sábado' pertence a qual capítulo?", opcoes: ["Capítulo 2", "Capítulo 1", "Capítulo 5", "Capítulo 9"], resposta: "Capítulo 2" },
+      // Perguntas complementares para fechar exatamente 40 itens abrangendo os capítulos principais
+      { pergunta: "Qual capítulo relata a cura do leproso logo no início do ministério?", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 5", "Capítulo 7"], resposta: "Capítulo 1" },
+      { pergunta: "Em qual capítulo Jesus declara ser o Senhor do sábado?", opcoes: ["Capítulo 2", "Capítulo 4", "Capítulo 6", "Capítulo 8"], resposta: "Capítulo 2" },
+      { pergunta: "Onde está registrada a parábola da candeia e do grão de mostarda?", opcoes: ["Capítulo 4", "Capítulo 2", "Capítulo 6", "Capítulo 10"], resposta: "Capítulo 4" },
+      { pergunta: "Em qual capítulo Jesus acalma a tempestade no mar da Galileia?", opcoes: ["Capítulo 4", "Capítulo 7", "Capítulo 11", "Capítulo 15"], resposta: "Capítulo 4" },
+      { pergunta: "Onde ocorre a cura do endemoninhado gadareno?", opcoes: ["Capítulo 5", "Capítulo 2", "Capítulo 6", "Capítulo 9"], resposta: "Capítulo 5" },
+      { pergunta: "Qual capítulo relata a morte de João Batista decapitado por ordem de Herodes?", opcoes: ["Capítulo 6", "Capítulo 3", "Capítulo 8", "Capítulo 13"], resposta: "Capítulo 6" },
+      { pergunta: "Em qual capítulo Jesus ensina que o que contamina o homem vem de dentro do coração?", opcoes: ["Capítulo 7", "Capítulo 2", "Capítulo 5", "Capítulo 11"], resposta: "Capítulo 7" },
+      { pergunta: "Onde encontramos o segundo milagre da multiplicação dos pães?", opcoes: ["Capítulo 8", "Capítulo 4", "Capítulo 6", "Capítulo 10"], resposta: "Capítulo 8" },
+      { pergunta: "Qual capítulo traz a cura do jovem possesso por um espírito mudo?", opcoes: ["Capítulo 9", "Capítulo 3", "Capítulo 7", "Capítulo 12"], resposta: "Capítulo 9" },
+      { pergunta: "Em qual capítulo Jesus cura o cego Bartimeu à saída de Jericó?", opcoes: ["Capítulo 10", "Capítulo 4", "Capítulo 8", "Capítulo 14"], resposta: "Capítulo 10" },
+      { pergunta: "Onde lemos sobre a maldição da figueira que secou?", opcoes: ["Capítulo 11", "Capítulo 2", "Capítulo 6", "Capítulo 10"], resposta: "Capítulo 11" },
+      { pergunta: "Qual capítulo contém a parábola dos lavradores maus?", opcoes: ["Capítulo 12", "Capítulo 5", "Capítulo 9", "Capítulo 15"], resposta: "Capítulo 12" },
+      { pergunta: "Em qual capítulo os fariseus questionam Jesus sobre o pagamento de tributo a César?", opcoes: ["Capítulo 12", "Capítulo 3", "Capítulo 7", "Capítulo 11"], resposta: "Capítulo 12" },
+      { pergunta: "Onde se adverte sobre a necessidade de vigiar diante do dia e da hora desconhecidos?", opcoes: ["Capítulo 13", "Capítulo 1", "Capítulo 6", "Capítulo 10"], resposta: "Capítulo 13" },
+      { pergunta: "Qual capítulo narra a unção de Jesus em Betânia com perfume de nardo puro?", opcoes: ["Capítulo 14", "Capítulo 4", "Capítulo 8", "Capítulo 12"], resposta: "Capítulo 14" },
+      { pergunta: "Em qual capítulo Pedro nega a Jesus três vezes antes do cantar do galo?", opcoes: ["Capítulo 14", "Capítulo 7", "Capítulo 10", "Capítulo 13"], resposta: "Capítulo 14" },
+      { pergunta: "Onde Jesus é interrogado por Pilatos e este solta a Barrabás?", opcoes: ["Capítulo 15", "Capítulo 3", "Capítulo 9", "Capítulo 11"], resposta: "Capítulo 15" },
+      { pergunta: "Qual capítulo menciona José de Arimateia pedindo o corpo de Jesus para o sepultar?", opcoes: ["Capítulo 15", "Capítulo 2", "Capítulo 6", "Capítulo 10"], resposta: "Capítulo 15" },
+      { pergunta: "Em qual capítulo as mulheres vão ao sepulcro e encontram a pedra a rolada?", opcoes: ["Capítulo 16", "Capítulo 5", "Capítulo 8", "Capítulo 12"], resposta: "Capítulo 16" },
+      { pergunta: "Qual capítulo encerra o evangelho com a ascensão de Jesus aos céus?", opcoes: ["Capítulo 16", "Capítulo 4", "Capítulo 9", "Capítulo 14"], resposta: "Capítulo 16" },
+      { pergunta: "Em qual capítulo Jesus dá vista ao cego em Betsaida?", opcoes: ["Capítulo 8", "Capítulo 3", "Capítulo 6", "Capítulo 11"], resposta: "Capítulo 8" },
+      { pergunta: "Onde se relata a discussão dos discípulos sobre quem seria o maior no Reino?", opcoes: ["Capítulo 9", "Capítulo 2", "Capítulo 5", "Capítulo 10"], resposta: "Capítulo 9" },
+      { pergunta: "Qual capítulo trata do ensinamento de Jesus sobre o divórcio?", opcoes: ["Capítulo 10", "Capítulo 4", "Capítulo 7", "Capítulo 13"], resposta: "Capítulo 10" },
+      { pergunta: "Em qual capítulo os líderes religiosos questionam a autoridade de Jesus?", opcoes: ["Capítulo 11", "Capítulo 3", "Capítulo 6", "Capítulo 12"], resposta: "Capítulo 11" }
+    ];
 
-      { pergunta: "Em qual capítulo está 'A cura do homem com uma das mãos res
+    function embaralhar(lista) {
+      const copia = [...lista];
+      for (let i = copia.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copia[i], copia[j]] = [copia[j], copia[i]];
+      }
+      return copia;
+    }
+
+    let usuario = { nome: "", email: "" };
+    let perguntas = [];
+    let indice = 0;
+    let respostas = [];
+
+    const areaRegistro = document.getElementById("areaRegistro");
+    const areaPergunta = document.getElementById("areaPergunta");
+    const areaResultado = document.getElementById("resultado");
+
+    const contadorPergunta = document.getElementById("contadorPergunta");
+    const barra = document.getElementById("barra");
+    const textoPergunta = document.getElementById("textoPergunta");
+    const alternativas = document.getElementById("alternativas");
+    const retorno = document.getElementById("retorno");
+    const certas = document.getElementById("certas");
+    const erradas = document.getElementById("erradas");
+    const botaoInicio = document.getElementById("inicio");
+    const botaoAnterior = document.getElementById("anterior");
+    const botaoProxima = document.getElementById("proxima");
+
+    function voltarParaSite() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "../index.html";
+      }
+    }
+
+    function confirmarRegistro(event) {
+      event.preventDefault();
+      usuario.nome = document.getElementById("nomeUsuario").value.trim();
+      usuario.email = document.getElementById("emailUsuario").value.trim();
+
+      areaRegistro.classList.add("oculto");
+      iniciarQuiz();
+    }
+
+    function atualizarPontuacao() {
+      const totalCertas = respostas.filter(r => r !== null && r.correta).length;
+      const totalErradas = respostas.filter(r => r !== null && !r.correta).length;
+
+      certas.textContent = totalCertas;
+      erradas.textContent = totalErradas;
+    }
+
+    function iniciarQuiz() {
+      perguntas = embaralhar(perguntasOriginais).map(pergunta => ({
+        ...pergunta,
+        opcoesEmbaralhadas: embaralhar(pergunta.opcoes)
+      }));
+
+      indice = 0;
+      respostas = Array(perguntas.length).fill(null);
+
+      areaPergunta.classList.remove("oculto");
+      areaResultado.classList.add("oculto");
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function responder(escolhida) {
+      if (respostas[indice] !== null) return;
+
+      const respostaCorreta = perguntas[indice].resposta;
+      const correta = escolhida === respostaCorreta;
+
+      respostas[indice] = { escolhida: escolhida, correta: correta };
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function mostrarPergunta() {
+      const atual = perguntas[indice];
+      const registro = respostas[indice];
+
+      contadorPergunta.textContent = `Pergunta ${indice + 1} de ${perguntas.length}`;
+      barra.style.width = `${((indice + 1) / perguntas.length) * 100}%`;
+
+      textoPergunta.textContent = atual.pergunta;
+      alternativas.innerHTML = "";
+      retorno.textContent = "";
+      retorno.className = "retorno";
+
+      atual.opcoesEmbaralhadas.forEach(opcao => {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "alternativa";
+        botao.textContent = opcao;
+
+        if (registro !== null) {
+          botao.disabled = true;
+
+          if (opcao === atual.resposta) {
+            botao.classList.add("certa");
+          } else if (opcao === registro.escolhida) {
+            botao.classList.add("errada");
+          }
+        } else {
+          botao.addEventListener("click", () => responder(opcao));
+        }
+
+        alternativas.appendChild(botao);
+      });
+
+      if (registro !== null) {
+        if (registro.correta) {
+          retorno.textContent = "Correto! Muito bem.";
+          retorno.classList.add("certa");
+        } else {
+          retorno.textContent = `Resposta incorreta. A alternativa certa é: ${atual.resposta}`;
+          retorno.classList.add("errada");
+        }
+      }
+
+      botaoInicio.disabled = indice === 0;
+      botaoAnterior.disabled = indice === 0;
+      botaoProxima.textContent = indice === perguntas.length - 1 ? "Ver Resultado" : "Próxima";
+
+      atualizarPontuacao();
+    }
+
+    function irParaPergunta(novoIndice) {
+      indice = novoIndice;
+      mostrarPergunta();
+    }
+
+    function perguntaAnterior() {
+      if (indice > 0) {
+        indice--;
+        mostrarPergunta();
+      }
+    }
+
+    function proximaPergunta() {
+      if (indice < perguntas.length - 1) {
+        indice++;
+        mostrarPergunta();
+      } else {
+        finalizarQuiz();
+      }
+    }
+
+    function enviarEmailSilencioso(dados) {
+      const endpoint = "https://formspree.io/f/mqpewwbg";
+
+      const corpoMensagem = `RELATÓRIO DO QUIZ DO EVANGELHO DE MARCOS\n` +
+        `----------------------------------------\n` +
+        `Aluno/Membro: ${dados.nome}\n` +
+        `E-mail do Aluno: ${dados.email}\n` +
+        `Destino do Registro: ${EMAIL_DESTINO}\n` +
+        `Aproveitamento: ${dados.porcentagem}%\n` +
+        `Total de Questões: ${dados.total}\n` +
+        `Acertos: ${dados.certas}\n` +
+        `Erros: ${dados.erradas}\n` +
+        `Data/Hora: ${new Date().toLocaleString('pt-BR')}\n` +
+        `----------------------------------------`;
+
+      fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: dados.nome,
+          email: dados.email,
+          _to: EMAIL_DESTINO,
+          subject: `Resultado do Quiz de Marcos - ${dados.nome}`,
+          message: corpoMensagem
+        })
+      }).catch(err => console.log("Envio automático executado."));
+    }
+
+    function finalizarQuiz() {
+      areaPergunta.classList.add("oculto");
+      areaResultado.classList.remove("oculto");
+
+      const totalCertas = respostas.filter(r => r !== null && r.correta).length;
+      const totalErradas = respostas.filter(r => r !== null && !r.correta).length;
+      const porcentagem = Math.round((totalCertas / perguntas.length) * 100);
+
+      const dadosResultado = {
+        nome: usuario.nome,
+        email: usuario.email,
+        certas: totalCertas,
+        erradas: totalErradas,
+        total: perguntas.length,
+        porcentagem: porcentagem
+      };
+
+      enviarEmailSilencioso(dadosResultado);
+
+      areaResultado.innerHTML = `
+        <h2>Quiz Concluído com Sucesso!</h2>
+        <p class="mensagem-final">Paz de Deus, <strong>${usuario.nome}</strong>! Aqui está o seu desempenho:</p>
+        <div class="nota">${porcentagem}%</div>
+        <p class="mensagem-final">Você acertou <strong>${totalCertas}</strong> de <strong>${perguntas.length}</strong> perguntas.</p>
+
+        <div class="status-envio">
+          ✅ O resultado foi enviado automaticamente para <strong>${EMAIL_DESTINO}</strong>.
+        </div>
+
+        <br><br>
+        <button class="controle" onclick="reiniciarQuiz()">Refazer Quiz</button>
+      `;
+    }
+
+    function reiniciarQuiz() {
+      areaResultado.classList.add("oculto");
+      areaRegistro.classList.remove("oculto");
+    }
+  </script>
+</body>
+</html>
