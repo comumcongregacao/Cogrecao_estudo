@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz do Evangelho de Mateus</title>
 
-  <!-- Biblioteca EmailJS para envio automático de e-mails -->
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-
   <style>
     :root {
       --dourado: #c9a64f;
@@ -51,12 +48,17 @@
       border-bottom: 1px solid #eee;
       padding-bottom: 18px;
       margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
     }
 
     h1 {
       margin: 0;
       font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(25px, 5vw, 36px);
+      font-size: clamp(23px, 4.5vw, 34px);
     }
 
     .subtitulo {
@@ -211,6 +213,19 @@
       color: var(--texto);
     }
 
+    button.controle.voltar-site {
+      background: #333;
+      color: #fff;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button.controle.voltar-site:hover {
+      background: #555;
+    }
+
     button.controle:disabled {
       opacity: 0.45;
       cursor: not-allowed;
@@ -240,10 +255,11 @@
       line-height: 1.6;
     }
 
-    .status-email {
+    .status-envio {
       margin-top: 15px;
       font-weight: bold;
       color: var(--verde);
+      font-size: 15px;
     }
 
     .oculto {
@@ -283,12 +299,15 @@
     <section class="cartao">
       <header>
         <h1>Quiz do Evangelho de Mateus</h1>
+        <button class="controle voltar-site" onclick="voltarParaSite()">
+          ⬅ Voltar ao Site
+        </button>
       </header>
 
       <!-- Tela 1: Identificação de Nome e E-mail -->
       <div id="areaRegistro">
         <p class="subtitulo">
-          A Paz de Deus! Antes de começar o questionário, informe o seu Nome e o seu E-mail para registrar o seu progresso no nosso sistema.
+          A Paz de Deus! Antes de começar o questionário sobre o Evangelho de Mateus, informe o seu Nome e o seu E-mail para registrar o seu resultado.
         </p>
         <form id="formRegistro" class="campo-identificacao" onsubmit="confirmarRegistro(event)">
           <input type="text" id="nomeUsuario" placeholder="Seu Nome Completo" required>
@@ -329,115 +348,55 @@
         </div>
       </div>
 
-      <!-- Tela 3: Resultado e Envio por E-mail -->
+      <!-- Tela 3: Resultado e Envio Automático -->
       <div class="resultado oculto" id="resultado"></div>
     </section>
   </main>
 
   <script>
-    // Inicializar EmailJS (Substitua SEU_PUBLIC_KEY se você criar uma conta gratuita no emailjs.com)
-    (function() {
-        emailjs.init("YOUR_PUBLIC_KEY"); 
-    })();
-
     const perguntasOriginais = [
-      // Capítulo 1
       { pergunta: "Em qual capítulo encontramos a epígrafe 'A genealogia de Jesus Cristo'?", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 5", "Capítulo 9"], resposta: "Capítulo 1" },
       { pergunta: "O epígrafe 'O nascimento de Jesus Cristo' pertence a qual capítulo?", opcoes: ["Capítulo 1", "Capítulo 2", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 1" },
-
-      // Capítulo 2
       { pergunta: "Em qual capítulo está registrada 'A visita dos magos'?", opcoes: ["Capítulo 2", "Capítulo 1", "Capítulo 4", "Capítulo 7"], resposta: "Capítulo 2" },
       { pergunta: "Onde encontramos o epígrafe 'A fuga para o Egito e o massacre dos inocentes'?", opcoes: ["Capítulo 2", "Capítulo 3", "Capítulo 5", "Capítulo 8"], resposta: "Capítulo 2" },
       { pergunta: "O epígrafe 'A volta do Egito e a habitação em Nazaré' pertence a qual capítulo?", opcoes: ["Capítulo 2", "Capítulo 6", "Capítulo 9", "Capítulo 12"], resposta: "Capítulo 2" },
-
-      // Capítulo 3
       { pergunta: "Em qual capítulo se encontra 'A pregação de João Batista'?", opcoes: ["Capítulo 3", "Capítulo 1", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 3" },
       { pergunta: "O epígrafe 'O batismo de Jesus' pertence a qual capítulo?", opcoes: ["Capítulo 3", "Capítulo 2", "Capítulo 5", "Capítulo 8"], resposta: "Capítulo 3" },
-
-      // Capítulo 4
       { pergunta: "Onde está narrado o epígrafe 'A tentação de Jesus no deserto'?", opcoes: ["Capítulo 4", "Capítulo 3", "Capítulo 7", "Capítulo 10"], resposta: "Capítulo 4" },
       { pergunta: "Em qual capítulo ocorre 'O chamamento dos primeiros discípulos' no mar da Galileia?", opcoes: ["Capítulo 4", "Capítulo 2", "Capítulo 6", "Capítulo 9"], resposta: "Capítulo 4" },
-
-      // Capítulo 5
       { pergunta: "O epígrafe 'O Sermão da Montanha e as Bem-Aventuranças' encontra-se em qual capítulo?", opcoes: ["Capítulo 5", "Capítulo 6", "Capítulo 7", "Capítulo 8"], resposta: "Capítulo 5" },
       { pergunta: "Em qual capítulo Jesus ensina sobre 'O sal da terra e a luz do mundo'?", opcoes: ["Capítulo 5", "Capítulo 4", "Capítulo 9", "Capítulo 11"], resposta: "Capítulo 5" },
       { pergunta: "O epígrafe 'O amor aos inimigos' pertence a qual capítulo?", opcoes: ["Capítulo 5", "Capítulo 7", "Capítulo 10", "Capítulo 12"], resposta: "Capítulo 5" },
-
-      // Capítulo 6
       { pergunta: "Em qual capítulo está o ensino sobre 'A oração e o Pai Nosso'?", opcoes: ["Capítulo 6", "Capítulo 5", "Capítulo 8", "Capítulo 13"], resposta: "Capítulo 6" },
       { pergunta: "O epígrafe 'Os tesouros no céu e a ansiedade pela vida' pertence a qual capítulo?", opcoes: ["Capítulo 6", "Capítulo 4", "Capítulo 7", "Capítulo 10"], resposta: "Capítulo 6" },
-
-      // Capítulo 7
       { pergunta: "Onde encontramos o epígrafe 'Não julgueis para não serdes julgados'?", opcoes: ["Capítulo 7", "Capítulo 5", "Capítulo 6", "Capítulo 9"], resposta: "Capítulo 7" },
       { pergunta: "Em qual capítulo está a 'A parábola dos dois alicerces' (o homem prudente e o insensato)?", opcoes: ["Capítulo 7", "Capítulo 8", "Capítulo 12", "Capítulo 15"], resposta: "Capítulo 7" },
-
-      // Capítulo 8
       { pergunta: "O epígrafe 'A cura de um leproso e do criado do centurião' pertence a qual capítulo?", opcoes: ["Capítulo 8", "Capítulo 3", "Capítulo 9", "Capítulo 11"], resposta: "Capítulo 8" },
       { pergunta: "Em qual capítulo Jesus 'Acalma a tempestade' no mar?", opcoes: ["Capítulo 8", "Capítulo 4", "Capítulo 10", "Capítulo 14"], resposta: "Capítulo 8" },
-
-      // Capítulo 9
       { pergunta: "O epígrafe 'O chamamento de Mateus (Levi) e a questão do jejum' é de qual capítulo?", opcoes: ["Capítulo 9", "Capítulo 2", "Capítulo 5", "Capítulo 10"], resposta: "Capítulo 9" },
       { pergunta: "Em qual capítulo encontramos 'A cura da mulher com fluxo de sangue e a ressurreição da filha de Jairo'?", opcoes: ["Capítulo 9", "Capítulo 8", "Capítulo 12", "Capítulo 15"], resposta: "Capítulo 9" },
-
-      // Capítulo 10
       { pergunta: "O epígrafe 'A missão e o envio dos doze apóstolos' está localizado em qual capítulo?", opcoes: ["Capítulo 10", "Capítulo 6", "Capítulo 11", "Capítulo 14"], resposta: "Capítulo 10" },
-
-      // Capítulo 11
       { pergunta: "Em qual capítulo Jesus profere as palavras 'Vinde a mim, todos os que estais cansados' (O jugo suave)?", opcoes: ["Capítulo 11", "Capítulo 5", "Capítulo 9", "Capítulo 13"], resposta: "Capítulo 11" },
-
-      // Capítulo 12
       { pergunta: "O epígrafe 'Jesus é Senhor do sábado e a cura do homem da mão ressequida' pertence a qual capítulo?", opcoes: ["Capítulo 12", "Capítulo 8", "Capítulo 10", "Capítulo 14"], resposta: "Capítulo 12" },
       { pergunta: "Em qual capítulo encontramos o ensino sobre 'O pecado contra o Espírito Santo'?", opcoes: ["Capítulo 12", "Capítulo 7", "Capítulo 13", "Capítulo 16"], resposta: "Capítulo 12" },
-
-      // Capítulo 13
       { pergunta: "O epígrafe 'A parábola do semeador' e 'A parábola do joio e do trigo' estão em qual capítulo?", opcoes: ["Capítulo 13", "Capítulo 4", "Capítulo 7", "Capítulo 15"], resposta: "Capítulo 13" },
       { pergunta: "Onde encontramos as parábolas 'Do tesouro escondido' e 'Da pérola de grande valor'?", opcoes: ["Capítulo 13", "Capítulo 10", "Capítulo 14", "Capítulo 18"], resposta: "Capítulo 13" },
-
-      // Capítulo 14
       { pergunta: "Em qual capítulo está registrada 'A morte de João Batista' e 'A primeira multiplicação dos pães'?", opcoes: ["Capítulo 14", "Capítulo 11", "Capítulo 15", "Capítulo 17"], resposta: "Capítulo 14" },
       { pergunta: "O epígrafe 'Jesus anda sobre as águas' encontra-se em qual capítulo?", opcoes: ["Capítulo 14", "Capítulo 8", "Capítulo 12", "Capítulo 16"], resposta: "Capítulo 14" },
-
-      // Capítulo 15
       { pergunta: "Em qual capítulo encontramos 'A fé da mulher cananeia'?", opcoes: ["Capítulo 15", "Capítulo 9", "Capítulo 13", "Capítulo 17"], resposta: "Capítulo 15" },
-
-      // Capítulo 16
       { pergunta: "O epígrafe 'A confissão de fé de Pedro' ('Tu és o Cristo') pertence a qual capítulo?", opcoes: ["Capítulo 16", "Capítulo 10", "Capítulo 14", "Capítulo 18"], resposta: "Capítulo 16" },
-
-      // Capítulo 17
       { pergunta: "Em qual capítulo ocorre 'A Transfiguração de Jesus' no monte?", opcoes: ["Capítulo 17", "Capítulo 12", "Capítulo 15", "Capítulo 20"], resposta: "Capítulo 17" },
-
-      // Capítulo 18
       { pergunta: "O epígrafe 'Quem é o maior no Reino dos Céus' e 'A parábola da ovelha perdida' pertencem a qual capítulo?", opcoes: ["Capítulo 18", "Capítulo 13", "Capítulo 19", "Capítulo 22"], resposta: "Capítulo 18" },
       { pergunta: "Em qual capítulo Jesus ensina sobre 'O perdão e a parábola do credor incompassivo'?", opcoes: ["Capítulo 18", "Capítulo 15", "Capítulo 20", "Capítulo 21"], resposta: "Capítulo 18" },
-
-      // Capítulo 19
       { pergunta: "O epígrafe 'Jesus abençoa as crianças' e o episódio do 'Jovem rico' encontram-se em qual capítulo?", opcoes: ["Capítulo 19", "Capítulo 16", "Capítulo 18", "Capítulo 21"], resposta: "Capítulo 19" },
-
-      // Capítulo 20
       { pergunta: "Em qual capítulo está 'A parábola dos trabalhadores da vinha'?", opcoes: ["Capítulo 20", "Capítulo 13", "Capítulo 17", "Capítulo 22"], resposta: "Capítulo 20" },
-
-      // Capítulo 21
       { pergunta: "O epígrafe 'A entrada triunfal de Jesus em Jerusalém' e 'A purificação do templo' pertencem a qual capítulo?", opcoes: ["Capítulo 21", "Capítulo 19", "Capítulo 23", "Capítulo 25"], resposta: "Capítulo 21" },
-
-      // Capítulo 22
       { pergunta: "Em qual capítulo se encontra o ensino sobre 'O pagamento do imposto a César' e 'O grande mandamento'?", opcoes: ["Capítulo 22", "Capítulo 20", "Capítulo 21", "Capítulo 24"], resposta: "Capítulo 22" },
-
-      // Capítulo 23
       { pergunta: "O epígrafe 'Denúncia contra os escribas e fariseus (Ais sobre os hipócritas)' está localizado em qual capítulo?", opcoes: ["Capítulo 23", "Capítulo 15", "Capítulo 21", "Capítulo 26"], resposta: "Capítulo 23" },
-
-      // Capítulo 24
       { pergunta: "Em qual capítulo Jesus fala sobre 'A predição da destruição do templo e os sinais do fim dos tempos'?", opcoes: ["Capítulo 24", "Capítulo 20", "Capítulo 22", "Capítulo 25"], resposta: "Capítulo 24" },
-
-      // Capítulo 25
       { pergunta: "O epígrafe 'A parábola das dez virgens' e 'A parábola dos talentos' pertencem a qual capítulo?", opcoes: ["Capítulo 25", "Capítulo 21", "Capítulo 23", "Capítulo 26"], resposta: "Capítulo 25" },
-
-      // Capítulo 26
       { pergunta: "Em qual capítulo ocorrem 'A unção em Betânia', 'A instituição da Santa Ceia' e 'A oração no Getsêmani'?", opcoes: ["Capítulo 26", "Capítulo 24", "Capítulo 25", "Capítulo 27"], resposta: "Capítulo 26" },
-
-      // Capítulo 27
       { pergunta: "O epígrafe 'O julgamento perante Pilatos, a crucificação, morte e sepultamento de Jesus' pertence a qual capítulo?", opcoes: ["Capítulo 27", "Capítulo 25", "Capítulo 26", "Capítulo 28"], resposta: "Capítulo 27" },
-
-      // Capítulo 28
       { pergunta: "Em qual capítulo está registrada 'A ressurreição de Jesus' e 'A Grande Comissão'?", opcoes: ["Capítulo 28", "Capítulo 25", "Capítulo 26", "Capítulo 27"], resposta: "Capítulo 28" }
     ];
 
@@ -469,6 +428,14 @@
     const botaoInicio = document.getElementById("inicio");
     const botaoAnterior = document.getElementById("anterior");
     const botaoProxima = document.getElementById("proxima");
+
+    function voltarParaSite() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "../index.html";
+      }
+    }
 
     function confirmarRegistro(event) {
       event.preventDefault();
@@ -565,27 +532,32 @@
       atualizarPontuacao();
     }
 
-    function enviarResultadoPorEmail(dados) {
-      const emailDestino = "comumcongregacao@gmail.com";
-      const assunto = `Resultado do Quiz de Mateus - ${dados.nome}`;
-      const corpo = `A Paz de Deus!%0D%0A%0D%0ANovo resultado registrado no Quiz do Evangelho de Mateus:%0D%0A%0D%0ANome: ${dados.nome}%0D%0AE-mail do Irmão: ${dados.email}%0D%0APorcentagem: ${dados.porcentagem}%25%0D%0AAnálise: ${dados.nivel}%0D%0AAcertos: ${dados.certas} de ${dados.total}%0D%0AErros: ${dados.erradas}`;
+    function enviarAutomaticoFormspree(dados) {
+      const endpointFormspree = "https://formspree.io/f/mqpewwbg";
 
-      // Tenta enviar via EmailJS
-      emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
-        to_email: emailDestino,
-        from_name: dados.nome,
-        from_email: dados.email,
-        porcentagem: dados.porcentagem,
-        nivel: dados.nivel,
-        certas: dados.certas,
-        erradas: dados.erradas,
-        total: dados.total
-      }).then(() => {
-        document.getElementById("statusEmail").innerText = "✅ O resultado foi enviado com sucesso para comumcongregacao@gmail.com!";
-      }).catch((err) => {
-        // Backup: gera o link mailto directo caso não haja API configurada
-        const mailtoUrl = `mailto:${emailDestino}?subject=${assunto}&body=${corpo}`;
-        document.getElementById("statusEmail").innerHTML = `✅ <a href="${mailtoUrl}" target="_blank" style="color: var(--dourado-escuro);">Clique aqui para confirmar o envio do relatório de resultado por E-mail</a>`;
+      const dadosEnvio = {
+        name: dados.nome,
+        email: dados.email,
+        message: `Resultado do Quiz do Evangelho de Mateus:\nAluno: ${dados.nome}\nE-mail: ${dados.email}\nDestino: comumcongregacao@gmail.com\nPorcentagem: ${dados.porcentagem}%\nNível: ${dados.nivel}\nAcertos: ${dados.certas} de ${dados.total}\nErros: ${dados.erradas}`
+      };
+
+      fetch(endpointFormspree, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosEnvio)
+      })
+      .then(response => {
+        if (response.ok) {
+          document.getElementById("statusEnvio").innerText = "✅ Resultado enviado com sucesso para comumcongregacao@gmail.com!";
+        } else {
+          document.getElementById("statusEnvio").innerText = "⚠️ Houve um pequeno problema ao enviar o resultado. Verifique sua conexão.";
+        }
+      })
+      .catch(error => {
+        console.error("Erro ao enviar:", error);
       });
     }
 
@@ -607,7 +579,7 @@
         mensagem = "Bom trabalho! Você conhece grande parte do Evangelho de Mateus.";
       } else {
         nivel = "Excelente";
-        mensagem = "Excelente resultado! Você demonstrou domínio impressionante das epígrafes!";
+        mensagem = "Excelente resultado! Você demonstrou domínio impressionante!";
       }
 
       areaPergunta.classList.add("oculto");
@@ -616,18 +588,23 @@
       areaResultado.innerHTML = `
         <h2>Resultado final de ${usuario.nome}</h2>
         <div class="nota">${porcentagem}%</div>
-        <p><strong>Nível: ${nivel}</strong></p>
+        <p><strong>${nivel}</strong></p>
         <p class="mensagem-final">
           Você acertou <strong>${totalCertas}</strong> e errou
           <strong>${totalErradas}</strong> de ${perguntas.length} perguntas.<br>
           ${mensagem}
         </p>
-        <div id="statusEmail" class="status-email">A enviar relatório para a congregação...</div>
-        <br>
-        <button class="controle" id="novaTentativa">Nova tentativa</button>
+
+        <div id="statusEnvio" class="status-envio">Enviando resultado para comumcongregacao@gmail.com...</div>
+
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 25px;">
+          <button class="controle" id="novaTentativa">Nova tentativa</button>
+          <button class="controle secundario" onclick="voltarParaSite()">Voltar ao Site</button>
+        </div>
       `;
 
-      enviarResultadoPorEmail({
+      // Dispara o envio automático invisível
+      enviarAutomaticoFormspree({
         nome: usuario.nome,
         email: usuario.email,
         porcentagem: porcentagem,
