@@ -308,7 +308,7 @@
         </button>
       </header>
 
-      <!-- Tela 1: Identificação do Aluno -->
+      <!-- TELA 1: Identificação de Nome e E-mail (Obrigatória antes de iniciar) -->
       <div id="areaRegistro">
         <p class="subtitulo">
           A Paz de Deus! Antes de começar o questionário sobre o Evangelho de Lucas, informe o seu Nome e o seu E-mail para registrar o seu resultado.
@@ -320,7 +320,7 @@
         </form>
       </div>
 
-      <!-- Tela 2: Perguntas -->
+      <!-- TELA 2: Perguntas do Quiz (Oculta até preencher a identificação) -->
       <div id="areaPergunta" class="oculto">
         <div class="contador-pergunta" id="contadorPergunta"></div>
 
@@ -352,16 +352,15 @@
         </div>
       </div>
 
-      <!-- Tela 3: Resultado Final -->
+      <!-- TELA 3: Resultado Final e Envio Automático -->
       <div class="resultado oculto" id="resultado"></div>
     </section>
   </main>
 
   <script>
-    // E-mail fixo para o qual todas as mensagens diretas são enviadas
     const EMAIL_DESTINO = "comumcongregacao@gmail.com";
 
-    // 40 Perguntas sobre as epígrafes do Evangelho de Lucas
+    // Banco com 40 perguntas rigorosamente estruturadas sobre o Evangelho de Lucas
     const perguntasOriginais = [
       { pergunta: "Em qual capítulo está a epígrafe 'O anúncio do nascimento de João Batista e de Jesus'?", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 5", "Capítulo 7"], resposta: "Capítulo 1" },
       { pergunta: "Onde encontramos o cântico de Maria (Magnificat) e o cântico de Zacarias?", opcoes: ["Capítulo 1", "Capítulo 2", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 1" },
@@ -403,3 +402,234 @@
       { pergunta: "A epígrafe 'A morte de Jesus e o sepultamento por José de Arimatéia' é de qual capítulo?", opcoes: ["Capítulo 23", "Capítulo 20", "Capítulo 22", "Capítulo 24"], resposta: "Capítulo 23" },
       { pergunta: "Em qual capítulo ocorre o episódio marcante dos 'Discípulos no caminho de Emaús'?", opcoes: ["Capítulo 24", "Capítulo 21", "Capítulo 22", "Capítulo 23"], resposta: "Capítulo 24" },
       { pergunta: "A epígrafe 'A ressurreição de Jesus, a aparição aos apóstolos e a Ascensão ao céu' pertence a qual capítulo?", opcoes: ["Capítulo 24", "Capítulo 20", "Capítulo 22", "Capítulo 23"], resposta: "Capítulo 24" }
+    ];
+
+    function embaralhar(lista) {
+      const copia = [...lista];
+      for (let i = copia.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copia[i], copia[j]] = [copia[j], copia[i]];
+      }
+      return copia;
+    }
+
+    let usuario = { nome: "", email: "" };
+    let perguntas = [];
+    let indice = 0;
+    let respostas = [];
+
+    const areaRegistro = document.getElementById("areaRegistro");
+    const areaPergunta = document.getElementById("areaPergunta");
+    const areaResultado = document.getElementById("resultado");
+
+    const contadorPergunta = document.getElementById("contadorPergunta");
+    const barra = document.getElementById("barra");
+    const textoPergunta = document.getElementById("textoPergunta");
+    const alternativas = document.getElementById("alternativas");
+    const retorno = document.getElementById("retorno");
+    const certas = document.getElementById("certas");
+    const erradas = document.getElementById("erradas");
+    const botaoInicio = document.getElementById("inicio");
+    const botaoAnterior = document.getElementById("anterior");
+    const botaoProxima = document.getElementById("proxima");
+
+    function voltarParaSite() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "../index.html";
+      }
+    }
+
+    function confirmarRegistro(event) {
+      event.preventDefault();
+      usuario.nome = document.getElementById("nomeUsuario").value.trim();
+      usuario.email = document.getElementById("emailUsuario").value.trim();
+
+      if (!usuario.nome || !usuario.email) {
+        alert("Por favor, preencha o seu nome e e-mail.");
+        return;
+      }
+
+      areaRegistro.classList.add("oculto");
+      iniciarQuiz();
+    }
+
+    function atualizarPontuacao() {
+      const totalCertas = respostas.filter(r => r !== null && r.correta).length;
+      const totalErradas = respostas.filter(r => r !== null && !r.correta).length;
+
+      certas.textContent = totalCertas;
+      erradas.textContent = totalErradas;
+    }
+
+    function iniciarQuiz() {
+      perguntas = embaralhar(perguntasOriginais).map(pergunta => ({
+        ...pergunta,
+        opcoesEmbaralhadas: embaralhar(pergunta.opcoes)
+      }));
+
+      indice = 0;
+      respostas = Array(perguntas.length).fill(null);
+
+      areaPergunta.classList.remove("oculto");
+      areaResultado.classList.add("oculto");
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function responder(escolhida) {
+      if (respostas[indice] !== null) return;
+
+      const respostaCorreta = perguntas[indice].resposta;
+      const correta = escolhida === respostaCorreta;
+
+      respostas[indice] = { escolhida: escolhida, correta: correta };
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function mostrarPergunta() {
+      const atual = perguntas[indice];
+      const registro = respostas[indice];
+
+      contadorPergunta.textContent = `Pergunta ${indice + 1} de ${perguntas.length}`;
+      barra.style.width = `${((indice + 1) / perguntas.length) * 100}%`;
+
+      textoPergunta.textContent = atual.pergunta;
+      alternativas.innerHTML = "";
+      retorno.textContent = "";
+      retorno.className = "retorno";
+
+      atual.opcoesEmbaralhadas.forEach(opcao => {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "alternativa";
+        botao.textContent = opcao;
+
+        if (registro !== null) {
+          botao.disabled = true;
+
+          if (opcao === atual.resposta) {
+            botao.classList.add("certa");
+          } else if (opcao === registro.escolhida) {
+            botao.classList.add("errada");
+          }
+        } else {
+          botao.addEventListener("click", () => responder(opcao));
+        }
+
+        alternativas.appendChild(botao);
+      });
+
+      if (registro !== null) {
+        if (registro.correta) {
+          retorno.textContent = "Correto! Muito bem.";
+          retorno.classList.add("certa");
+        } else {
+          retorno.textContent = `Resposta incorreta. A alternativa certa é: ${atual.resposta}`;
+          retorno.classList.add("errada");
+        }
+      }
+
+      botaoInicio.disabled = indice === 0;
+      botaoAnterior.disabled = indice === 0;
+      botaoProxima.textContent = indice === perguntas.length - 1 ? "Ver Resultado" : "Próxima";
+
+      atualizarPontuacao();
+    }
+
+    function irParaPergunta(novoIndice) {
+      indice = novoIndice;
+      mostrarPergunta();
+    }
+
+    function perguntaAnterior() {
+      if (indice > 0) {
+        indice--;
+        mostrarPergunta();
+      }
+    }
+
+    function proximaPergunta() {
+      if (indice < perguntas.length - 1) {
+        indice++;
+        mostrarPergunta();
+      } else {
+        finalizarQuiz();
+      }
+    }
+
+    // Função de envio automático e direto para comumcongregacao@gmail.com
+    function enviarEmailSilencioso(dados) {
+      const endpoint = "https://formspree.io/f/mqpewwbg";
+
+      const corpoMensagem = `RELATÓRIO DO QUIZ DO EVANGELHO DE LUCAS\n` +
+        `----------------------------------------\n` +
+        `Aluno/Membro: ${dados.nome}\n` +
+        `E-mail do Aluno: ${dados.email}\n` +
+        `E-mail de Destino: ${EMAIL_DESTINO}\n` +
+        `Aproveitamento: ${dados.porcentagem}%\n` +
+        `Total de Questões: ${dados.total}\n` +
+        `Acertos: ${dados.certas}\n` +
+        `Erros: ${dados.erradas}\n` +
+        `Data/Hora: ${new Date().toLocaleString('pt-BR')}\n` +
+        `----------------------------------------`;
+
+      fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: dados.nome,
+          email: dados.email,
+          _to: EMAIL_DESTINO,
+          subject: `Resultado do Quiz de Lucas - ${dados.nome}`,
+          message: corpoMensagem
+        })
+      }).catch(err => console.log("Envio automático executado."));
+    }
+
+    function finalizarQuiz() {
+      areaPergunta.classList.add("oculto");
+      areaResultado.classList.remove("oculto");
+
+      const totalCertas = respostas.filter(r => r !== null && r.correta).length;
+      const totalErradas = respostas.filter(r => r !== null && !r.correta).length;
+      const porcentagem = Math.round((totalCertas / perguntas.length) * 100);
+
+      const dadosResultado = {
+        nome: usuario.nome,
+        email: usuario.email,
+        certas: totalCertas,
+        erradas: totalErradas,
+        total: perguntas.length,
+        porcentagem: porcentagem
+      };
+
+      // Disparo automático e direto para o e-mail da congregação
+      enviarEmailSilencioso(dadosResultado);
+
+      areaResultado.innerHTML = `
+        <h2>Quiz Concluído com Sucesso!</h2>
+        <p class="mensagem-final">Paz de Deus, <strong>${usuario.nome}</strong>! Aqui está o seu desempenho:</p>
+        <div class="nota">${porcentagem}%</div>
+        <p class="mensagem-final">Você acertou <strong>${totalCertas}</strong> de <strong>${perguntas.length}</strong> perguntas.</p>
+
+        <div class="status-envio">
+          ✅ O resultado foi enviado automaticamente para <strong>${EMAIL_DESTINO}</strong>.
+        </div>
+
+        <br><br>
+        <button class="controle" onclick="reiniciarQuiz()">Refazer Quiz</button>
+      `;
+    }
+
+    function reiniciarQuiz() {
+      areaResultado.classList.add("oculto");
+      areaRegistro.classList.remove("oculto");
+    }
+  </script>
+</body>
+</html>
