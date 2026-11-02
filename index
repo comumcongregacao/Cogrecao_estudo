@@ -126,6 +126,7 @@
             text-decoration: none;
             font-weight: bold;
             transition: all 0.2s ease;
+            box-sizing: border-box;
         }
 
         .livro-link-btn:hover {
@@ -173,7 +174,7 @@
     <!-- Página 2: Quem Nós Somos -->
     <div id="pagina-quem-somos" class="conteudo-pagina">
         <h2>Quem Nós Somos</h2>
-        <p>A Comum Congregação em Jesus Cristo nasceu do sincero desejo de servir a Deus com simplicidade, ordem e zelo pela doutrina revelada nas Sagradas Escrituras. Sob a presidência do Ancião Éber Silos, nossa casa de oração mantém firme em cultivar e conservar a cultura de fé, comunhão e amor ao próximo.</p>
+        <p>A Comum Congregação em Jesus Cristo nasceu do sincero desejo de servir a Deus com simplicidade, ordem e zelo pela doutrina revelada nas Sagradas Escrituras. Nossa casa de oração mantém firme em cultivar e conservar a cultura de fé, comunhão e amor ao próximo.</p>
         
         <p>Reconhecemos que a obra não é feita por mãos nem por vanglória humana, mas pelo poder do Espírito Santo que habita em cada coração regenerado. Nossos irmãos que servem com humildade no púlpito, sendo reconhecidos com amor como cooperadores em Jesus Cristo, dedicando-se à exortação, ao aconselhamento e à doutrina.</p>
 
@@ -223,42 +224,50 @@
         </div>
     </div>
 
-    <!-- Página 4: Nossas Aulas Bíblicas & Quiz (Links exatos com letras minúsculas da pasta aulas) -->
+    <!-- Página 4: Nossas Aulas Bíblicas & Quiz (Em ordem bíblica do Novo Testamento) -->
     <div id="pagina-aulas" class="conteudo-pagina">
         <h2>Nossas Aulas Bíblicas & Quiz do Novo Testamento</h2>
-        <p>Selecione abaixo o livro do Novo Testamento para abrir o seu respectivo questionário de estudos da pasta de aulas:</p>
+        <p>Selecione abaixo o livro do Novo Testamento para abrir o seu respectivo questionário de estudos:</p>
 
         <div class="quiz-container">
-            <h3>Livros do Novo Testamento (Pasta Aulas)</h3>
+            <h3>Livros do Novo Testamento (Em Ordem Bíblica)</h3>
             <div class="lista-livros">
-                <a href="aulas/Lucas.html" class="livro-link-btn">Evangelho de Marcos</a>
-                <a href="aulas/marcos.html" class="livro-link-btn">Evangelho de Marcos</a>
-                <a href="aulas/mateus.html" class="livro-link-btn">Evangelho de Mateus</a>
-                <a href="aulas/joao.html" class="livro-link-btn">Evangelho de João</a>
-                <a href="aulas/atos.html" class="livro-link-btn">Atos dos Apóstolos</a>
-                <a href="aulas/romanos.html" class="livro-link-btn">Epístola aos Romanos</a>
-                <a href="aulas/primeiro corintios.html" class="livro-link-btn">1º Coríntios</a>
-                <a href="aulas/segundo corintios.html" class="livro-link-btn">2º Coríntios</a>
-                <a href="aulas/galatas.html" class="livro-link-btn">Gálatas</a>
-                <a href="aulas/efesios.html" class="livro-link-btn">Efésios</a>
-                <a href="aulas/felipenses.html" class="livro-link-btn">Filipenses</a>
-                <a href="aulas/colossenses.html" class="livro-link-btn">Colossenses</a>
-                <a href="aulas/tessalonisense.html" class="livro-link-btn">Tessalonicenses</a>
-                <a href="aulas/tessalonisense1.html" class="livro-link-btn">1 Tessalonicenses</a>
-                <a href="aulas/tessalonisense2.html" class="livro-link-btn">2 Tessalonicenses</a>
-                <a href="aulas/timoteo1.html" class="livro-link-btn">1º Timóteo</a>
-                <a href="aulas/timoteo2.html" class="livro-link-btn">2º Timóteo</a>
-                <a href="aulas/tito.html" class="livro-link-btn">Tito</a>
-                <a href="aulas/filemom.html" class="livro-link-btn">Filemom</a>
-                <a href="aulas/hebreus.html" class="livro-link-btn">Hebreus</a>
-                <a href="aulas/tiago.html" class="livro-link-btn">Tiago</a>
-                <a href="aulas/pedro1.html" class="livro-link-btn">1º Pedro</a>
-                <a href="aulas/pedro2.html" class="livro-link-btn">2º Pedro</a>
-                <a href="aulas/joao1.html" class="livro-link-btn">1º João</a>
-                <a href="aulas/joao2.html" class="livro-link-btn">2º João</a>
-                <a href="aulas/joao3.html" class="livro-link-btn">3º João</a>
-                <a href="aulas/judas.html" class="livro-link-btn">Judas</a>
-                <a href="aulas/apocalipse.html" class="livro-link-btn">Apocalipse</a>
+                <!-- Evangelhos -->
+                <a href="aulas/mateus.html" class="livro-link-btn">1. Evangelho de Mateus</a>
+                <a href="aulas/marcos.html" class="livro-link-btn">2. Evangelho de Marcos</a>
+                <a href="aulas/lucas.html" class="livro-link-btn">3. Evangelho de Lucas</a>
+                <a href="aulas/joao.html" class="livro-link-btn">4. Evangelho de João</a>
+                
+                <!-- Histórico -->
+                <a href="aulas/atos.html" class="livro-link-btn">5. Atos dos Apóstolos</a>
+                
+                <!-- Epístolas Paulinas -->
+                <a href="aulas/romanos.html" class="livro-link-btn">6. Romanos</a>
+                <a href="aulas/primeiro corintios.html" class="livro-link-btn">7. 1º Coríntios</a>
+                <a href="aulas/segundo corintios.html" class="livro-link-btn">8. 2º Coríntios</a>
+                <a href="aulas/galatas.html" class="livro-link-btn">9. Gálatas</a>
+                <a href="aulas/efesios.html" class="livro-link-btn">10. Efésios</a>
+                <a href="aulas/filipenses.html" class="livro-link-btn">11. Filipenses</a>
+                <a href="aulas/colossenses.html" class="livro-link-btn">12. Colossenses</a>
+                <a href="aulas/tessalonisense1.html" class="livro-link-btn">13. 1º Tessalonicenses</a>
+                <a href="aulas/tessalonisense2.html" class="livro-link-btn">14. 2º Tessalonicenses</a>
+                <a href="aulas/timoteo1.html" class="livro-link-btn">15. 1º Timóteo</a>
+                <a href="aulas/timoteo2.html" class="livro-link-btn">16. 2º Timóteo</a>
+                <a href="aulas/tito.html" class="livro-link-btn">17. Tito</a>
+                <a href="aulas/filemom.html" class="livro-link-btn">18. Filemom</a>
+                
+                <!-- Epístolas Gerais -->
+                <a href="aulas/hebreus.html" class="livro-link-btn">19. Hebreus</a>
+                <a href="aulas/tiago.html" class="livro-link-btn">20. Tiago</a>
+                <a href="aulas/pedro1.html" class="livro-link-btn">21. 1º Pedro</a>
+                <a href="aulas/pedro2.html" class="livro-link-btn">22. 2º Pedro</a>
+                <a href="aulas/joao1.html" class="livro-link-btn">23. 1º João</a>
+                <a href="aulas/joao2.html" class="livro-link-btn">24. 2º João</a>
+                <a href="aulas/joao3.html" class="livro-link-btn">25. 3º João</a>
+                <a href="aulas/judas.html" class="livro-link-btn">26. Judas</a>
+                
+                <!-- Revelação / Profecia -->
+                <a href="aulas/apocalipse.html" class="livro-link-btn">27. Apocalipse</a>
             </div>
         </div>
     </div>
@@ -279,7 +288,7 @@
     </div>
 
     <footer>
-        <p>&copy; Comum Congregação em Jesus Cristo. Presidência: Ancião Éber Silos.</p>
+        <p>&copy; Comum Congregação em Jesus Cristo.</p>
         <p>A Paz de Deus no grato amor de Jesus Cristo.</p>
     </footer>
 
