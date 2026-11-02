@@ -17,9 +17,7 @@
       --vermelho: #b73535;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -33,9 +31,7 @@
       font-family: Arial, Helvetica, sans-serif;
     }
 
-    .app {
-      width: min(760px, 100%);
-    }
+    .app { width: min(760px, 100%); }
 
     .cartao {
       background: var(--cartao);
@@ -135,9 +131,7 @@
       background: #eee3c5;
     }
 
-    .alternativa:disabled {
-      cursor: default;
-    }
+    .alternativa:disabled { cursor: default; }
 
     .alternativa.certa {
       background: #e1f2e6;
@@ -160,13 +154,8 @@
       line-height: 1.5;
     }
 
-    .retorno.certa {
-      color: var(--verde);
-    }
-
-    .retorno.errada {
-      color: var(--vermelho);
-    }
+    .retorno.certa { color: var(--verde); }
+    .retorno.errada { color: var(--vermelho); }
 
     .painel {
       display: flex;
@@ -184,9 +173,7 @@
       font-size: 14px;
     }
 
-    .pontuacao strong {
-      color: var(--texto);
-    }
+    .pontuacao strong { color: var(--texto); }
 
     .botoes {
       display: flex;
@@ -204,9 +191,7 @@
       cursor: pointer;
     }
 
-    button.controle:hover:not(:disabled) {
-      background: var(--dourado-escuro);
-    }
+    button.controle:hover:not(:disabled) { background: var(--dourado-escuro); }
 
     button.controle.secundario {
       background: #eee9dc;
@@ -216,15 +201,12 @@
     button.controle.voltar-site {
       background: #333;
       color: #fff;
-      text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
 
-    button.controle.voltar-site:hover {
-      background: #555;
-    }
+    button.controle.voltar-site:hover { background: #555; }
 
     button.controle:disabled {
       opacity: 0.45;
@@ -255,45 +237,15 @@
       line-height: 1.6;
     }
 
-    .status-envio {
-      margin-top: 20px;
-      padding: 12px;
-      border-radius: 10px;
-      background: #e1f2e6;
-      border: 1px solid var(--verde);
-      color: #155a30;
-      font-weight: bold;
-      font-size: 15px;
-    }
-
-    .oculto {
-      display: none;
-    }
+    .oculto { display: none; }
 
     @media (max-width: 560px) {
-      .cartao {
-        padding: 23px 18px;
-      }
-
-      .alternativas {
-        grid-template-columns: 1fr;
-      }
-
-      .painel {
-        align-items: stretch;
-      }
-
-      .pontuacao {
-        width: 100%;
-      }
-
-      .botoes {
-        width: 100%;
-      }
-
-      .botoes button {
-        flex: 1;
-      }
+      .cartao { padding: 23px 18px; }
+      .alternativas { grid-template-columns: 1fr; }
+      .painel { align-items: stretch; }
+      .pontuacao { width: 100%; }
+      .botoes { width: 100%; }
+      .botoes button { flex: 1; }
     }
   </style>
 </head>
@@ -308,7 +260,7 @@
         </button>
       </header>
 
-      <!-- TELA 1: Identificação de Nome e E-mail (Obrigatória antes de iniciar) -->
+      <!-- TELA 1: Identificação -->
       <div id="areaRegistro">
         <p class="subtitulo">
           A Paz de Deus! Antes de começar o questionário sobre o Evangelho de Lucas, informe o seu Nome e o seu E-mail para registrar o seu resultado.
@@ -320,7 +272,7 @@
         </form>
       </div>
 
-      <!-- TELA 2: Perguntas do Quiz (Oculta até preencher a identificação) -->
+      <!-- TELA 2: Perguntas -->
       <div id="areaPergunta" class="oculto">
         <div class="contador-pergunta" id="contadorPergunta"></div>
 
@@ -339,28 +291,33 @@
           </div>
 
           <div class="botoes">
-            <button class="controle secundario" id="inicio" onclick="irParaPergunta(0)">
-              Primeira
-            </button>
-            <button class="controle secundario" id="anterior" onclick="perguntaAnterior()">
-              Anterior
-            </button>
-            <button class="controle" id="proxima" onclick="proximaPergunta()">
-              Próxima
-            </button>
+            <button class="controle secundario" id="inicio" onclick="irParaPergunta(0)">Primeira</button>
+            <button class="controle secundario" id="anterior" onclick="perguntaAnterior()">Anterior</button>
+            <button class="controle" id="proxima" onclick="proximaPergunta()">Próxima</button>
           </div>
         </div>
       </div>
 
-      <!-- TELA 3: Resultado Final e Envio Automático -->
+      <!-- TELA 3: Resultado -->
       <div class="resultado oculto" id="resultado"></div>
     </section>
   </main>
 
   <script>
-    const EMAIL_DESTINO = "comumcongregacao@gmail.com";
+    /* ============================================================
+       CONFIGURAÇÃO DO ENVIO
+       ------------------------------------------------------------
+       O endpoint abaixo é um formulário do Formspree.
+       O e-mail que RECEBE o relatório é o e-mail da CONTA Formspree
+       (não é definido no código). Portanto:
+         1. Crie a conta no Formspree com o e-mail comumcongregacao@gmail.com
+         2. Crie um formulário e copie o ID
+         3. Substitua "mqpewwbg" pelo ID do seu formulário
+       ============================================================ */
+    const ENDPOINT_FORMSPREE = "https://formspree.io/f/mqpewwbg";
+    const EMAIL_DESTINO = "comumcongregacao@gmail.com"; // apenas informativo no relatório
 
-    // Banco com 40 perguntas rigorosamente estruturadas sobre o Evangelho de Lucas
+    // Banco com 40 perguntas sobre o Evangelho de Lucas
     const perguntasOriginais = [
       { pergunta: "Em qual capítulo está a epígrafe 'O anúncio do nascimento de João Batista e de Jesus'?", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 5", "Capítulo 7"], resposta: "Capítulo 1" },
       { pergunta: "Onde encontramos o cântico de Maria (Magnificat) e o cântico de Zacarias?", opcoes: ["Capítulo 1", "Capítulo 2", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 1" },
@@ -417,6 +374,7 @@
     let perguntas = [];
     let indice = 0;
     let respostas = [];
+    let envioFeito = false;
 
     const areaRegistro = document.getElementById("areaRegistro");
     const areaPergunta = document.getElementById("areaPergunta");
@@ -458,7 +416,6 @@
     function atualizarPontuacao() {
       const totalCertas = respostas.filter(r => r !== null && r.correta).length;
       const totalErradas = respostas.filter(r => r !== null && !r.correta).length;
-
       certas.textContent = totalCertas;
       erradas.textContent = totalErradas;
     }
@@ -471,6 +428,7 @@
 
       indice = 0;
       respostas = Array(perguntas.length).fill(null);
+      envioFeito = false;
 
       areaPergunta.classList.remove("oculto");
       areaResultado.classList.add("oculto");
@@ -511,7 +469,6 @@
 
         if (registro !== null) {
           botao.disabled = true;
-
           if (opcao === atual.resposta) {
             botao.classList.add("certa");
           } else if (opcao === registro.escolhida) {
@@ -562,33 +519,60 @@
       }
     }
 
-    // Função de envio automático e direto para comumcongregacao@gmail.com
-    function enviarEmailSilencioso(dados) {
-      const endpoint = "https://formspree.io/f/mqpewwbg";
+    /* ============================================================
+       ENVIO SILENCIOSO DO RELATÓRIO
+       Nenhuma mensagem, alerta ou log é mostrado ao jogador.
+       ============================================================ */
+    function montarRelatorio(dados) {
+      const detalhes = perguntas.map((p, i) => {
+        const r = respostas[i];
+        const situacao = r === null ? "NÃO RESPONDIDA" : (r.correta ? "ACERTOU" : "ERROU");
+        return `${i + 1}) ${p.pergunta}\n` +
+               `   Marcou:  ${r ? r.escolhida : "—"}\n` +
+               `   Correta: ${p.resposta}\n` +
+               `   Situação: ${situacao}`;
+      }).join("\n\n");
 
-      const corpoMensagem = `RELATÓRIO DO QUIZ DO EVANGELHO DE LUCAS\n` +
-        `----------------------------------------\n` +
-        `Aluno/Membro: ${dados.nome}\n` +
-        `E-mail do Aluno: ${dados.email}\n` +
-        `E-mail de Destino: ${EMAIL_DESTINO}\n` +
-        `Aproveitamento: ${dados.porcentagem}%\n` +
-        `Total de Questões: ${dados.total}\n` +
-        `Acertos: ${dados.certas}\n` +
-        `Erros: ${dados.erradas}\n` +
-        `Data/Hora: ${new Date().toLocaleString('pt-BR')}\n` +
-        `----------------------------------------`;
+      return `RELATÓRIO DO QUIZ DO EVANGELHO DE LUCAS\n` +
+             `========================================\n` +
+             `Aluno/Membro: ${dados.nome}\n` +
+             `E-mail do Aluno: ${dados.email}\n` +
+             `Data/Hora: ${dados.dataHora}\n` +
+             `----------------------------------------\n` +
+             `Aproveitamento: ${dados.porcentagem}%\n` +
+             `Total de Questões: ${dados.total}\n` +
+             `Acertos: ${dados.certas}\n` +
+             `Erros: ${dados.erradas}\n` +
+             `Sem resposta: ${dados.semResposta}\n` +
+             `========================================\n` +
+             `DETALHAMENTO DAS RESPOSTAS\n\n` +
+             detalhes;
+    }
 
-      fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: dados.nome,
-          email: dados.email,
-          _to: EMAIL_DESTINO,
-          subject: `Resultado do Quiz de Lucas - ${dados.nome}`,
-          message: corpoMensagem
-        })
-      }).catch(err => console.log("Envio automático executado."));
+    function enviarRelatorio(dados) {
+      const corpoMensagem = montarRelatorio(dados);
+
+      const payload = {
+        name: dados.nome,
+        email: dados.email,
+        _subject: `Resultado do Quiz de Lucas - ${dados.nome}`,
+        message: corpoMensagem
+      };
+
+      // Envio em segundo plano. Se falhar, nada é exibido ao jogador.
+      try {
+        fetch(ENDPOINT_FORMSPREE, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(payload),
+          keepalive: true // garante o envio mesmo se o usuário sair da página
+        }).catch(() => { /* silencioso */ });
+      } catch (e) {
+        /* silencioso */
+      }
     }
 
     function finalizarQuiz() {
@@ -597,6 +581,8 @@
 
       const totalCertas = respostas.filter(r => r !== null && r.correta).length;
       const totalErradas = respostas.filter(r => r !== null && !r.correta).length;
+      const totalRespondidas = respostas.filter(r => r !== null).length;
+      const semResposta = perguntas.length - totalRespondidas;
       const porcentagem = Math.round((totalCertas / perguntas.length) * 100);
 
       const dadosResultado = {
@@ -604,23 +590,24 @@
         email: usuario.email,
         certas: totalCertas,
         erradas: totalErradas,
+        semResposta: semResposta,
         total: perguntas.length,
-        porcentagem: porcentagem
+        porcentagem: porcentagem,
+        dataHora: new Date().toLocaleString('pt-BR')
       };
 
-      // Disparo automático e direto para o e-mail da congregação
-      enviarEmailSilencioso(dadosResultado);
+      // Envio automático e invisível (uma única vez por tentativa)
+      if (!envioFeito) {
+        envioFeito = true;
+        enviarRelatorio(dadosResultado);
+      }
 
+      // Tela vista pelo jogador — sem qualquer menção ao envio
       areaResultado.innerHTML = `
-        <h2>Quiz Concluído com Sucesso!</h2>
+        <h2>Quiz Concluído!</h2>
         <p class="mensagem-final">Paz de Deus, <strong>${usuario.nome}</strong>! Aqui está o seu desempenho:</p>
         <div class="nota">${porcentagem}%</div>
         <p class="mensagem-final">Você acertou <strong>${totalCertas}</strong> de <strong>${perguntas.length}</strong> perguntas.</p>
-
-        <div class="status-envio">
-          ✅ O resultado foi enviado automaticamente para <strong>${EMAIL_DESTINO}</strong>.
-        </div>
-
         <br><br>
         <button class="controle" onclick="reiniciarQuiz()">Refazer Quiz</button>
       `;
@@ -629,6 +616,7 @@
     function reiniciarQuiz() {
       areaResultado.classList.add("oculto");
       areaRegistro.classList.remove("oculto");
+      envioFeito = false;
     }
   </script>
 </body>
