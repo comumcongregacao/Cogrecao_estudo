@@ -1,4 +1,4 @@
-DOCTYPE html>
+!<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -602,7 +602,6 @@ DOCTYPE html>
         message: corpoMensagem
       };
 
-      // Envio em segundo plano. Se falhar, nada é exibido ao jogador.
       try {
         fetch(ENDPOINT_FORMSPREE, {
           method: "POST",
@@ -611,7 +610,7 @@ DOCTYPE html>
             "Accept": "application/json"
           },
           body: JSON.stringify(payload),
-          keepalive: true // garante o envio mesmo se o usuário sair da página
+          keepalive: true
         }).catch(() => { /* silencioso */ });
       } catch (e) {
         /* silencioso */
@@ -654,7 +653,6 @@ DOCTYPE html>
         dataHora: new Date().toLocaleString('pt-BR')
       };
 
-      // Envio automático e invisível (uma única vez por tentativa)
       if (!envioFeito) {
         envioFeito = true;
         enviarRelatorio(dadosResultado);
@@ -663,7 +661,6 @@ DOCTYPE html>
       areaPergunta.classList.add("oculto");
       areaResultado.classList.remove("oculto");
 
-      // Tela vista pelo jogador — sem qualquer menção ao envio
       areaResultado.innerHTML = `
         <h2>Resultado final</h2>
         <div class="nota">${porcentagem}%</div>
@@ -689,4 +686,4 @@ DOCTYPE html>
     }
   </script>
 </body>
-</html><
+</html>
