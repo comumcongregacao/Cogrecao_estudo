@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz da Primeira Epístola de João</title>
 
+  <!-- Biblioteca EmailJS para envio automático de e-mails -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
   <style>
     :root {
       --dourado: #c9a64f;
@@ -65,6 +68,21 @@
       color: var(--suave);
       line-height: 1.5;
       margin: 0 0 24px;
+    }
+
+    .campo-identificacao {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .campo-identificacao input {
+      padding: 14px;
+      border: 1px solid #e7dfca;
+      border-radius: 10px;
+      font-size: 16px;
+      background: #fdfbf7;
     }
 
     .contador-pergunta {
@@ -240,6 +258,12 @@
       line-height: 1.6;
     }
 
+    .status-email {
+      margin-top: 15px;
+      font-weight: bold;
+      color: var(--verde);
+    }
+
     .oculto {
       display: none;
     }
@@ -282,12 +306,20 @@
         </button>
       </header>
 
-      <p class="subtitulo">
-        Responda às 20 perguntas sobre os 5 capítulos e epígrafes da Primeira Epístola de João (João Ferreira de Almeida).
-        As perguntas e alternativas são embaralhadas a cada tentativa.
-      </p>
+      <!-- Tela 1: Identificação de Nome e E-mail -->
+      <div id="areaRegistro">
+        <p class="subtitulo">
+          A Paz de Deus! Antes de começar o questionário sobre a Primeira Epístola de João, informe o seu Nome e o seu E-mail para registrar o seu resultado.
+        </p>
+        <form id="formRegistro" class="campo-identificacao" onsubmit="confirmarRegistro(event)">
+          <input type="text" id="nomeUsuario" placeholder="Seu Nome Completo" required>
+          <input type="email" id="emailUsuario" placeholder="Seu E-mail" required>
+          <button type="submit" class="controle">Iniciar Quiz</button>
+        </form>
+      </div>
 
-      <div id="areaPergunta">
+      <!-- Tela 2: Pergunta do Quiz -->
+      <div id="areaPergunta" class="oculto">
         <div class="contador-pergunta" id="contadorPergunta"></div>
 
         <div class="barra-fundo">
@@ -318,11 +350,17 @@
         </div>
       </div>
 
+      <!-- Tela 3: Resultado e Envio por E-mail -->
       <div class="resultado oculto" id="resultado"></div>
     </section>
   </main>
 
   <script>
+    // Inicializar EmailJS (Substitua "YOUR_PUBLIC_KEY" caso use uma conta própria no emailjs.com)
+    (function() {
+        emailjs.init("YOUR_PUBLIC_KEY"); 
+    })();
+
     // 20 perguntas baseadas nos 5 capítulos e epígrafes de 1 João (João Ferreira de Almeida)
     const perguntasOriginais = [
       // Capítulo 1
@@ -352,222 +390,4 @@
 
       // Capítulo 5
       { pergunta: "A afirmação de que 'esta é a vitória que vence o mundo, a nossa fé' encontra-se no:", opcoes: ["Capítulo 5", "Capítulo 1", "Capítulo 2", "Capítulo 4"], resposta: "Capítulo 5" },
-      { pergunta: "A passagem que trata dos testemunhos no céu e na terra, e do testemunho que Deus dá de Seu Filho, pertence ao:", opcoes: ["Capítulo 5", "Capítulo 2", "Capítulo 3", "Capítulo 4"], resposta: "Capítulo 5" },
-      { pergunta: "A certeza da vida eterna para os que crêem no Nome do Filho de Deus, a confiança nas orações segundo a Sua vontade e a exortação final 'Filhinhos, guardai-vos dos ídolos' estão no:", opcoes: ["Capítulo 5", "Capítulo 1", "Capítulo 3", "Capítulo 4"], resposta: "Capítulo 5" }
-    ];
-
-    function embaralhar(lista) {
-      const copia = [...lista];
-      for (let i = copia.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [copia[i], copia[j]] = [copia[j], copia[i]];
-      }
-      return copia;
-    }
-
-    let perguntas = [];
-    let indice = 0;
-    let respostas = [];
-
-    const contadorPergunta = document.getElementById("contadorPergunta");
-    const barra = document.getElementById("barra");
-    const textoPergunta = document.getElementById("textoPergunta");
-    const alternativas = document.getElementById("alternativas");
-    const retorno = document.getElementById("retorno");
-    const certas = document.getElementById("certas");
-    const erradas = document.getElementById("erradas");
-    const botaoInicio = document.getElementById("inicio");
-    const botaoAnterior = document.getElementById("anterior");
-    const botaoProxima = document.getElementById("proxima");
-    const areaPergunta = document.getElementById("areaPergunta");
-    const areaResultado = document.getElementById("resultado");
-
-    function voltarParaSite() {
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.location.href = "/";
-      }
-    }
-
-    function atualizarPontuacao() {
-      const totalCertas = respostas.filter(
-        resposta => resposta !== null && resposta.correta
-      ).length;
-
-      const totalErradas = respostas.filter(
-        resposta => resposta !== null && !resposta.correta
-      ).length;
-
-      certas.textContent = totalCertas;
-      erradas.textContent = totalErradas;
-    }
-
-    function iniciarQuiz() {
-      perguntas = embaralhar(perguntasOriginais).map(pergunta => ({
-        ...pergunta,
-        opcoesEmbaralhadas: embaralhar(pergunta.opcoes)
-      }));
-
-      indice = 0;
-      respostas = Array(perguntas.length).fill(null);
-
-      areaPergunta.classList.remove("oculto");
-      areaResultado.classList.add("oculto");
-
-      atualizarPontuacao();
-      mostrarPergunta();
-    }
-
-    function responder(escolhida) {
-      if (respostas[indice] !== null) {
-        return;
-      }
-
-      const respostaCorreta = perguntas[indice].resposta;
-      const correta = escolhida === respostaCorreta;
-
-      respostas[indice] = {
-        escolhida: escolhida,
-        correta: correta
-      };
-
-      atualizarPontuacao();
-      mostrarPergunta();
-    }
-
-    function mostrarPergunta() {
-      const atual = perguntas[indice];
-      const registro = respostas[indice];
-
-      contadorPergunta.textContent =
-        `Pergunta ${indice + 1} de ${perguntas.length}`;
-
-      barra.style.width =
-        `${((indice + 1) / perguntas.length) * 100}%`;
-
-      textoPergunta.textContent = atual.pergunta;
-      alternativas.innerHTML = "";
-      retorno.textContent = "";
-      retorno.className = "retorno";
-
-      atual.opcoesEmbaralhadas.forEach(opcao => {
-        const botao = document.createElement("button");
-        botao.type = "button";
-        botao.className = "alternativa";
-        botao.textContent = opcao;
-
-        if (registro !== null) {
-          botao.disabled = true;
-
-          if (opcao === atual.resposta) {
-            botao.classList.add("certa");
-          } else if (opcao === registro.escolhida) {
-            botao.classList.add("errada");
-          }
-        } else {
-          botao.addEventListener("click", () => responder(opcao));
-        }
-
-        alternativas.appendChild(botao);
-      });
-
-      if (registro !== null) {
-        if (registro.correta) {
-          retorno.textContent = "Correto! Muito bem.";
-          retorno.classList.add("certa");
-        } else {
-          retorno.textContent =
-            `Resposta incorreta. A alternativa certa é: ${atual.resposta}`;
-          retorno.classList.add("errada");
-        }
-      }
-
-      botaoInicio.disabled = indice === 0;
-      botaoAnterior.disabled = indice === 0;
-
-      botaoProxima.textContent =
-        indice === perguntas.length - 1 ? "Ver resultado" : "Próxima";
-
-      atualizarPontuacao();
-    }
-
-    function mostrarResultado() {
-      const totalCertas = respostas.filter(
-        resposta => resposta !== null && resposta.correta
-      ).length;
-
-      const totalErradas = respostas.filter(
-        resposta => resposta !== null && !resposta.correta
-      ).length;
-
-      const porcentagem = Math.round(
-        (totalCertas / perguntas.length) * 100
-      );
-
-      let nivel;
-      let mensagem;
-
-      if (porcentagem < 25) {
-        nivel = "Mal";
-        mensagem = "Continue estudando a Primeira Epístola de João e tente novamente.";
-      } else if (porcentagem < 50) {
-        nivel = "Médio";
-        mensagem = "Você está avançando. Revise os 5 capítulos e tente novamente.";
-      } else if (porcentagem < 75) {
-        nivel = "Bom";
-        mensagem = "Bom trabalho! Você conhece grande parte da Primeira Epístola de João.";
-      } else {
-        nivel = "Excelente";
-        mensagem = "Excelente resultado! Você demonstrou domínio impressionante das epígrafes!";
-      }
-
-      areaPergunta.classList.add("oculto");
-      areaResultado.classList.remove("oculto");
-
-      areaResultado.innerHTML = `
-        <h2>Resultado final</h2>
-        <div class="nota">${porcentagem}%</div>
-        <p><strong>${nivel}</strong></p>
-        <p class="mensagem-final">
-          Você acertou <strong>${totalCertas}</strong> e errou
-          <strong>${totalErradas}</strong> de ${perguntas.length} perguntas.<br>
-          ${mensagem}
-        </p>
-
-        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px;">
-          <button class="controle" id="novaTentativa">Nova tentativa</button>
-          <button class="controle secundario" onclick="voltarParaSite()">Voltar ao Site</button>
-        </div>
-      `;
-
-      document
-        .getElementById("novaTentativa")
-        .addEventListener("click", iniciarQuiz);
-    }
-
-    botaoInicio.addEventListener("click", () => {
-      indice = 0;
-      mostrarPergunta();
-    });
-
-    botaoAnterior.addEventListener("click", () => {
-      if (indice > 0) {
-        indice--;
-        mostrarPergunta();
-      }
-    });
-
-    botaoProxima.addEventListener("click", () => {
-      if (indice < perguntas.length - 1) {
-        indice++;
-        mostrarPergunta();
-      } else {
-        mostrarResultado();
-      }
-    });
-
-    iniciarQuiz();
-  </script>
-</body>
-</html>
+      { pergunta: "A passagem que trata dos
