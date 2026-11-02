@@ -268,4 +268,473 @@
 
     @media (max-width: 560px) {
       .cartao {
-        padding:
+        padding: 23px 18px;
+      }
+
+      .alternativas {
+        grid-template-columns: 1fr;
+      }
+
+      .painel {
+        align-items: stretch;
+      }
+
+      .pontuacao {
+        width: 100%;
+      }
+
+      .botoes {
+        width: 100%;
+      }
+
+      .botoes button {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <section class="cartao">
+      <header>
+        <h1>Quiz do Evangelho de Marcos</h1>
+        <button class="controle voltar-site" onclick="voltarParaSite()">
+          ⬅ Voltar ao Site
+        </button>
+      </header>
+
+      <!-- Tela 1: Identificação de Nome e E-mail -->
+      <div id="areaRegistro">
+        <p class="subtitulo">
+          A Paz de Deus! Antes de começar o questionário sobre o Evangelho de Marcos, informe o seu Nome e o seu E-mail para registrar o seu resultado.
+        </p>
+        <form id="formRegistro" class="campo-identificacao" onsubmit="confirmarRegistro(event)">
+          <input type="text" id="nomeUsuario" placeholder="Seu Nome Completo" required>
+          <input type="email" id="emailUsuario" placeholder="Seu E-mail" required>
+          <button type="submit" class="controle">Iniciar Quiz</button>
+        </form>
+      </div>
+
+      <!-- Tela 2: Pergunta do Quiz -->
+      <div id="areaPergunta" class="oculto">
+        <div class="contador-pergunta" id="contadorPergunta"></div>
+
+        <div class="barra-fundo">
+          <div class="barra" id="barra"></div>
+        </div>
+
+        <h2 class="pergunta" id="textoPergunta"></h2>
+        <div class="alternativas" id="alternativas"></div>
+        <p class="retorno" id="retorno" aria-live="polite"></p>
+
+        <div class="painel">
+          <div class="pontuacao">
+            <span>✅ Certas: <strong id="certas">0</strong></span>
+            <span>❌ Erradas: <strong id="erradas">0</strong></span>
+          </div>
+
+          <div class="botoes">
+            <button class="controle secundario" id="inicio">
+              Primeira pergunta
+            </button>
+            <button class="controle secundario" id="anterior">
+              Anterior
+            </button>
+            <button class="controle" id="proxima">
+              Próxima
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tela 3: Resultado e Envio Automático -->
+      <div class="resultado oculto" id="resultado"></div>
+    </section>
+  </main>
+
+  <script>
+    // Lista com 100 perguntas baseadas em todas as epígrafes de Marcos 1-16
+    const perguntasOriginais = [
+      // Capitulo 1
+      { pergunta: "Em qual capítulo está o epígrafe 'João Batista'?", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 5", "Capítulo 8"], resposta: "Capítulo 1" },
+      { pergunta: "O epígrafe 'O batismo e a tentação de nosso Senhor Jesus Cristo' pertence a qual capítulo?", opcoes: ["Capítulo 1", "Capítulo 2", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 1" },
+      { pergunta: "Em qual capítulo encontramos o epígrafe 'Nosso Senhor Jesus Cristo começa a pregar na Galileia'?", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 7", "Capítulo 9"], resposta: "Capítulo 1" },
+      { pergunta: "Onde encontramos o epígrafe 'A vocação dos primeiros discípulos'?", opcoes: ["Capítulo 1", "Capítulo 2", "Capítulo 4", "Capítulo 5"], resposta: "Capítulo 1" },
+      { pergunta: "Em qual capítulo fica o epígrafe 'A cura de um endemoninhado em Cafarnaum'?", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 8", "Capítulo 10"], resposta: "Capítulo 1" },
+      { pergunta: "O epígrafe 'A cura da sogra de Pedro e de outros enfermos' está localizado em qual capítulo?", opcoes: ["Capítulo 1", "Capítulo 5", "Capítulo 7", "Capítulo 11"], resposta: "Capítulo 1" },
+      { pergunta: "Em qual capítulo está o epígrafe 'Nosso Senhor Jesus Cristo percorre a Galileia'?", opcoes: ["Capítulo 1", "Capítulo 2", "Capítulo 6", "Capítulo 9"], resposta: "Capítulo 1" },
+      { pergunta: "Onde se encontra o epígrafe 'A cura de um leproso'?", opcoes: ["Capítulo 1", "Capítulo 4", "Capítulo 8", "Capítulo 12"], resposta: "Capítulo 1" },
+
+      // Capitulo 2
+      { pergunta: "O epígrafe 'A cura de um paralítico' é encontrado em qual capítulo?", opcoes: ["Capítulo 2", "Capítulo 1", "Capítulo 3", "Capítulo 5"], resposta: "Capítulo 2" },
+      { pergunta: "Em qual capítulo está registrado o epígrafe 'A vocação de Levi'?", opcoes: ["Capítulo 2", "Capítulo 4", "Capítulo 6", "Capítulo 8"], resposta: "Capítulo 2" },
+      { pergunta: "Onde fica o epígrafe 'A questão do jejum'?", opcoes: ["Capítulo 2", "Capítulo 3", "Capítulo 7", "Capítulo 10"], resposta: "Capítulo 2" },
+      { pergunta: "O epígrafe 'Nosso Senhor Jesus Cristo é Senhor do sábado' pertence a qual capítulo?", opcoes: ["Capítulo 2", "Capítulo 1", "Capítulo 5", "Capítulo 9"], resposta: "Capítulo 2" },
+
+      // Capitulo 3
+      { pergunta: "Em qual capítulo está 'A cura de um homem com uma das mãos ressequida'?", opcoes: ["Capítulo 3", "Capítulo 2", "Capítulo 6", "Capítulo 8"], resposta: "Capítulo 3" },
+      { pergunta: "Onde se encontra o epígrafe 'Multidões seguem a nosso Senhor Jesus Cristo'?", opcoes: ["Capítulo 3", "Capítulo 4", "Capítulo 7", "Capítulo 11"], resposta: "Capítulo 3" },
+      { pergunta: "O epígrafe 'A eleição dos doze apóstolos' é narrado em qual capítulo?", opcoes: ["Capítulo 3", "Capítulo 1", "Capítulo 5", "Capítulo 10"], resposta: "Capítulo 3" },
+      { pergunta: "Em qual capítulo está o epígrafe 'A blasfémia dos escribas'?", opcoes: ["Capítulo 3", "Capítulo 2", "Capítulo 8", "Capítulo 12"], resposta: "Capítulo 3" },
+      { pergunta: "O epígrafe 'A mãe e os irmãos de nosso Senhor Jesus Cristo' pertence a qual capítulo?", opcoes: ["Capítulo 3", "Capítulo 4", "Capítulo 6", "Capítulo 9"], resposta: "Capítulo 3" },
+
+      // Capitulo 4
+      { pergunta: "O epígrafe 'A parábola do semeador' está em qual capítulo?", opcoes: ["Capítulo 4", "Capítulo 2", "Capítulo 5", "Capítulo 7"], resposta: "Capítulo 4" },
+      { pergunta: "Em qual capítulo encontramos o epígrafe 'A razão de ensinar por parábolas'?", opcoes: ["Capítulo 4", "Capítulo 3", "Capítulo 8", "Capítulo 10"], resposta: "Capítulo 4" },
+      { pergunta: "Onde fica o epígrafe 'A explicação da parábola do semeador'?", opcoes: ["Capítulo 4", "Capítulo 1", "Capítulo 6", "Capítulo 9"], resposta: "Capítulo 4" },
+      { pergunta: "O epígrafe 'A parábola da candeia' pertence a qual capítulo?", opcoes: ["Capítulo 4", "Capítulo 2", "Capítulo 7", "Capítulo 11"], resposta: "Capítulo 4" },
+      { pergunta: "Em qual capítulo está a 'A parábola da semente'?", opcoes: ["Capítulo 4", "Capítulo 5", "Capítulo 8", "Capítulo 12"], resposta: "Capítulo 4" },
+      { pergunta: "Onde está registrada 'A parábola do grão de mostarda'?", opcoes: ["Capítulo 4", "Capítulo 3", "Capítulo 6", "Capítulo 10"], resposta: "Capítulo 4" },
+      { pergunta: "O epígrafe 'O uso de parábolas' pertence a qual capítulo?", opcoes: ["Capítulo 4", "Capítulo 1", "Capítulo 7", "Capítulo 9"], resposta: "Capítulo 4" },
+      { pergunta: "Em qual capítulo 'Nosso Senhor Jesus Cristo apazigua a tempestade'?", opcoes: ["Capítulo 4", "Capítulo 6", "Capítulo 8", "Capítulo 14"], resposta: "Capítulo 4" },
+
+      // Capitulo 5
+      { pergunta: "O epígrafe 'A cura do endemoninhado gadareno' pertence a qual capítulo?", opcoes: ["Capítulo 5", "Capítulo 1", "Capítulo 7", "Capítulo 9"], resposta: "Capítulo 5" },
+      { pergunta: "Onde encontramos o epígrafe 'A filha de Jairo e a mulher que tinha um fluxo de sangue'?", opcoes: ["Capítulo 5", "Capítulo 3", "Capítulo 8", "Capítulo 10"], resposta: "Capítulo 5" },
+      { pergunta: "Em qual capítulo está 'A cura da mulher que tinha um fluxo de sangue'?", opcoes: ["Capítulo 5", "Capítulo 2", "Capítulo 6", "Capítulo 12"], resposta: "Capítulo 5" },
+      { pergunta: "O epígrafe 'A ressurreição da filha de Jairo' está em qual capítulo?", opcoes: ["Capítulo 5", "Capítulo 4", "Capítulo 7", "Capítulo 11"], resposta: "Capítulo 5" },
+
+      // Capitulo 6
+      { pergunta: "Em qual capítulo 'Nosso Senhor Jesus Cristo é rejeitado em Nazaré'?", opcoes: ["Capítulo 6", "Capítulo 1", "Capítulo 3", "Capítulo 8"], resposta: "Capítulo 6" },
+      { pergunta: "O epígrafe 'A missão dos doze apóstolos' está localizado em qual capítulo?", opcoes: ["Capítulo 6", "Capítulo 4", "Capítulo 7", "Capítulo 10"], resposta: "Capítulo 6" },
+      { pergunta: "Onde se encontra o epígrafe 'A morte de João Batista'?", opcoes: ["Capítulo 6", "Capítulo 2", "Capítulo 9", "Capítulo 14"], resposta: "Capítulo 6" },
+      { pergunta: "Em qual capítulo está 'A primeira multiplicação dos pães'?", opcoes: ["Capítulo 6", "Capítulo 8", "Capítulo 11", "Capítulo 15"], resposta: "Capítulo 6" },
+      { pergunta: "O epígrafe 'Nosso Senhor Jesus Cristo anda sobre as águas' pertence a qual capítulo?", opcoes: ["Capítulo 6", "Capítulo 4", "Capítulo 7", "Capítulo 12"], resposta: "Capítulo 6" },
+      { pergunta: "Onde encontramos 'A cura de enfermos em Genesaré'?", opcoes: ["Capítulo 6", "Capítulo 5", "Capítulo 9", "Capítulo 13"], resposta: "Capítulo 6" },
+
+      // Capitulo 7
+      { pergunta: "O epígrafe 'A tradição dos anciãos' está presente em qual capítulo?", opcoes: ["Capítulo 7", "Capítulo 2", "Capítulo 8", "Capítulo 10"], resposta: "Capítulo 7" },
+      { pergunta: "Em qual capítulo está o epígrafe 'O que contamina o homem'?", opcoes: ["Capítulo 7", "Capítulo 3", "Capítulo 6", "Capítulo 12"], resposta: "Capítulo 7" },
+      { pergunta: "Onde se encontra 'A fé da mulher siro-fenícia'?", opcoes: ["Capítulo 7", "Capítulo 5", "Capítulo 9", "Capítulo 11"], resposta: "Capítulo 7" },
+      { pergunta: "O epígrafe 'A cura de um surdo e gago' é de qual capítulo?", opcoes: ["Capítulo 7", "Capítulo 1", "Capítulo 4", "Capítulo 8"], resposta: "Capítulo 7" },
+
+      // Capitulo 8
+      { pergunta: "Em qual capítulo de Marcos está 'A segunda multiplicação dos pães'?", opcoes: ["Capítulo 8", "Capítulo 6", "Capítulo 10", "Capítulo 14"], resposta: "Capítulo 8" },
+      { pergunta: "O epígrafe 'Os fariseus pedem um sinal' encontra-se em qual capítulo?", opcoes: ["Capítulo 8", "Capítulo 3", "Capítulo 7", "Capítulo 11"], resposta: "Capítulo 8" },
+      { pergunta: "Onde encontramos o epígrafe 'O fermento dos fariseus e de Herodes'?", opcoes: ["Capítulo 8", "Capítulo 2", "Capítulo 9", "Capítulo 12"], resposta: "Capítulo 8" },
+      { pergunta: "Em qual capítulo ocorre 'A cura de um cego em Betsaida'?", opcoes: ["Capítulo 8", "Capítulo 5", "Capítulo 10", "Capítulo 13"], resposta: "Capítulo 8" },
+      { pergunta: "O epígrafe 'A confissão de Pedro' pertence a qual capítulo?", opcoes: ["Capítulo 8", "Capítulo 1", "Capítulo 4", "Capítulo 9"], resposta: "Capítulo 8" },
+      { pergunta: "Onde está 'O primeiro anúncio da morte e ressurreição de nosso Senhor Jesus Cristo'?", opcoes: ["Capítulo 8", "Capítulo 9", "Capítulo 10", "Capítulo 14"], resposta: "Capítulo 8" },
+      { pergunta: "Em qual capítulo está o epígrafe 'O discípulo deve tomar a sua cruz'?", opcoes: ["Capítulo 8", "Capítulo 3", "Capítulo 11", "Capítulo 15"], resposta: "Capítulo 8" },
+
+      // Capitulo 9
+      { pergunta: "O epígrafe 'A transfiguração de nosso Senhor Jesus Cristo' pertence a qual capítulo?", opcoes: ["Capítulo 9", "Capítulo 5", "Capítulo 8", "Capítulo 13"], resposta: "Capítulo 9" },
+      { pergunta: "Em qual capítulo está 'A vinda de Elias'?", opcoes: ["Capítulo 9", "Capítulo 1", "Capítulo 6", "Capítulo 11"], resposta: "Capítulo 9" },
+      { pergunta: "Onde encontramos 'A cura de um jovem possesso de um espírito mudo'?", opcoes: ["Capítulo 9", "Capítulo 3", "Capítulo 7", "Capítulo 10"], resposta: "Capítulo 9" },
+      { pergunta: "Em qual capítulo ocorre 'O segundo anúncio da morte e ressurreição de nosso Senhor Jesus Cristo'?", opcoes: ["Capítulo 9", "Capítulo 8", "Capítulo 10", "Capítulo 14"], resposta: "Capítulo 9" },
+      { pergunta: "O epígrafe 'Quem é o maior no Reino de Deus' está em qual capítulo?", opcoes: ["Capítulo 9", "Capítulo 4", "Capítulo 12", "Capítulo 15"], resposta: "Capítulo 9" },
+      { pergunta: "Onde se encontra o epígrafe 'Aquele que não é contra nós é por nós'?", opcoes: ["Capítulo 9", "Capítulo 2", "Capítulo 6", "Capítulo 10"], resposta: "Capítulo 9" },
+      { pergunta: "Em qual capítulo está o epígrafe 'Os escândalos'?", opcoes: ["Capítulo 9", "Capítulo 7", "Capítulo 11", "Capítulo 13"], resposta: "Capítulo 9" },
+      { pergunta: "O epígrafe 'O sal e a paz' pertence a qual capítulo?", opcoes: ["Capítulo 9", "Capítulo 3", "Capítulo 5", "Capítulo 8"], resposta: "Capítulo 9" },
+
+      // Capitulo 10
+      { pergunta: "Onde está 'O ensino sobre o divórcio'?", opcoes: ["Capítulo 10", "Capítulo 7", "Capítulo 12", "Capítulo 15"], resposta: "Capítulo 10" },
+      { pergunta: "Em qual capítulo 'Nosso Senhor Jesus Cristo abençoa as crianças'?", opcoes: ["Capítulo 10", "Capítulo 4", "Capítulo 8", "Capítulo 11"], resposta: "Capítulo 10" },
+      { pergunta: "O epígrafe 'O jovem rico' pertence a qual capítulo?", opcoes: ["Capítulo 10", "Capítulo 2", "Capítulo 6", "Capítulo 9"], resposta: "Capítulo 10" },
+      { pergunta: "Onde se encontra 'O perigo das riquezas'?", opcoes: ["Capítulo 10", "Capítulo 3", "Capítulo 5", "Capítulo 12"], resposta: "Capítulo 10" },
+      { pergunta: "Em qual capítulo está 'A recompensa do desprendimento'?", opcoes: ["Capítulo 10", "Capítulo 1", "Capítulo 8", "Capítulo 14"], resposta: "Capítulo 10" },
+      { pergunta: "O epígrafe 'O terceiro anúncio da morte e ressurreição de nosso Senhor Jesus Cristo' é de qual capítulo?", opcoes: ["Capítulo 10", "Capítulo 8", "Capítulo 9", "Capítulo 13"], resposta: "Capítulo 10" },
+      { pergunta: "Em qual capítulo está 'O pedido dos filhos de Zebedeu'?", opcoes: ["Capítulo 10", "Capítulo 6", "Capítulo 11", "Capítulo 15"], resposta: "Capítulo 10" },
+      { pergunta: "Onde está o epígrafe 'A cura do cego Bartimeu'?", opcoes: ["Capítulo 10", "Capítulo 5", "Capítulo 8", "Capítulo 12"], resposta: "Capítulo 10" },
+
+      // Capitulo 11
+      { pergunta: "O epígrafe 'A entrada triunfal em Jerusalém' pertence a qual capítulo?", opcoes: ["Capítulo 11", "Capítulo 9", "Capítulo 12", "Capítulo 14"], resposta: "Capítulo 11" },
+      { pergunta: "Em qual capítulo está 'A maldição da figueira sem fruto'?", opcoes: ["Capítulo 11", "Capítulo 4", "Capítulo 8", "Capítulo 13"], resposta: "Capítulo 11" },
+      { pergunta: "Onde encontramos o epígrafe 'A purificação do templo'?", opcoes: ["Capítulo 11", "Capítulo 3", "Capítulo 7", "Capítulo 15"], resposta: "Capítulo 11" },
+      { pergunta: "O epígrafe 'A lição da figueira seca' pertence a qual capítulo?", opcoes: ["Capítulo 11", "Capítulo 2", "Capítulo 6", "Capítulo 10"], resposta: "Capítulo 11" },
+      { pergunta: "Em qual capítulo se encontra 'O poder da fé e da oração'?", opcoes: ["Capítulo 11", "Capítulo 5", "Capítulo 9", "Capítulo 12"], resposta: "Capítulo 11" },
+      { pergunta: "O epígrafe 'A autoridade de nosso Senhor Jesus Cristo é questionada' está em qual capítulo?", opcoes: ["Capítulo 11", "Capítulo 1", "Capítulo 8", "Capítulo 14"], resposta: "Capítulo 11" },
+
+      // Capitulo 12
+      { pergunta: "Onde está 'A parábola dos lavradores maus'?", opcoes: ["Capítulo 12", "Capítulo 10", "Capítulo 11", "Capítulo 14"], resposta: "Capítulo 12" },
+      { pergunta: "Em qual capítulo ocorre 'A questão do tributo a César'?", opcoes: ["Capítulo 12", "Capítulo 3", "Capítulo 7", "Capítulo 13"], resposta: "Capítulo 12" },
+      { pergunta: "O epígrafe 'A questão da ressurreição' pertence a qual capítulo?", opcoes: ["Capítulo 12", "Capítulo 8", "Capítulo 10", "Capítulo 15"], resposta: "Capítulo 12" },
+      { pergunta: "Onde encontramos o epígrafe 'O grande mandamento'?", opcoes: ["Capítulo 12", "Capítulo 5", "Capítulo 9", "Capítulo 11"], resposta: "Capítulo 12" },
+      { pergunta: "Em qual capítulo está 'Nosso Senhor Jesus Cristo é o Filho de David'?", opcoes: ["Capítulo 12", "Capítulo 2", "Capítulo 6", "Capítulo 14"], resposta: "Capítulo 12" },
+      { pergunta: "O epígrafe 'A advertência contra os escribas' pertence a qual capítulo?", opcoes: ["Capítulo 12", "Capítulo 4", "Capítulo 8", "Capítulo 13"], resposta: "Capítulo 12" },
+      { pergunta: "Onde se encontra 'A oferta da viúva pobre'?", opcoes: ["Capítulo 12", "Capítulo 1", "Capítulo 7", "Capítulo 10"], resposta: "Capítulo 12" },
+
+      // Capitulo 13
+      { pergunta: "O epígrafe 'O anúncio da destruição do templo' é narrado em qual capítulo?", opcoes: ["Capítulo 13", "Capítulo 11", "Capítulo 14", "Capítulo 16"], resposta: "Capítulo 13" },
+      { pergunta: "Em qual capítulo está 'O início das dores'?", opcoes: ["Capítulo 13", "Capítulo 5", "Capítulo 9", "Capítulo 12"], resposta: "Capítulo 13" },
+      { pergunta: "Onde fica o epígrafe 'A grande tribulação'?", opcoes: ["Capítulo 13", "Capítulo 3", "Capítulo 8", "Capítulo 15"], resposta: "Capítulo 13" },
+      { pergunta: "O epígrafe 'A vinda do Filho do Homem' pertence a qual capítulo?", opcoes: ["Capítulo 13", "Capítulo 4", "Capítulo 10", "Capítulo 14"], resposta: "Capítulo 13" },
+      { pergunta: "Em qual capítulo está 'A parábola da figueira'?", opcoes: ["Capítulo 13", "Capítulo 2", "Capítulo 7", "Capítulo 11"], resposta: "Capítulo 13" },
+      { pergunta: "O epígrafe 'A incerteza do dia e da hora' é de qual capítulo?", opcoes: ["Capítulo 13", "Capítulo 6", "Capítulo 9", "Capítulo 12"], resposta: "Capítulo 13" },
+      { pergunta: "Onde se encontra a 'Exortação à vigilância'?", opcoes: ["Capítulo 13", "Capítulo 1", "Capítulo 8", "Capítulo 16"], resposta: "Capítulo 13" },
+
+      // Capitulo 14
+      { pergunta: "Em qual capítulo está 'A conspiração contra nosso Senhor Jesus Cristo'?", opcoes: ["Capítulo 14", "Capítulo 11", "Capítulo 13", "Capítulo 15"], resposta: "Capítulo 14" },
+      { pergunta: "O epígrafe 'A unção em Betânia' é encontrado em qual capítulo?", opcoes: ["Capítulo 14", "Capítulo 10", "Capítulo 12", "Capítulo 16"], resposta: "Capítulo 14" },
+      { pergunta: "Onde se encontra 'Judas prepara a traição'?", opcoes: ["Capítulo 14", "Capítulo 3", "Capítulo 8", "Capítulo 11"], resposta: "Capítulo 14" },
+      { pergunta: "Em qual capítulo ocorrem 'Os preparativos para a Páscoa'?", opcoes: ["Capítulo 14", "Capítulo 2", "Capítulo 6", "Capítulo 9"], resposta: "Capítulo 14" },
+      { pergunta: "O epígrafe 'A indicação do traidor' pertence a qual capítulo?", opcoes: ["Capítulo 14", "Capítulo 5", "Capítulo 7", "Capítulo 13"], resposta: "Capítulo 14" },
+      { pergunta: "Onde está 'A instituição da Sagrada Eucaristia'?", opcoes: ["Capítulo 14", "Capítulo 12", "Capítulo 15", "Capítulo 16"], resposta: "Capítulo 14" },
+      { pergunta: "Em qual capítulo 'Nosso Senhor Jesus Cristo prediz a negação de Pedro'?", opcoes: ["Capítulo 14", "Capítulo 8", "Capítulo 10", "Capítulo 13"], resposta: "Capítulo 14" },
+      { pergunta: "O epígrafe 'A oração no Getsêmani' pertence a qual capítulo?", opcoes: ["Capítulo 14", "Capítulo 9", "Capítulo 11", "Capítulo 15"], resposta: "Capítulo 14" },
+      { pergunta: "Onde se encontra 'A prisão de nosso Senhor Jesus Cristo'?", opcoes: ["Capítulo 14", "Capítulo 4", "Capítulo 7", "Capítulo 12"], resposta: "Capítulo 14" },
+      { pergunta: "Em qual capítulo está 'A fuga dos discípulos'?", opcoes: ["Capítulo 14", "Capítulo 3", "Capítulo 6", "Capítulo 10"], resposta: "Capítulo 14" },
+      { pergunta: "O epígrafe 'Nosso Senhor Jesus Cristo perante o Sinédrio' é de qual capítulo?", opcoes: ["Capítulo 14", "Capítulo 11", "Capítulo 13", "Capítulo 15"], resposta: "Capítulo 14" },
+      { pergunta: "Onde encontramos 'A negação de Pedro'?", opcoes: ["Capítulo 14", "Capítulo 8", "Capítulo 12", "Capítulo 16"], resposta: "Capítulo 14" },
+
+      // Capitulo 15
+      { pergunta: "Em qual capítulo 'Nosso Senhor Jesus Cristo perante Pilatos'?", opcoes: ["Capítulo 15", "Capítulo 12", "Capítulo 14", "Capítulo 16"], resposta: "Capítulo 15" },
+      { pergunta: "O epígrafe 'Nosso Senhor Jesus Cristo e Barrabás' pertence a qual capítulo?", opcoes: ["Capítulo 15", "Capítulo 10", "Capítulo 11", "Capítulo 13"], resposta: "Capítulo 15" },
+      { pergunta: "Onde está 'A condenação à morte de nosso Senhor Jesus Cristo'?", opcoes: ["Capítulo 15", "Capítulo 9", "Capítulo 14", "Capítulo 16"], resposta: "Capítulo 15" },
+      { pergunta: "Em qual capítulo 'Os soldados escarnecem de nosso Senhor Jesus Cristo'?", opcoes: ["Capítulo 15", "Capítulo 7", "Capítulo 12", "Capítulo 13"], resposta: "Capítulo 15" },
+      { pergunta: "O epígrafe 'A caminho do Calvário' pertence a qual capítulo?", opcoes: ["Capítulo 15", "Capítulo 5", "Capítulo 8", "Capítulo 14"], resposta: "Capítulo 15" },
+      { pergunta: "Onde se encontra 'A crucificação de nosso Senhor Jesus Cristo'?", opcoes: ["Capítulo 15", "Capítulo 11", "Capítulo 13", "Capítulo 16"], resposta: "Capítulo 15" },
+      { pergunta: "Em qual capítulo ocorre 'A morte de nosso Senhor Jesus Cristo'?", opcoes: ["Capítulo 15", "Capítulo 10", "Capítulo 12", "Capítulo 14"], resposta: "Capítulo 15" },
+      { pergunta: "O epígrafe 'O sepultamento de nosso Senhor Jesus Cristo' pertence a qual capítulo?", opcoes: ["Capítulo 15", "Capítulo 6", "Capítulo 9", "Capítulo 16"], resposta: "Capítulo 15" },
+
+      // Capitulo 16
+      { pergunta: "Em qual capítulo está 'A ressurreição de nosso Senhor Jesus Cristo'?", opcoes: ["Capítulo 16", "Capítulo 12", "Capítulo 14", "Capítulo 15"], resposta: "Capítulo 16" },
+      { pergunta: "O epígrafe 'As aparições de nosso Senhor Jesus Cristo após a ressurreição' pertence a qual capítulo?", opcoes: ["Capítulo 16", "Capítulo 11", "Capítulo 13", "Capítulo 14"], resposta: "Capítulo 16" },
+      { pergunta: "Onde se encontra 'A grande comissão'?", opcoes: ["Capítulo 16", "Capítulo 8", "Capítulo 10", "Capítulo 15"], resposta: "Capítulo 16" },
+      { pergunta: "O epígrafe 'A ascensão de nosso Senhor Jesus Cristo' é narrado em qual capítulo?", opcoes: ["Capítulo 16", "Capítulo 9", "Capítulo 13", "Capítulo 14"], resposta: "Capítulo 16" }
+    ];
+
+    function embaralhar(lista) {
+      const copia = [...lista];
+      for (let i = copia.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copia[i], copia[j]] = [copia[j], copia[i]];
+      }
+      return copia;
+    }
+
+    let usuario = { nome: "", email: "" };
+    let perguntas = [];
+    let indice = 0;
+    let respostas = [];
+
+    const areaRegistro = document.getElementById("areaRegistro");
+    const areaPergunta = document.getElementById("areaPergunta");
+    const areaResultado = document.getElementById("resultado");
+
+    const contadorPergunta = document.getElementById("contadorPergunta");
+    const barra = document.getElementById("barra");
+    const textoPergunta = document.getElementById("textoPergunta");
+    const alternativas = document.getElementById("alternativas");
+    const retorno = document.getElementById("retorno");
+    const certas = document.getElementById("certas");
+    const erradas = document.getElementById("erradas");
+    const botaoInicio = document.getElementById("inicio");
+    const botaoAnterior = document.getElementById("anterior");
+    const botaoProxima = document.getElementById("proxima");
+
+    function voltarParaSite() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = "../index.html";
+      }
+    }
+
+    function confirmarRegistro(event) {
+      event.preventDefault();
+      usuario.nome = document.getElementById("nomeUsuario").value;
+      usuario.email = document.getElementById("emailUsuario").value;
+
+      areaRegistro.classList.add("oculto");
+      iniciarQuiz();
+    }
+
+    function atualizarPontuacao() {
+      const totalCertas = respostas.filter(r => r !== null && r.correta).length;
+      const totalErradas = respostas.filter(r => r !== null && !r.correta).length;
+
+      certas.textContent = totalCertas;
+      erradas.textContent = totalErradas;
+    }
+
+    function iniciarQuiz() {
+      perguntas = embaralhar(perguntasOriginais).map(pergunta => ({
+        ...pergunta,
+        opcoesEmbaralhadas: embaralhar(pergunta.opcoes)
+      }));
+
+      indice = 0;
+      respostas = Array(perguntas.length).fill(null);
+
+      areaPergunta.classList.remove("oculto");
+      areaResultado.classList.add("oculto");
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function responder(escolhida) {
+      if (respostas[indice] !== null) return;
+
+      const respostaCorreta = perguntas[indice].resposta;
+      const correta = escolhida === respostaCorreta;
+
+      respostas[indice] = { escolhida: escolhida, correta: correta };
+
+      atualizarPontuacao();
+      mostrarPergunta();
+    }
+
+    function mostrarPergunta() {
+      const atual = perguntas[indice];
+      const registro = respostas[indice];
+
+      contadorPergunta.textContent = `Pergunta ${indice + 1} de ${perguntas.length}`;
+      barra.style.width = `${((indice + 1) / perguntas.length) * 100}%`;
+
+      textoPergunta.textContent = atual.pergunta;
+      alternativas.innerHTML = "";
+      retorno.textContent = "";
+      retorno.className = "retorno";
+
+      atual.opcoesEmbaralhadas.forEach(opcao => {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "alternativa";
+        botao.textContent = opcao;
+
+        if (registro !== null) {
+          botao.disabled = true;
+
+          if (opcao === atual.resposta) {
+            botao.classList.add("certa");
+          } else if (opcao === registro.escolhida) {
+            botao.classList.add("errada");
+          }
+        } else {
+          botao.addEventListener("click", () => responder(opcao));
+        }
+
+        alternativas.appendChild(botao);
+      });
+
+      if (registro !== null) {
+        if (registro.correta) {
+          retorno.textContent = "Correto! Muito bem.";
+          retorno.classList.add("certa");
+        } else {
+          retorno.textContent = `Resposta incorreta. A alternativa certa é: ${atual.resposta}`;
+          retorno.classList.add("errada");
+        }
+      }
+
+      botaoInicio.disabled = indice === 0;
+      botaoAnterior.disabled = indice === 0;
+      botaoProxima.textContent = indice === perguntas.length - 1 ? "Ver resultado" : "Próxima";
+
+      atualizarPontuacao();
+    }
+
+    function enviarAutomaticoFormspree(dados) {
+      const endpointFormspree = "https://formspree.io/f/mqpewwbg";
+
+      const dadosEnvio = {
+        name: dados.nome,
+        email: dados.email,
+        message: `Resultado do Quiz do Evangelho de Marcos:\nAluno: ${dados.nome}\nE-mail: ${dados.email}\nDestino: comumcongregacao@gmail.com\nPorcentagem: ${dados.porcentagem}%\nNível: ${dados.nivel}\nAcertos: ${dados.certas} de ${dados.total}\nErros: ${dados.erradas}`
+      };
+
+      fetch(endpointFormspree, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dadosEnvio)
+      })
+      .then(response => {
+        if (response.ok) {
+          document.getElementById("statusEnvio").innerText = "✅ Resultado enviado com sucesso para comumcongregacao@gmail.com!";
+        } else {
+          document.getElementById("statusEnvio").innerText = "⚠️ Houve um pequeno problema ao enviar o resultado. Verifique sua conexão.";
+        }
+      })
+      .catch(error => {
+        console.error("Erro ao enviar:", error);
+      });
+    }
+
+    function mostrarResultado() {
+      const totalCertas = respostas.filter(r => r !== null && r.correta).length;
+      const totalErradas = respostas.filter(r => r !== null && !r.correta).length;
+      const porcentagem = Math.round((totalCertas / perguntas.length) * 100);
+
+      let nivel, mensagem;
+
+      if (porcentagem < 25) {
+        nivel = "Insuficiente";
+        mensagem = "Continue estudando o Evangelho de Marcos e tente novamente.";
+      } else if (porcentagem < 50) {
+        nivel = "Médio";
+        mensagem = "Você está avançando. Revise os capítulos e tente novamente.";
+      } else if (porcentagem < 75) {
+        nivel = "Bom";
+        mensagem = "Bom trabalho! Você conhece grande parte do Evangelho de Marcos.";
+      } else {
+        nivel = "Excelente";
+        mensagem = "Excelente resultado! Você demonstrou domínio impressionante!";
+      }
+
+      areaPergunta.classList.add("oculto");
+      areaResultado.classList.remove("oculto");
+
+      areaResultado.innerHTML = `
+        <h2>Resultado final de ${usuario.nome}</h2>
+        <div class="nota">${porcentagem}%</div>
+        <p><strong>${nivel}</strong></p>
+        <p class="mensagem-final">
+          Você acertou <strong>${totalCertas}</strong> e errou
+          <strong>${totalErradas}</strong> de ${perguntas.length} perguntas.<br>
+          ${mensagem}
+        </p>
+
+        <div id="statusEnvio" class="status-envio">Enviando resultado para comumcongregacao@gmail.com...</div>
+
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 25px;">
+          <button class="controle" id="novaTentativa">Nova tentativa</button>
+          <button class="controle secundario" onclick="voltarParaSite()">Voltar ao Site</button>
+        </div>
+      `;
+
+      // Dispara o envio automático invisível
+      enviarAutomaticoFormspree({
+        nome: usuario.nome,
+        email: usuario.email,
+        porcentagem: porcentagem,
+        nivel: nivel,
+        certas: totalCertas,
+        erradas: totalErradas,
+        total: perguntas.length
+      });
+
+      document.getElementById("novaTentativa").addEventListener("click", () => {
+        areaResultado.classList.add("oculto");
+        areaRegistro.classList.remove("oculto");
+      });
+    }
+
+    botaoInicio.addEventListener("click", () => {
+      indice = 0;
+      mostrarPergunta();
+    });
+
+    botaoAnterior.addEventListener("click", () => {
+      if (indice > 0) {
+        indice--;
+        mostrarPergunta();
+      }
+    });
+
+    botaoProxima.addEventListener("click", () => {
+      if (indice < perguntas.length - 1) {
+        indice++;
+        mostrarPergunta();
+      } else {
+        mostrarResultado();
+      }
+    });
+  </script>
+</body>
+</html>
