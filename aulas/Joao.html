@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -17,9 +17,7 @@
       --vermelho: #b73535;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -33,9 +31,7 @@
       font-family: Arial, Helvetica, sans-serif;
     }
 
-    .app {
-      width: min(760px, 100%);
-    }
+    .app { width: min(760px, 100%); }
 
     .cartao {
       background: var(--cartao);
@@ -58,13 +54,28 @@
     h1 {
       margin: 0;
       font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(25px, 5vw, 36px);
+      font-size: clamp(23px, 4.5vw, 34px);
     }
 
     .subtitulo {
       color: var(--suave);
       line-height: 1.5;
       margin: 0 0 24px;
+    }
+
+    .campo-identificacao {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .campo-identificacao input {
+      padding: 14px;
+      border: 1px solid #e7dfca;
+      border-radius: 10px;
+      font-size: 16px;
+      background: #fdfbf7;
     }
 
     .contador-pergunta {
@@ -120,9 +131,7 @@
       background: #eee3c5;
     }
 
-    .alternativa:disabled {
-      cursor: default;
-    }
+    .alternativa:disabled { cursor: default; }
 
     .alternativa.certa {
       background: #e1f2e6;
@@ -145,13 +154,8 @@
       line-height: 1.5;
     }
 
-    .retorno.certa {
-      color: var(--verde);
-    }
-
-    .retorno.errada {
-      color: var(--vermelho);
-    }
+    .retorno.certa { color: var(--verde); }
+    .retorno.errada { color: var(--vermelho); }
 
     .painel {
       display: flex;
@@ -169,9 +173,7 @@
       font-size: 14px;
     }
 
-    .pontuacao strong {
-      color: var(--texto);
-    }
+    .pontuacao strong { color: var(--texto); }
 
     .botoes {
       display: flex;
@@ -189,9 +191,7 @@
       cursor: pointer;
     }
 
-    button.controle:hover:not(:disabled) {
-      background: var(--dourado-escuro);
-    }
+    button.controle:hover:not(:disabled) { background: var(--dourado-escuro); }
 
     button.controle.secundario {
       background: #eee9dc;
@@ -201,15 +201,12 @@
     button.controle.voltar-site {
       background: #333;
       color: #fff;
-      text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 6px;
     }
 
-    button.controle.voltar-site:hover {
-      background: #555;
-    }
+    button.controle.voltar-site:hover { background: #555; }
 
     button.controle:disabled {
       opacity: 0.45;
@@ -240,34 +237,15 @@
       line-height: 1.6;
     }
 
-    .oculto {
-      display: none;
-    }
+    .oculto { display: none; }
 
     @media (max-width: 560px) {
-      .cartao {
-        padding: 23px 18px;
-      }
-
-      .alternativas {
-        grid-template-columns: 1fr;
-      }
-
-      .painel {
-        align-items: stretch;
-      }
-
-      .pontuacao {
-        width: 100%;
-      }
-
-      .botoes {
-        width: 100%;
-      }
-
-      .botoes button {
-        flex: 1;
-      }
+      .cartao { padding: 23px 18px; }
+      .alternativas { grid-template-columns: 1fr; }
+      .painel { align-items: stretch; }
+      .pontuacao { width: 100%; }
+      .botoes { width: 100%; }
+      .botoes button { flex: 1; }
     }
   </style>
 </head>
@@ -282,12 +260,20 @@
         </button>
       </header>
 
-      <p class="subtitulo">
-        Responda às 40 perguntas sobre os 21 capítulos e epígrafes do Evangelho segundo São João (João Ferreira de Almeida).
-        As perguntas e alternativas são embaralhadas a cada tentativa.
-      </p>
+      <!-- TELA 1: Identificação -->
+      <div id="areaRegistro">
+        <p class="subtitulo">
+          A Paz de Deus! Antes de começar o questionário sobre o Evangelho de João, informe o seu Nome e o seu E-mail para registrar o seu resultado.
+        </p>
+        <form id="formRegistro" class="campo-identificacao" onsubmit="confirmarRegistro(event)">
+          <input type="text" id="nomeUsuario" placeholder="Seu Nome Completo" required>
+          <input type="email" id="emailUsuario" placeholder="Seu E-mail" required>
+          <button type="submit" class="controle">Iniciar Quiz</button>
+        </form>
+      </div>
 
-      <div id="areaPergunta">
+      <!-- TELA 2: Perguntas -->
+      <div id="areaPergunta" class="oculto">
         <div class="contador-pergunta" id="contadorPergunta"></div>
 
         <div class="barra-fundo">
@@ -305,25 +291,33 @@
           </div>
 
           <div class="botoes">
-            <button class="controle secundario" id="inicio">
-              Primeira pergunta
-            </button>
-            <button class="controle secundario" id="anterior">
-              Anterior
-            </button>
-            <button class="controle" id="proxima">
-              Próxima
-            </button>
+            <button class="controle secundario" id="inicio" onclick="irParaPergunta(0)">Primeira</button>
+            <button class="controle secundario" id="anterior" onclick="perguntaAnterior()">Anterior</button>
+            <button class="controle" id="proxima" onclick="proximaPergunta()">Próxima</button>
           </div>
         </div>
       </div>
 
+      <!-- TELA 3: Resultado -->
       <div class="resultado oculto" id="resultado"></div>
     </section>
   </main>
 
   <script>
-    // Lista com 40 perguntas baseadas em todas as epígrafes de João 1-21 (João Ferreira de Almeida)
+    /* ============================================================
+       CONFIGURAÇÃO DO ENVIO SILENCIOSO
+       ------------------------------------------------------------
+       O endpoint abaixo é um formulário do Formspree.
+       O e-mail que RECEBE o relatório é o e-mail da CONTA Formspree.
+       Para receber em comumcongregacao@gmail.com:
+         1. Crie a conta no Formspree com esse e-mail
+         2. Crie um formulário e copie o ID
+         3. Substitua "mqpewwbg" pelo ID do seu formulário
+       ============================================================ */
+    const ENDPOINT_FORMSPREE = "https://formspree.io/f/mqpewwbg";
+    const EMAIL_DESTINO = "comumcongregacao@gmail.com"; // apenas informativo no relatório
+
+    // 40 perguntas baseadas nas epígrafes de João 1–21 (João Ferreira de Almeida)
     const perguntasOriginais = [
       // Capítulo 1
       { pergunta: "Em qual capítulo está a epígrafe 'O Verbo eterno feito carne' e 'O Cordeiro de Deus'?", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 5", "Capítulo 8"], resposta: "Capítulo 1" },
@@ -335,7 +329,7 @@
 
       // Capítulo 3
       { pergunta: "O epígrafe 'O diálogo de Jesus com Nicodemos (o novo nascimento)' pertence a qual capítulo?", opcoes: ["Capítulo 3", "Capítulo 1", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 3" },
-      { pergunta: "Em qual capítulo está escrito o famoso epígrafe sobre 'O amor de Deus ao mundo' ('Porque Deus amou o mundo de tal maneira...')?", opcoes: ["Capítulo 3", "Capítulo 2", "Capítulo 5", "Capítulo 8"], resposta: "Capítulo 3" },
+      { pergunta: "Em qual capítulo está o famoso versículo sobre 'O amor de Deus ao mundo' ('Porque Deus amou o mundo de tal maneira...')?", opcoes: ["Capítulo 3", "Capítulo 2", "Capítulo 5", "Capítulo 8"], resposta: "Capítulo 3" },
 
       // Capítulo 4
       { pergunta: "Onde se encontra 'Jesus e a mulher samaritana junto ao poço de Jacó'?", opcoes: ["Capítulo 4", "Capítulo 2", "Capítulo 6", "Capítulo 9"], resposta: "Capítulo 4" },
@@ -417,9 +411,15 @@
       return copia;
     }
 
+    let usuario = { nome: "", email: "" };
     let perguntas = [];
     let indice = 0;
     let respostas = [];
+    let envioFeito = false;
+
+    const areaRegistro = document.getElementById("areaRegistro");
+    const areaPergunta = document.getElementById("areaPergunta");
+    const areaResultado = document.getElementById("resultado");
 
     const contadorPergunta = document.getElementById("contadorPergunta");
     const barra = document.getElementById("barra");
@@ -431,8 +431,6 @@
     const botaoInicio = document.getElementById("inicio");
     const botaoAnterior = document.getElementById("anterior");
     const botaoProxima = document.getElementById("proxima");
-    const areaPergunta = document.getElementById("areaPergunta");
-    const areaResultado = document.getElementById("resultado");
 
     function voltarParaSite() {
       if (window.history.length > 1) {
@@ -442,15 +440,23 @@
       }
     }
 
+    function confirmarRegistro(event) {
+      event.preventDefault();
+      usuario.nome = document.getElementById("nomeUsuario").value.trim();
+      usuario.email = document.getElementById("emailUsuario").value.trim();
+
+      if (!usuario.nome || !usuario.email) {
+        alert("Por favor, preencha o seu nome e e-mail.");
+        return;
+      }
+
+      areaRegistro.classList.add("oculto");
+      iniciarQuiz();
+    }
+
     function atualizarPontuacao() {
-      const totalCertas = respostas.filter(
-        resposta => resposta !== null && resposta.correta
-      ).length;
-
-      const totalErradas = respostas.filter(
-        resposta => resposta !== null && !resposta.correta
-      ).length;
-
+      const totalCertas = respostas.filter(r => r !== null && r.correta).length;
+      const totalErradas = respostas.filter(r => r !== null && !r.correta).length;
       certas.textContent = totalCertas;
       erradas.textContent = totalErradas;
     }
@@ -463,6 +469,7 @@
 
       indice = 0;
       respostas = Array(perguntas.length).fill(null);
+      envioFeito = false;
 
       areaPergunta.classList.remove("oculto");
       areaResultado.classList.add("oculto");
@@ -472,17 +479,12 @@
     }
 
     function responder(escolhida) {
-      if (respostas[indice] !== null) {
-        return;
-      }
+      if (respostas[indice] !== null) return;
 
       const respostaCorreta = perguntas[indice].resposta;
       const correta = escolhida === respostaCorreta;
 
-      respostas[indice] = {
-        escolhida: escolhida,
-        correta: correta
-      };
+      respostas[indice] = { escolhida: escolhida, correta: correta };
 
       atualizarPontuacao();
       mostrarPergunta();
@@ -492,11 +494,8 @@
       const atual = perguntas[indice];
       const registro = respostas[indice];
 
-      contadorPergunta.textContent =
-        `Pergunta ${indice + 1} de ${perguntas.length}`;
-
-      barra.style.width =
-        `${((indice + 1) / perguntas.length) * 100}%`;
+      contadorPergunta.textContent = `Pergunta ${indice + 1} de ${perguntas.length}`;
+      barra.style.width = `${((indice + 1) / perguntas.length) * 100}%`;
 
       textoPergunta.textContent = atual.pergunta;
       alternativas.innerHTML = "";
@@ -511,7 +510,6 @@
 
         if (registro !== null) {
           botao.disabled = true;
-
           if (opcao === atual.resposta) {
             botao.classList.add("certa");
           } else if (opcao === registro.escolhida) {
@@ -529,33 +527,103 @@
           retorno.textContent = "Correto! Muito bem.";
           retorno.classList.add("certa");
         } else {
-          retorno.textContent =
-            `Resposta incorreta. A alternativa certa é: ${atual.resposta}`;
+          retorno.textContent = `Resposta incorreta. A alternativa certa é: ${atual.resposta}`;
           retorno.classList.add("errada");
         }
       }
 
       botaoInicio.disabled = indice === 0;
       botaoAnterior.disabled = indice === 0;
-
-      botaoProxima.textContent =
-        indice === perguntas.length - 1 ? "Ver resultado" : "Próxima";
+      botaoProxima.textContent = indice === perguntas.length - 1 ? "Ver Resultado" : "Próxima";
 
       atualizarPontuacao();
     }
 
-    function mostrarResultado() {
-      const totalCertas = respostas.filter(
-        resposta => resposta !== null && resposta.correta
-      ).length;
+    function irParaPergunta(novoIndice) {
+      indice = novoIndice;
+      mostrarPergunta();
+    }
 
-      const totalErradas = respostas.filter(
-        resposta => resposta !== null && !resposta.correta
-      ).length;
+    function perguntaAnterior() {
+      if (indice > 0) {
+        indice--;
+        mostrarPergunta();
+      }
+    }
 
-      const porcentagem = Math.round(
-        (totalCertas / perguntas.length) * 100
-      );
+    function proximaPergunta() {
+      if (indice < perguntas.length - 1) {
+        indice++;
+        mostrarPergunta();
+      } else {
+        finalizarQuiz();
+      }
+    }
+
+    /* ============================================================
+       ENVIO SILENCIOSO DO RELATÓRIO
+       Nenhuma mensagem, alerta, log ou status é mostrado ao jogador.
+       ============================================================ */
+    function montarRelatorio(dados) {
+      const detalhes = perguntas.map((p, i) => {
+        const r = respostas[i];
+        const situacao = r === null ? "NÃO RESPONDIDA" : (r.correta ? "ACERTOU" : "ERROU");
+        return `${i + 1}) ${p.pergunta}\n` +
+               `   Marcou:  ${r ? r.escolhida : "—"}\n` +
+               `   Correta: ${p.resposta}\n` +
+               `   Situação: ${situacao}`;
+      }).join("\n\n");
+
+      return `RELATÓRIO DO QUIZ DO EVANGELHO DE JOÃO\n` +
+             `========================================\n` +
+             `Aluno/Membro: ${dados.nome}\n` +
+             `E-mail do Aluno: ${dados.email}\n` +
+             `E-mail de Destino: ${EMAIL_DESTINO}\n` +
+             `Data/Hora: ${dados.dataHora}\n` +
+             `----------------------------------------\n` +
+             `Aproveitamento: ${dados.porcentagem}%\n` +
+             `Nível: ${dados.nivel}\n` +
+             `Total de Questões: ${dados.total}\n` +
+             `Acertos: ${dados.certas}\n` +
+             `Erros: ${dados.erradas}\n` +
+             `Sem resposta: ${dados.semResposta}\n` +
+             `========================================\n` +
+             `DETALHAMENTO DAS RESPOSTAS (ordem apresentada)\n\n` +
+             detalhes;
+    }
+
+    function enviarRelatorio(dados) {
+      const corpoMensagem = montarRelatorio(dados);
+
+      const payload = {
+        name: dados.nome,
+        email: dados.email,
+        _subject: `Resultado do Quiz de João - ${dados.nome}`,
+        message: corpoMensagem
+      };
+
+      // Envio em segundo plano. Se falhar, nada é exibido ao jogador.
+      try {
+        fetch(ENDPOINT_FORMSPREE, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(payload),
+          keepalive: true // garante o envio mesmo se o usuário sair da página
+        }).catch(() => { /* silencioso */ });
+      } catch (e) {
+        /* silencioso */
+      }
+    }
+
+    function finalizarQuiz() {
+      const totalCertas = respostas.filter(r => r !== null && r.correta).length;
+      const totalErradas = respostas.filter(r => r !== null && !r.correta).length;
+      const totalRespondidas = respostas.filter(r => r !== null).length;
+      const semResposta = perguntas.length - totalRespondidas;
+      const porcentagem = Math.round((totalCertas / perguntas.length) * 100);
 
       let nivel;
       let mensagem;
@@ -574,9 +642,28 @@
         mensagem = "Excelente resultado! Você demonstrou domínio impressionante das epígrafes!";
       }
 
+      const dadosResultado = {
+        nome: usuario.nome,
+        email: usuario.email,
+        certas: totalCertas,
+        erradas: totalErradas,
+        semResposta: semResposta,
+        total: perguntas.length,
+        porcentagem: porcentagem,
+        nivel: nivel,
+        dataHora: new Date().toLocaleString('pt-BR')
+      };
+
+      // Envio automático e invisível (uma única vez por tentativa)
+      if (!envioFeito) {
+        envioFeito = true;
+        enviarRelatorio(dadosResultado);
+      }
+
       areaPergunta.classList.add("oculto");
       areaResultado.classList.remove("oculto");
 
+      // Tela vista pelo jogador — sem qualquer menção ao envio
       areaResultado.innerHTML = `
         <h2>Resultado final</h2>
         <div class="nota">${porcentagem}%</div>
@@ -588,38 +675,18 @@
         </p>
 
         <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px;">
-          <button class="controle" id="novaTentativa">Nova tentativa</button>
+          <button class="controle" onclick="reiniciarQuiz()">Refazer Quiz</button>
           <button class="controle secundario" onclick="voltarParaSite()">Voltar ao Site</button>
         </div>
       `;
-
-      document
-        .getElementById("novaTentativa")
-        .addEventListener("click", iniciarQuiz);
     }
 
-    botaoInicio.addEventListener("click", () => {
-      indice = 0;
-      mostrarPergunta();
-    });
-
-    botaoAnterior.addEventListener("click", () => {
-      if (indice > 0) {
-        indice--;
-        mostrarPergunta();
-      }
-    });
-
-    botaoProxima.addEventListener("click", () => {
-      if (indice < perguntas.length - 1) {
-        indice++;
-        mostrarPergunta();
-      } else {
-        mostrarResultado();
-      }
-    });
-
-    iniciarQuiz();
+    function reiniciarQuiz() {
+      areaResultado.classList.add("oculto");
+      areaPergunta.classList.add("oculto");
+      areaRegistro.classList.remove("oculto");
+      envioFeito = false;
+    }
   </script>
 </body>
-</html>
+</html><
