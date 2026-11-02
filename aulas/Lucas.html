@@ -323,93 +323,45 @@
   </main>
 
   <script>
-    // Lista com 40 perguntas baseadas em todas as epígrafes de Lucas 1-24 (João Ferreira de Almeida)
     const perguntasOriginais = [
-      // Capítulo 1
       { pergunta: "Em qual capítulo está a epígrafe 'O anúncio do nascimento de João Batista e de Jesus'?", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 5", "Capítulo 7"], resposta: "Capítulo 1" },
       { pergunta: "Onde encontramos o cântico de Maria (Magnificat) e o cântico de Zacarias?", opcoes: ["Capítulo 1", "Capítulo 2", "Capítulo 4", "Capítulo 6"], resposta: "Capítulo 1" },
-
-      // Capítulo 2
       { pergunta: "O epígrafe 'O nascimento de Jesus em Belém e o canto dos anjos aos pastores' pertence a qual capítulo?", opcoes: ["Capítulo 2", "Capítulo 1", "Capítulo 3", "Capítulo 5"], resposta: "Capítulo 2" },
       { pergunta: "Em qual capítulo se encontra o episódio de 'Jesus no templo aos doze anos'?", opcoes: ["Capítulo 2", "Capítulo 4", "Capítulo 8", "Capítulo 12"], resposta: "Capítulo 2" },
-
-      // Capítulo 3
       { pergunta: "Em qual capítulo encontramos 'A pregação de João Batista, o batismo e a genealogia de Jesus'?", opcoes: ["Capítulo 3", "Capítulo 1", "Capítulo 5", "Capítulo 9"], resposta: "Capítulo 3" },
-
-      // Capítulo 4
       { pergunta: "O epígrafe 'A tentação de Jesus no deserto e a rejeição em Nazaré' pertence a qual capítulo?", opcoes: ["Capítulo 4", "Capítulo 2", "Capítulo 6", "Capítulo 10"], resposta: "Capítulo 4" },
       { pergunta: "Em qual capítulo ocorre 'A cura da sogra de Pedro e de muitos enfermos em Cafarnaum'?", opcoes: ["Capítulo 4", "Capítulo 7", "Capítulo 11", "Capítulo 13"], resposta: "Capítulo 4" },
-
-      // Capítulo 5
       { pergunta: "Onde encontramos o relato da 'Pesca maravilhosa e o chamamento dos primeiros discípulos'?", opcoes: ["Capítulo 5", "Capítulo 3", "Capítulo 8", "Capítulo 12"], resposta: "Capítulo 5" },
       { pergunta: "O epígrafe 'A cura de um paralítico baixado pelo telhado e a vocação de Levi' é de qual capítulo?", opcoes: ["Capítulo 5", "Capítulo 2", "Capítulo 6", "Capítulo 9"], resposta: "Capítulo 5" },
-
-      // Capítulo 6
       { pergunta: "Em qual capítulo está 'A escolha dos doze apóstolos e o Sermão da Planície'?", opcoes: ["Capítulo 6", "Capítulo 5", "Capítulo 7", "Capítulo 10"], resposta: "Capítulo 6" },
       { pergunta: "O epígrafe 'Jesus é o Senhor do sábado e a cura da mão ressequida' pertence a qual capítulo?", opcoes: ["Capítulo 6", "Capítulo 4", "Capítulo 8", "Capítulo 11"], resposta: "Capítulo 6" },
-
-      // Capítulo 7
       { pergunta: "Onde se encontra 'A cura do servo do centurião e a ressurreição do filho da viúva de Naim'?", opcoes: ["Capítulo 7", "Capítulo 5", "Capítulo 9", "Capítulo 14"], resposta: "Capítulo 7" },
       { pergunta: "Em qual capítulo ocorre 'A unção de Jesus por uma mulher pecadora na casa do fariseu'?", opcoes: ["Capítulo 7", "Capítulo 8", "Capítulo 10", "Capítulo 12"], resposta: "Capítulo 7" },
-
-      // Capítulo 8
       { pergunta: "O epígrafe 'A parábola do semeador' e 'Jesus acalma a tempestade' pertence a qual capítulo?", opcoes: ["Capítulo 8", "Capítulo 4", "Capítulo 9", "Capítulo 13"], resposta: "Capítulo 8" },
       { pergunta: "Em qual capítulo ocorre 'A cura da mulher com fluxo de sangue e a ressurreição da filha de Jairo'?", opcoes: ["Capítulo 8", "Capítulo 6", "Capítulo 11", "Capítulo 15"], resposta: "Capítulo 8" },
-
-      // Capítulo 9
       { pergunta: "O epígrafe 'A missão dos doze apóstolos, a multiplicação dos pães e a Transfiguração' está em qual capítulo?", opcoes: ["Capítulo 9", "Capítulo 7", "Capítulo 10", "Capítulo 12"], resposta: "Capítulo 9" },
       { pergunta: "Em qual capítulo encontramos a pergunta de Jesus: 'E vós, quem dizeis que eu sou?' (A confissão de Pedro)?", opcoes: ["Capítulo 9", "Capítulo 8", "Capítulo 14", "Capítulo 16"], resposta: "Capítulo 9" },
-
-      // Capítulo 10
       { pergunta: "Onde se encontra 'A missão dos setenta discípulos e a parábola do bom samaritano'?", opcoes: ["Capítulo 10", "Capítulo 6", "Capítulo 12", "Capítulo 15"], resposta: "Capítulo 10" },
       { pergunta: "O epígrafe 'Jesus na casa de Marta e Maria' pertence a qual capítulo?", opcoes: ["Capítulo 10", "Capítulo 9", "Capítulo 11", "Capítulo 13"], resposta: "Capítulo 10" },
-
-      // Capítulo 11
       { pergunta: "Em qual capítulo está o ensino da oração do 'Pai Nosso' e o 'Pedi, buscai e batei' em Lucas?", opcoes: ["Capítulo 11", "Capítulo 6", "Capítulo 12", "Capítulo 18"], resposta: "Capítulo 11" },
       { pergunta: "O epígrafe 'O sinal de Jonas e os ais contra os fariseus' encontra-se em qual capítulo?", opcoes: ["Capítulo 11", "Capítulo 7", "Capítulo 13", "Capítulo 16"], resposta: "Capítulo 11" },
-
-      // Capítulo 12
       { pergunta: "Onde está a 'Parábola do rico insensato' e a 'Exortação contra a ansiedade'?", opcoes: ["Capítulo 12", "Capítulo 8", "Capítulo 10", "Capítulo 14"], resposta: "Capítulo 12" },
-
-      // Capítulo 13
       { pergunta: "Em qual capítulo encontramos 'A cura de uma mulher encurvada no sábado e a porta estreita'?", opcoes: ["Capítulo 13", "Capítulo 9", "Capítulo 14", "Capítulo 17"], resposta: "Capítulo 13" },
       { pergunta: "As parábolas do 'Grão de mostarda e do fermento' no Evangelho de Lucas estão em qual capítulo?", opcoes: ["Capítulo 13", "Capítulo 11", "Capítulo 15", "Capítulo 18"], resposta: "Capítulo 13" },
-
-      // Capítulo 14
       { pergunta: "O epígrafe 'A cura de um hidrópico e a parábola da grande ceia' é de qual capítulo?", opcoes: ["Capítulo 14", "Capítulo 10", "Capítulo 12", "Capítulo 16"], resposta: "Capítulo 14" },
-
-      // Capítulo 15
       { pergunta: "Em qual capítulo estão as três parábolas da graça: 'A ovelha perdida, a dracma perdida e o filho pródigo'?", opcoes: ["Capítulo 15", "Capítulo 12", "Capítulo 16", "Capítulo 19"], resposta: "Capítulo 15" },
-
-      // Capítulo 16
       { pergunta: "O epígrafe 'A parábola do mordomo infiel e a história do rico e Lázaro' pertence a qual capítulo?", opcoes: ["Capítulo 16", "Capítulo 13", "Capítulo 15", "Capítulo 18"], resposta: "Capítulo 16" },
-
-      // Capítulo 17
       { pergunta: "Em qual capítulo está registrada 'A cura dos dez leprosos' e os ensinos sobre a 'Vinda do Reino'?", opcoes: ["Capítulo 17", "Capítulo 14", "Capítulo 18", "Capítulo 20"], resposta: "Capítulo 17" },
-
-      // Capítulo 18
       { pergunta: "Onde encontramos a 'Parábola do fariseu e do publicano' e o 'Jovem rico'?", opcoes: ["Capítulo 18", "Capítulo 15", "Capítulo 19", "Capítulo 21"], resposta: "Capítulo 18" },
       { pergunta: "O epígrafe 'A cura do cego de Jericó' está localizado em qual capítulo?", opcoes: ["Capítulo 18", "Capítulo 16", "Capítulo 20", "Capítulo 22"], resposta: "Capítulo 18" },
-
-      // Capítulo 19
       { pergunta: "Em qual capítulo ocorre 'A conversão de Zaqueu, o publicano' e a 'Parábola das minas'?", opcoes: ["Capítulo 19", "Capítulo 17", "Capítulo 20", "Capítulo 22"], resposta: "Capítulo 19" },
       { pergunta: "O epígrafe 'A entrada triunfal de Jesus em Jerusalém e o lamento sobre a cidade' pertence a qual capítulo?", opcoes: ["Capítulo 19", "Capítulo 18", "Capítulo 21", "Capítulo 23"], resposta: "Capítulo 19" },
-
-      // Capítulo 20
       { pergunta: "Em qual capítulo se encontra 'A parábola dos lavradores maus' e a questão do 'Tributo a César'?", opcoes: ["Capítulo 20", "Capítulo 17", "Capítulo 21", "Capítulo 23"], resposta: "Capítulo 20" },
-
-      // Capítulo 21
       { pergunta: "O epígrafe 'A oferta da viúva pobre e o anúncio da destruição do templo' pertence a qual capítulo?", opcoes: ["Capítulo 21", "Capítulo 19", "Capítulo 22", "Capítulo 24"], resposta: "Capítulo 21" },
-
-      // Capítulo 22
       { pergunta: "Em qual capítulo está 'A traição de Judas, a instituição da Ceia do Senhor e a oração no Getsêmani'?", opcoes: ["Capítulo 22", "Capítulo 20", "Capítulo 21", "Capítulo 23"], resposta: "Capítulo 22" },
       { pergunta: "O epígrafe 'A prisão de Jesus e a negação de Pedro' pertence a qual capítulo?", opcoes: ["Capítulo 22", "Capítulo 19", "Capítulo 23", "Capítulo 24"], resposta: "Capítulo 22" },
-
-      // Capítulo 23
       { pergunta: "Onde se encontra o julgamento perante Pilatos e Herodes, a crucificação e 'O bom ladrão na cruz'?", opcoes: ["Capítulo 23", "Capítulo 21", "Capítulo 22", "Capítulo 24"], resposta: "Capítulo 23" },
       { pergunta: "O epígrafe 'A morte de Jesus e o sepultamento por José de Arimatéia' é de qual capítulo?", opcoes: ["Capítulo 23", "Capítulo 20", "Capítulo 22", "Capítulo 24"], resposta: "Capítulo 23" },
-
-      // Capítulo 24
       { pergunta: "Em qual capítulo ocorre o episódio marcante dos 'Discípulos no caminho de Emaús'?", opcoes: ["Capítulo 24", "Capítulo 21", "Capítulo 22", "Capítulo 23"], resposta: "Capítulo 24" },
       { pergunta: "O epígrafe 'A ressurreição de Jesus, a aparição aos apóstolos e a Ascensão ao céu' pertence a qual capítulo?", opcoes: ["Capítulo 24", "Capítulo 20", "Capítulo 22", "Capítulo 23"], resposta: "Capítulo 24" }
     ];
@@ -449,14 +401,8 @@
     }
 
     function atualizarPontuacao() {
-      const totalCertas = respostas.filter(
-        resposta => resposta !== null && resposta.correta
-      ).length;
-
-      const totalErradas = respostas.filter(
-        resposta => resposta !== null && !resposta.correta
-      ).length;
-
+      const totalCertas = respostas.filter(r => r !== null && r.correta).length;
+      const totalErradas = respostas.filter(r => r !== null && !r.correta).length;
       certas.textContent = totalCertas;
       erradas.textContent = totalErradas;
     }
@@ -478,17 +424,12 @@
     }
 
     function responder(escolhida) {
-      if (respostas[indice] !== null) {
-        return;
-      }
+      if (respostas[indice] !== null) return;
 
       const respostaCorreta = perguntas[indice].resposta;
       const correta = escolhida === respostaCorreta;
 
-      respostas[indice] = {
-        escolhida: escolhida,
-        correta: correta
-      };
+      respostas[indice] = { escolhida, correta };
 
       atualizarPontuacao();
       mostrarPergunta();
@@ -498,11 +439,8 @@
       const atual = perguntas[indice];
       const registro = respostas[indice];
 
-      contadorPergunta.textContent =
-        `Pergunta ${indice + 1} de ${perguntas.length}`;
-
-      barra.style.width =
-        `${((indice + 1) / perguntas.length) * 100}%`;
+      contadorPergunta.textContent = `Pergunta ${indice + 1} de ${perguntas.length}`;
+      barra.style.width = `${((indice + 1) / perguntas.length) * 100}%`;
 
       textoPergunta.textContent = atual.pergunta;
       alternativas.innerHTML = "";
@@ -517,7 +455,6 @@
 
         if (registro !== null) {
           botao.disabled = true;
-
           if (opcao === atual.resposta) {
             botao.classList.add("certa");
           } else if (opcao === registro.escolhida) {
@@ -535,39 +472,44 @@
           retorno.textContent = "Correto! Muito bem.";
           retorno.classList.add("certa");
         } else {
-          retorno.textContent =
-            `Resposta incorreta. A alternativa certa é: ${atual.resposta}`;
+          retorno.textContent = `Resposta incorreta. A alternativa certa é: ${atual.resposta}`;
           retorno.classList.add("errada");
         }
       }
 
       botaoInicio.disabled = indice === 0;
       botaoAnterior.disabled = indice === 0;
-
-      botaoProxima.textContent =
-        indice === perguntas.length - 1 ? "Ver resultado" : "Próxima";
-
+      botaoProxima.textContent = indice === perguntas.length - 1 ? "Ver resultado" : "Próxima";
       atualizarPontuacao();
     }
 
-    function mostrarResultado() {
-      const totalCertas = respostas.filter(
-        resposta => resposta !== null && resposta.correta
-      ).length;
-
-      const totalErradas = respostas.filter(
-        resposta => resposta !== null && !resposta.correta
-      ).length;
-
-      const porcentagem = Math.round(
-        (totalCertas / perguntas.length) * 100
+    function enviarEmailResultado(totalCertas, totalErradas, porcentagem, nivel) {
+      const destinatario = "comumcongregacao@gmail.com";
+      const assunto = encodeURIComponent("Resultado do Quiz - Evangelho de Lucas");
+      const corpo = encodeURIComponent(
+        `A Paz de Deus!\n\nUm irmão concluiu o Quiz do Evangelho de Lucas e obteve o seguinte resultado:\n\n` +
+        `- Desempenho / Nível: ${nivel}\n` +
+        `- Porcentagem de acertos: ${porcentagem}%\n` +
+        `- Respostas Certas: ${totalCertas}\n` +
+        `- Respostas Erradas: ${totalErradas}\n` +
+        `- Total de Perguntas: ${perguntas.length}\n\n` +
+        `Relatório gerado automaticamente pelo sistema de estudos.`
       );
+      
+      // Abre o cliente de e-mail do usuário preenchendo os campos
+      window.location.href = `mailto:${destinatorio}?subject=${assunto}&body=${corpo}`;
+    }
+
+    function mostrarResultado() {
+      const totalCertas = respostas.filter(r => r !== null && r.correta).length;
+      const totalErradas = respostas.filter(r => r !== null && !r.correta).length;
+      const porcentagem = Math.round((totalCertas / perguntas.length) * 100);
 
       let nivel;
       let mensagem;
 
       if (porcentagem < 25) {
-        nivel = "Mal";
+        nivel = "Ruim";
         mensagem = "Continue estudando o Evangelho de Lucas e tente novamente.";
       } else if (porcentagem < 50) {
         nivel = "Médio";
@@ -575,9 +517,12 @@
       } else if (porcentagem < 75) {
         nivel = "Bom";
         mensagem = "Bom trabalho! Você conhece grande parte do Evangelho de Lucas.";
+      } else if (porcentagem < 90) {
+        nivel = "Muito Bom";
+        mensagem = "Muito bom! Excelente aproveitamento das epígrafes de Lucas!";
       } else {
         nivel = "Excelente";
-        mensagem = "Excelente resultado! Você demonstrou domínio impressionante das epígrafes!";
+        mensagem = "Excelente resultado! Domínio impressionante da Palavra!";
       }
 
       areaPergunta.classList.add("oculto");
@@ -586,22 +531,35 @@
       areaResultado.innerHTML = `
         <h2>Resultado final</h2>
         <div class="nota">${porcentagem}%</div>
-        <p><strong>${nivel}</strong></p>
+        <p><strong>Desempenho: ${nivel}</strong></p>
         <p class="mensagem-final">
           Você acertou <strong>${totalCertas}</strong> e errou
-          <strong>${totalErradas}</strong> de ${perguntas.length} perguntas.<br>
+          <strong>${totalErradas}</strong> de ${perguntas.length} perguntas (${porcentagem}% de pontos).<br>
           ${mensagem}
         </p>
 
-        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 15px;">
-          <button class="controle" id="novaTentativa">Nova tentativa</button>
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
+          <button class="controle" id="novaTentativa">🔄 Novo Jogo (Recomeçar)</button>
+          <button class="controle secundario" id="reverPerguntas">📖 Rever Perguntas (Início)</button>
+          <button class="controle" style="background: #1b6638;" id="enviarEmailBtn">✉️ Enviar Resultado por E-mail</button>
           <button class="controle secundario" onclick="voltarParaSite()">Voltar ao Site</button>
         </div>
       `;
 
-      document
-        .getElementById("novaTentativa")
-        .addEventListener("click", iniciarQuiz);
+      document.getElementById("novaTentativa").addEventListener("click", iniciarQuiz);
+      
+      // Botão que volta ao início para rever as perguntas já respondidas
+      document.getElementById("reverPerguntas").addEventListener("click", () => {
+        indice = 0;
+        areaResultado.classList.add("oculto");
+        areaPergunta.classList.remove("oculto");
+        mostrarPergunta();
+      });
+
+      // Botão para enviar o relatório para o e-mail solicitado
+      document.getElementById("enviarEmailBtn").addEventListener("click", () => {
+        enviarEmailResultado(totalCertas, totalErradas, porcentagem, nivel);
+      });
     }
 
     botaoInicio.addEventListener("click", () => {
