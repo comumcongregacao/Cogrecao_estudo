@@ -233,7 +233,7 @@
             <h3>Livros do Novo Testamento (Em Ordem Bíblica)</h3>
             <div class="lista-livros">
                 <!-- Evangelhos -->
-                <a href="aulas/mateus.html" class="livro-link-btn">1. Evangelho de Mateus</a>
+                <a href="aulas/Mateus.html" class="livro-link-btn">1. Evangelho de Mateus</a>
                 <a href="aulas/marcos.html" class="livro-link-btn">2. Evangelho de Marcos</a>
                 <a href="aulas/lucas.html" class="livro-link-btn">3. Evangelho de Lucas</a>
                 <a href="aulas/Joao.html" class="livro-link-btn">4. Evangelho de João</a>
