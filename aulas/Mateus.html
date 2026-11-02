@@ -1,9 +1,12 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz do Evangelho de Mateus</title>
+
+  <!-- Biblioteca EmailJS para envio automático de e-mails -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
   <style>
     :root {
@@ -60,6 +63,21 @@
       color: var(--suave);
       line-height: 1.5;
       margin: 0 0 24px;
+    }
+
+    .campo-identificacao {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .campo-identificacao input {
+      padding: 14px;
+      border: 1px solid #e7dfca;
+      border-radius: 10px;
+      font-size: 16px;
+      background: #fdfbf7;
     }
 
     .contador-pergunta {
@@ -222,6 +240,12 @@
       line-height: 1.6;
     }
 
+    .status-email {
+      margin-top: 15px;
+      font-weight: bold;
+      color: var(--verde);
+    }
+
     .oculto {
       display: none;
     }
@@ -261,12 +285,20 @@
         <h1>Quiz do Evangelho de Mateus</h1>
       </header>
 
-      <p class="subtitulo">
-        Responda às perguntas sobre os 28 capítulos e as epígrafes do Evangelho de Mateus.
-        As perguntas e alternativas são embaralhadas a cada tentativa.
-      </p>
+      <!-- Tela 1: Identificação de Nome e E-mail -->
+      <div id="areaRegistro">
+        <p class="subtitulo">
+          A Paz de Deus! Antes de começar o questionário, informe o seu Nome e o seu E-mail para registrar o seu progresso no nosso sistema.
+        </p>
+        <form id="formRegistro" class="campo-identificacao" onsubmit="confirmarRegistro(event)">
+          <input type="text" id="nomeUsuario" placeholder="Seu Nome Completo" required>
+          <input type="email" id="emailUsuario" placeholder="Seu E-mail" required>
+          <button type="submit" class="controle">Iniciar Quiz</button>
+        </form>
+      </div>
 
-      <div id="areaPergunta">
+      <!-- Tela 2: Pergunta do Quiz -->
+      <div id="areaPergunta" class="oculto">
         <div class="contador-pergunta" id="contadorPergunta"></div>
 
         <div class="barra-fundo">
@@ -297,12 +329,17 @@
         </div>
       </div>
 
+      <!-- Tela 3: Resultado e Envio por E-mail -->
       <div class="resultado oculto" id="resultado"></div>
     </section>
   </main>
 
   <script>
-    // Lista com 40 perguntas baseadas nas epígrafes de Mateus 1-28
+    // Inicializar EmailJS (Substitua SEU_PUBLIC_KEY se você criar uma conta gratuita no emailjs.com)
+    (function() {
+        emailjs.init("YOUR_PUBLIC_KEY"); 
+    })();
+
     const perguntasOriginais = [
       // Capítulo 1
       { pergunta: "Em qual capítulo encontramos a epígrafe 'A genealogia de Jesus Cristo'?", opcoes: ["Capítulo 1", "Capítulo 3", "Capítulo 5", "Capítulo 9"], resposta: "Capítulo 1" },
@@ -413,9 +450,14 @@
       return copia;
     }
 
+    let usuario = { nome: "", email: "" };
     let perguntas = [];
     let indice = 0;
     let respostas = [];
+
+    const areaRegistro = document.getElementById("areaRegistro");
+    const areaPergunta = document.getElementById("areaPergunta");
+    const areaResultado = document.getElementById("resultado");
 
     const contadorPergunta = document.getElementById("contadorPergunta");
     const barra = document.getElementById("barra");
@@ -427,17 +469,19 @@
     const botaoInicio = document.getElementById("inicio");
     const botaoAnterior = document.getElementById("anterior");
     const botaoProxima = document.getElementById("proxima");
-    const areaPergunta = document.getElementById("areaPergunta");
-    const areaResultado = document.getElementById("resultado");
+
+    function confirmarRegistro(event) {
+      event.preventDefault();
+      usuario.nome = document.getElementById("nomeUsuario").value;
+      usuario.email = document.getElementById("emailUsuario").value;
+
+      areaRegistro.classList.add("oculto");
+      iniciarQuiz();
+    }
 
     function atualizarPontuacao() {
-      const totalCertas = respostas.filter(
-        resposta => resposta !== null && resposta.correta
-      ).length;
-
-      const totalErradas = respostas.filter(
-        resposta => resposta !== null && !resposta.correta
-      ).length;
+      const totalCertas = respostas.filter(r => r !== null && r.correta).length;
+      const totalErradas = respostas.filter(r => r !== null && !r.correta).length;
 
       certas.textContent = totalCertas;
       erradas.textContent = totalErradas;
@@ -460,17 +504,12 @@
     }
 
     function responder(escolhida) {
-      if (respostas[indice] !== null) {
-        return;
-      }
+      if (respostas[indice] !== null) return;
 
       const respostaCorreta = perguntas[indice].resposta;
       const correta = escolhida === respostaCorreta;
 
-      respostas[indice] = {
-        escolhida: escolhida,
-        correta: correta
-      };
+      respostas[indice] = { escolhida: escolhida, correta: correta };
 
       atualizarPontuacao();
       mostrarPergunta();
@@ -480,11 +519,8 @@
       const atual = perguntas[indice];
       const registro = respostas[indice];
 
-      contadorPergunta.textContent =
-        `Pergunta ${indice + 1} de ${perguntas.length}`;
-
-      barra.style.width =
-        `${((indice + 1) / perguntas.length) * 100}%`;
+      contadorPergunta.textContent = `Pergunta ${indice + 1} de ${perguntas.length}`;
+      barra.style.width = `${((indice + 1) / perguntas.length) * 100}%`;
 
       textoPergunta.textContent = atual.pergunta;
       alternativas.innerHTML = "";
@@ -517,39 +553,51 @@
           retorno.textContent = "Correto! Muito bem.";
           retorno.classList.add("certa");
         } else {
-          retorno.textContent =
-            `Resposta incorreta. A alternativa certa é: ${atual.resposta}`;
+          retorno.textContent = `Resposta incorreta. A alternativa certa é: ${atual.resposta}`;
           retorno.classList.add("errada");
         }
       }
 
       botaoInicio.disabled = indice === 0;
       botaoAnterior.disabled = indice === 0;
-
-      botaoProxima.textContent =
-        indice === perguntas.length - 1 ? "Ver resultado" : "Próxima";
+      botaoProxima.textContent = indice === perguntas.length - 1 ? "Ver resultado" : "Próxima";
 
       atualizarPontuacao();
     }
 
+    function enviarResultadoPorEmail(dados) {
+      const emailDestino = "comumcongregacao@gmail.com";
+      const assunto = `Resultado do Quiz de Mateus - ${dados.nome}`;
+      const corpo = `A Paz de Deus!%0D%0A%0D%0ANovo resultado registrado no Quiz do Evangelho de Mateus:%0D%0A%0D%0ANome: ${dados.nome}%0D%0AE-mail do Irmão: ${dados.email}%0D%0APorcentagem: ${dados.porcentagem}%25%0D%0AAnálise: ${dados.nivel}%0D%0AAcertos: ${dados.certas} de ${dados.total}%0D%0AErros: ${dados.erradas}`;
+
+      // Tenta enviar via EmailJS
+      emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+        to_email: emailDestino,
+        from_name: dados.nome,
+        from_email: dados.email,
+        porcentagem: dados.porcentagem,
+        nivel: dados.nivel,
+        certas: dados.certas,
+        erradas: dados.erradas,
+        total: dados.total
+      }).then(() => {
+        document.getElementById("statusEmail").innerText = "✅ O resultado foi enviado com sucesso para comumcongregacao@gmail.com!";
+      }).catch((err) => {
+        // Backup: gera o link mailto directo caso não haja API configurada
+        const mailtoUrl = `mailto:${emailDestino}?subject=${assunto}&body=${corpo}`;
+        document.getElementById("statusEmail").innerHTML = `✅ <a href="${mailtoUrl}" target="_blank" style="color: var(--dourado-escuro);">Clique aqui para confirmar o envio do relatório de resultado por E-mail</a>`;
+      });
+    }
+
     function mostrarResultado() {
-      const totalCertas = respostas.filter(
-        resposta => resposta !== null && resposta.correta
-      ).length;
+      const totalCertas = respostas.filter(r => r !== null && r.correta).length;
+      const totalErradas = respostas.filter(r => r !== null && !r.correta).length;
+      const porcentagem = Math.round((totalCertas / perguntas.length) * 100);
 
-      const totalErradas = respostas.filter(
-        resposta => resposta !== null && !resposta.correta
-      ).length;
-
-      const porcentagem = Math.round(
-        (totalCertas / perguntas.length) * 100
-      );
-
-      let nivel;
-      let mensagem;
+      let nivel, mensagem;
 
       if (porcentagem < 25) {
-        nivel = "Mal";
+        nivel = "Insuficiente";
         mensagem = "Continue estudando o Evangelho de Mateus e tente novamente.";
       } else if (porcentagem < 50) {
         nivel = "Médio";
@@ -566,20 +614,33 @@
       areaResultado.classList.remove("oculto");
 
       areaResultado.innerHTML = `
-        <h2>Resultado final</h2>
+        <h2>Resultado final de ${usuario.nome}</h2>
         <div class="nota">${porcentagem}%</div>
-        <p><strong>${nivel}</strong></p>
+        <p><strong>Nível: ${nivel}</strong></p>
         <p class="mensagem-final">
           Você acertou <strong>${totalCertas}</strong> e errou
           <strong>${totalErradas}</strong> de ${perguntas.length} perguntas.<br>
           ${mensagem}
         </p>
+        <div id="statusEmail" class="status-email">A enviar relatório para a congregação...</div>
+        <br>
         <button class="controle" id="novaTentativa">Nova tentativa</button>
       `;
 
-      document
-        .getElementById("novaTentativa")
-        .addEventListener("click", iniciarQuiz);
+      enviarResultadoPorEmail({
+        nome: usuario.nome,
+        email: usuario.email,
+        porcentagem: porcentagem,
+        nivel: nivel,
+        certas: totalCertas,
+        erradas: totalErradas,
+        total: perguntas.length
+      });
+
+      document.getElementById("novaTentativa").addEventListener("click", () => {
+        areaResultado.classList.add("oculto");
+        areaRegistro.classList.remove("oculto");
+      });
     }
 
     botaoInicio.addEventListener("click", () => {
@@ -602,8 +663,6 @@
         mostrarResultado();
       }
     });
-
-    iniciarQuiz();
   </script>
 </body>
 </html>
